@@ -1,0 +1,3 @@
+[submodule "include/shared"]
+	path = include/shared
+	url = git@github.com:epitech-mirroring/ArcadeShared.git
