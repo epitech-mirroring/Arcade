@@ -8,16 +8,17 @@ pipeline {
         BIN_NAME = 'arcade'
     }
     stages {
-        stage('🕵️ Lint') {
+        stage('🔍 Checkout') {
             steps {
-                // Clean before linting
+                // Clean before checkout
                 cleanWs()
 
                 // Clone the repository
                 checkout scm
-                // Clone submodules
-                sh 'git submodule update --init --recursive'
-
+            }
+        }
+        stage('🕵️ Lint') {
+            steps {
                 // Run docker container
                 sh 'docker run --rm --security-opt "label:disable" -v "$(pwd)":"/mnt/delivery" -v "$(pwd)":"/mnt/reports" ghcr.io/epitech/coding-style-checker:latest "/mnt/delivery" "/mnt/reports"'
 
