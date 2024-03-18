@@ -137,14 +137,14 @@ $(CXX_TESTS_OBJS):	%.o: %.cpp
 
 tests_games:
 		@for game in $(GAMES); do \
-			printf "$(RUNNING) $(BLUE) 🔨  Tests $$game$(RESET)"; \
+			printf "$(RUNNING) $(BLUE)  🧪  Tests $$game$(RESET)"; \
 			make -C $$game tests_run >> $(LOG) 2>&1 \
 			&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"; \
 		done
 
 tests_drivers:
 		@for driver in $(DRIVERS); do \
-			printf "$(RUNNING) $(BLUE) 🔨  Tests $$driver$(RESET)"; \
+			printf "$(RUNNING) $(BLUE)  🧪  Tests $$driver$(RESET)"; \
 			make -C $$driver tests_run >> $(LOG) 2>&1 \
 			&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"; \
 		done
