@@ -1,34 +1,27 @@
 ##
 ## EPITECH PROJECT, 2024
-## Arcade
+## Arcade | SFML
 ## File description:
 ## This is the Makefile for the Arcade project
-## It compiles each games, drivers and the core
+## (more specifically the SFML driver)
+## It job is to compile, clean and tests the project
 ##
 
 # All the source files
-CXX_SOURCES		= src/main.cpp		\
-
-GAMES			= games/Pacman 		\
-				  games/Snake		\
-
-DRIVERS			= drivers/ncurses	\
-				  drivers/sdl2		\
-				  drivers/sfml		\
+CXX_SOURCES		= src/Sfml.cpp								\
 
 CXX_TESTS		=
 
 # Compiler and linker settings
-NAME 			= arcade
+NAME 			= arcade_sfml.so
 XX				= g++
-XXFLAGS			= -W -Wall -Wextra -std=c++20 --coverage -I./include
+XXFLAGS			= -W -Wall -Wextra -std=c++20 --coverage -I../../include
 CXX_OBJS		= $(CXX_SOURCES:.cpp=.o)
 CXX_TESTS_OBJS	= $(CXX_TESTS:.cpp=.o)
 LOG				= ./build.log
 
 .PHONY: $(NAME) all clean fclean re tests_run clean_test \
-	$(CXX_OBJS) $(CXX_TESTS_OBJS) games $(GAMES) graphicals $(DRIVERS) \
-	tests_games tests_drivers
+	$(CXX_OBJS) $(CXX_TESTS_OBJS)
 
 # Colors and formatting
 GREEN =		\033[1;32m
@@ -42,35 +35,12 @@ RUNNING = [$(YELLOW)~$(RESET)]
 SUCCESS = [$(GREEN)✔$(RESET)]
 FAILURE = [$(RED)✘$(RESET)]
 
-all:		$(GAMES) $(DRIVERS) $(NAME)
-
-games:		$(GAMES)
-graphicals:	$(DRIVERS)
-
-$(GAMES):
-		@mkdir -p lib
-		@printf "$(RUNNING) $(BLUE) 🔨  Building $@$(RESET)"
-		@LOWERCASE_DIR=$$(echo $@ | sed 's:.*/::' \
-		| tr '[:upper:]' '[:lower:]') ; \
-		SO_NAME=arcade_$${LOWERCASE_DIR}.so ; \
-		make -C $@ >> $(LOG) 2>&1 \
-		&& (printf "\r$(SUCCESS)\n" && cp $@/$${SO_NAME} lib/) \
-		|| printf "\r$(FAILURE)\n"
-
-$(DRIVERS):
-		@mkdir -p lib
-		@printf "$(RUNNING) $(BLUE) 🔨  Building $@$(RESET)"
-		@LOWERCASE_DIR=$$(echo $@ | sed 's:.*/::' \
-		| tr '[:upper:]' '[:lower:]') ; \
-		SO_NAME=arcade_$${LOWERCASE_DIR}.so ; \
-		make -C $@ >> $(LOG) 2>&1 \
-		&& (printf "\r$(SUCCESS)\n" && cp $@/$${SO_NAME} lib/) \
-		|| printf "\r$(FAILURE)\n"
+all:		$(NAME)
 
 $(NAME):	$(CXX_OBJS)
 # Link the object files
 		@printf "$(RUNNING) $(BLUE) 🔗  Linking$(RESET)"
-		@$(XX) -o $(NAME) $(CXX_OBJS) $(XXFLAGS) >> $(LOG) 2>&1 \
+		@$(XX) -shared -o $(NAME) $(CXX_OBJS) $(XXFLAGS) >> $(LOG) 2>&1 \
 		&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
 # Check if the binary was created
 		@if [ -f $(NAME) ]; then \
@@ -94,34 +64,11 @@ clean:
 			rm -f $$file >> $(LOG) 2>&1 \
 			&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"; \
 		done
-		@for game in $(GAMES); do \
-			printf "$(RUNNING) $(RED) 🗑️   Clean $$game$(RESET)"; \
-			make -C $$game clean >> $(LOG) 2>&1 \
-			&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"; \
-		done
-		@for driver in $(DRIVERS); do \
-			printf "$(RUNNING) $(RED) 🗑️   Clean $$driver$(RESET)"; \
-			make -C $$driver clean >> $(LOG) 2>&1 \
-			&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"; \
-		done
 
 fclean: clean clean_test
 # Delete the binary
 		@printf "$(RUNNING) $(RED) 🗑️   Deleting $(NAME)$(RESET)"
 		@rm -f $(NAME) >> $(LOG) 2>&1 \
-		&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
-		@for game in $(GAMES); do \
-			printf "$(RUNNING) $(RED) 🗑️   Fclean $$game$(RESET)"; \
-			make -C $$game fclean >> $(LOG) 2>&1 \
-			&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"; \
-		done
-		@for driver in $(DRIVERS); do \
-			printf "$(RUNNING) $(RED) 🗑️   Fclean $$driver$(RESET)"; \
-			make -C $$driver fclean >> $(LOG) 2>&1 \
-			&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"; \
-		done
-		@printf "$(RUNNING) $(RED) 🗑️   Deleting lib/$(RESET)"
-		@rm -rf lib >> $(LOG) 2>&1 \
 		&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
 # Delete the log file
 		@printf "$(RUNNING) $(RED) 🗑️   Deleting $(LOG)$(RESET)"
@@ -135,21 +82,7 @@ $(CXX_TESTS_OBJS):	%.o: %.cpp
 		@$(XX) -o $@ -c $< $(XXFLAGS) >> $(LOG) 2>&1 \
 		&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
 
-tests_games:
-		@for game in $(GAMES); do \
-			printf "$(RUNNING) $(BLUE) 🔨  Tests $$game$(RESET)"; \
-			make -C $$game tests_run >> $(LOG) 2>&1 \
-			&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"; \
-		done
-
-tests_drivers:
-		@for driver in $(DRIVERS); do \
-			printf "$(RUNNING) $(BLUE) 🔨  Tests $$driver$(RESET)"; \
-			make -C $$driver tests_run >> $(LOG) 2>&1 \
-			&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"; \
-		done
-
-tests_run: fclean $(CXX_OBJS) $(CXX_TESTS_OBJS)  tests_games tests_drivers
+tests_run: fclean $(CXX_OBJS) $(CXX_TESTS_OBJS)
 	@printf "$(RUNNING) $(BLUE) 🔗  Linking$(RESET)"
 	@$(XX) -o tests.out $(filter-out src/main.o, $(CXX_OBJS)) \
 	$(CXX_TESTS_OBJS) $(XXFLAGS) --coverage >> $(LOG) 2>&1 \
