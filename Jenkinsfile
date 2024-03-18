@@ -15,6 +15,11 @@ pipeline {
 
                 // Clone the repository
                 checkout scm
+
+                // Clone submodules
+                withCredentials([sshUserPrivateKey(credentialsId: 'EPITECH_SSH_KEY', keyFileVariable: 'PRIVATE_KEY')]) {
+                    sh 'GIT_SSH_COMMAND="ssh -i $PRIVATE_KEY" git submodule update --init --recursive'
+                }
             }
         }
         stage('🕵️ Lint') {
@@ -61,6 +66,11 @@ pipeline {
             }
             steps {
                 ansiColor('xterm') {
+                    // Clone the submodules
+                    withCredentials([sshUserPrivateKey(credentialsId: 'EPITECH_SSH_KEY', keyFileVariable: 'PRIVATE_KEY')]) {
+                        sh 'GIT_SSH_COMMAND="ssh -i $PRIVATE_KEY" git submodule update --init --recursive'
+                    }
+
                     // Run the build
                     sh 'make'
 
