@@ -47,7 +47,12 @@ all:		$(GAMES) $(DRIVERS) $(NAME)
 games:		$(GAMES)
 graphicals:	$(DRIVERS)
 
-$(GAMES):
+shared:
+		@printf "$(RUNNING) $(YELLOW) 📥  Syncing submodules$(RESET)"
+		@git submodule update --init --recursive >> $(LOG) 2>&1 \
+		&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
+
+$(GAMES): shared
 		@mkdir -p lib
 		@printf "$(RUNNING) $(BLUE) 🔨  Building $@$(RESET)"
 		@LOWERCASE_DIR=$$(echo $@ | sed 's:.*/::' \
@@ -57,7 +62,7 @@ $(GAMES):
 		&& (printf "\r$(SUCCESS)\n" && cp $@/$${SO_NAME} lib/) \
 		|| printf "\r$(FAILURE)\n"
 
-$(DRIVERS):
+$(DRIVERS): shared
 		@mkdir -p lib
 		@printf "$(RUNNING) $(BLUE) 🔨  Building $@$(RESET)"
 		@LOWERCASE_DIR=$$(echo $@ | sed 's:.*/::' \
