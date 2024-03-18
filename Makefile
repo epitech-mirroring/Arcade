@@ -50,7 +50,8 @@ graphicals:	$(DRIVERS)
 shared:
 		@printf "$(RUNNING) $(YELLOW) 📥  Syncing submodules$(RESET)"
 		@git submodule update --init --recursive >> $(LOG) 2>&1 \
-		&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
+		&& printf "\r$(SUCCESS)\n" || (printf "\r$(FAILURE)\n" \
+		&& cat $(LOG) && exit 1)
 
 $(GAMES): shared
 		@mkdir -p lib
