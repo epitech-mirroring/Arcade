@@ -9,11 +9,11 @@
 # All the source files
 CXX_SOURCES		= src/main.cpp		\
 
-GAMES			= games/Pacman/ 	\
-				  games/Snake/		\
+GAMES			= games/Pacman 		\
+				  games/Snake		\
 
-DRIVERS			= drivers/ncurses/	\
-				  drivers/sdl2/		\
+DRIVERS			= drivers/ncurses	\
+				  drivers/sdl2		\
 
 CXX_TESTS		=
 
@@ -49,15 +49,21 @@ graphicals:	$(DRIVERS)
 $(GAMES):
 		@mkdir -p lib
 		@printf "$(RUNNING) $(BLUE) 🔨  Building $@$(RESET)"
-		@make -C $@ >> $(LOG) 2>&1 \
-		&& (printf "\r$(SUCCESS)\n" && cp $@/*.so lib/) \
+		@LOWERCASE_DIR=$$(echo $@ | sed 's:.*/::' \
+		| tr '[:upper:]' '[:lower:]') ; \
+		SO_NAME=arcade_$${LOWERCASE_DIR}.so ; \
+		make -C $@ >> $(LOG) 2>&1 \
+		&& (printf "\r$(SUCCESS)\n" && cp $@/$${SO_NAME} lib/) \
 		|| printf "\r$(FAILURE)\n"
 
 $(DRIVERS):
 		@mkdir -p lib
 		@printf "$(RUNNING) $(BLUE) 🔨  Building $@$(RESET)"
-		@make -C $@ >> $(LOG) 2>&1 \
-		&& (printf "\r$(SUCCESS)\n" && cp $@/*.so lib/) \
+		@LOWERCASE_DIR=$$(echo $@ | sed 's:.*/::' \
+		| tr '[:upper:]' '[:lower:]') ; \
+		SO_NAME=arcade_$${LOWERCASE_DIR}.so ; \
+		make -C $@ >> $(LOG) 2>&1 \
+		&& (printf "\r$(SUCCESS)\n" && cp $@/$${SO_NAME} lib/) \
 		|| printf "\r$(FAILURE)\n"
 
 $(NAME):	$(CXX_OBJS)
