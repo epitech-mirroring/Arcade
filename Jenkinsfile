@@ -105,10 +105,11 @@ pipeline {
                         def dirs = ['games/Pacman', 'games/Snake', 'drivers/ncurses', 'drivers/sdl2', 'drivers/sfml']
 
                         for (dir in dirs) {
+                            def covID = dir.replaceAll('/', '-')
                             sh "cd ${dir} && gcovr --cobertura cobertura.xml --exclude tests/"
                             junit(testResults: "${dir}/criterion.xml", allowEmptyResults : true)
                             recordCoverage(tools: [[parser: 'COBERTURA']],
-                                    id: "${dir}", name: "Coverage ${dir}",
+                                    id: ""${covID}", name: "Coverage ${dir}","
                                     sourceCodeRetention: 'EVERY_BUILD')
                         }
                     }
