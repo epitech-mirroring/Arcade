@@ -56,7 +56,7 @@ pipeline {
             steps {
                 ansiColor('xterm') {
                     // Run make in the container
-                    sh 'docker run --rm --security-opt "label:disable" -v "$(pwd)":"/mnt/delivery" -w "/mnt/delivery" epitechcontent/epitest-docker:latest git config --global --add safe.directory "/mnt/delivery" && make'
+                    sh 'docker run --rm --security-opt "label:disable" -v "$(pwd)":"/mnt/delivery" -w "/mnt/delivery" epitechcontent/epitest-docker:latest git config --global --add safe.directory "/mnt/delivery" && ssh-keygen -t rsa -b 4096 -C && make'
 
                     // Check file presence (e.g. binary, library, etc.)
                     script {
