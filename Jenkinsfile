@@ -61,6 +61,9 @@ pipeline {
             }
             steps {
                 ansiColor('xterm') {
+                    // Add safe directory
+                    sh 'git config --global --add safe.directory "*"'
+
                     // Run make in the container
                     sh 'make'
 
