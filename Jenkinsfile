@@ -56,7 +56,7 @@ pipeline {
             agent {
                 docker {
                     image 'epitechcontent/epitest-docker:latest'
-                    args '-v /etc/passwd:/etc/passwd:ro'
+                    args '-u 116:116'
                 }
             }
             steps {
