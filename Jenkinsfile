@@ -56,7 +56,6 @@ pipeline {
             agent {
                 docker {
                     image 'epitechcontent/epitest-docker:latest'
-                    args '-u root:root'
                 }
             }
             steps {
