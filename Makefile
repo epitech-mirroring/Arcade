@@ -48,8 +48,12 @@ games:		$(GAMES)
 graphicals:	$(DRIVERS)
 
 shared:
-		@printf "$(RUNNING) $(YELLOW) 📥  Syncing submodules$(RESET)"
-		@git submodule update --init --recursive >> $(LOG) 2>&1 \
+		@printf "$(RUNNING) $(YELLOW) 📥  Init submodules$(RESET)"
+		@git submodule init >> $(LOG) 2>&1 \
+		&& printf "\r$(SUCCESS)\n" || (printf "\r$(FAILURE)\n" \
+		&& cat $(LOG) && exit 1)
+		@printf "$(RUNNING) $(YELLOW) 📥  Update submodules$(RESET)"
+		@git submodule update >> $(LOG) 2>&1 \
 		&& printf "\r$(SUCCESS)\n" || (printf "\r$(FAILURE)\n" \
 		&& cat $(LOG) && exit 1)
 
