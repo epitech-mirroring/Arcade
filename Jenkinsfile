@@ -94,26 +94,23 @@ pipeline {
         }
         stage ('🧪 Tests') {
             steps {
-                ansiColor('xterm') {
-                    // Run the tests
-                    sh 'make tests_run'
+                // Run the tests
+                sh 'make tests_run'
 
-                    // Update gcovr
-                    sh 'python3 -m pip install -Iv gcovr==6.0'
+                // Update gcovr
+                sh 'python3 -m pip install -Iv gcovr==6.0'
 
-                    script {
-                        def dirs = ['games/Pacman', 'games/Snake', 'drivers/ncurses', 'drivers/sdl2', 'drivers/sfml']
+                script {
+                    def dirs = ['games/Pacman', 'games/Snake', 'drivers/ncurses', 'drivers/sdl2', 'drivers/sfml']
 
-                        for (dir in dirs) {
-                            def covID = dir.replaceAll('/', '-')
-                            sh "cd ${dir} && gcovr --cobertura cobertura.xml --exclude tests/"
-                            junit(testResults: "${dir}/criterion.xml", allowEmptyResults : true)
-                            recordCoverage(tools: [[parser: 'COBERTURA']],
-                                    id: "${covID}", name: "Coverage ${dir}",
-                                    sourceCodeRetention: 'EVERY_BUILD')
-                        }
+                    for (dir in dirs) {
+                        junit(testResults: "${dir}/criterion.xml", allowEmptyResults : true)
                     }
                 }
+
+                recordCoverage(tools: [[parser: 'COBERTURA']],
+                    id: "coverage", name: "Coverage",
+                    sourceCodeRetention: 'EVERY_BUILD')
             }
         }
         stage('🪞 Mirror') {
