@@ -52,63 +52,57 @@ pipeline {
                 }
             }
         }
-        stage('🏗️ Build') {
+        stage('🏁 Setup') {
             steps {
-                stages {
-                    stage('🏁 Setup') {
-                        steps {
-                            sh 'git config --global user.email "jenkins@place2die.com"'
-                            sh 'git config --global user.name "Jenkins"'
-                            sh 'git config --global safe.directory "*"'
-                            sh 'ssh-keygen -R github.com'
-                            sh 'ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts'
-                        }
+                sh 'git config --global user.email "jenkins@place2die.com"'
+                sh 'git config --global user.name "Jenkins"'
+                sh 'git config --global safe.directory "*"'
+                sh 'ssh-keygen -R github.com'
+                sh 'ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts'
+            }
+        }
+        stage('🔨 Build') {
+            agent {
+                docker {
+                    image 'epitechcontent/epitest-docker:latest'
+                }
+            }
+            steps {
+                sh 'make re'
+            }
+        }
+        stage ('🔎 Verify') {
+            steps {
+                script {
+                    if (!fileExists(BIN_NAME)) {
+                        error "The binary file does not exist"
                     }
-                    stage('🔨 Build') {
-                        agent {
-                            docker {
-                                image 'epitechcontent/epitest-docker:latest'
-                            }
-                        }
-                        steps {
-                            sh 'make re'
-                        }
+                    if (!fileExists('lib/arcade_ncurses.so')) {
+                        error "Missing graphical library: NCurses"
                     }
-                    stage ('🔎 Verify') {
-                        steps {
-                            script {
-                                if (!fileExists(BIN_NAME)) {
-                                    error "The binary file does not exist"
-                                }
-                                if (!fileExists('lib/arcade_ncurses.so')) {
-                                    error "Missing graphical library: NCurses"
-                                }
-                                if (!fileExists('lib/arcade_sdl2.so')) {
-                                    error "Missing graphical library: SDL2"
-                                }
-                                if (!fileExists('lib/arcade_sfml.so')) {
-                                    error "Missing graphical library: SFML"
-                                }
-                                if (!fileExists('lib/arcade_pacman.so')) {
-                                    error "Missing game library: Pacman"
-                                }
-                                if (!fileExists('lib/arcade_snake.so')) {
-                                    error "Missing game library: Snake"
-                                }
-                            }
-                        }
+                    if (!fileExists('lib/arcade_sdl2.so')) {
+                        error "Missing graphical library: SDL2"
                     }
-                    stage('📦 Archive') {
-                        steps {
-                            archiveArtifacts BIN_NAME
-                            archiveArtifacts 'lib/arcade_ncurses.so'
-                            archiveArtifacts 'lib/arcade_sdl2.so'
-                            archiveArtifacts 'lib/arcade_sfml.so'
-                            archiveArtifacts 'lib/arcade_pacman.so'
-                            archiveArtifacts 'lib/arcade_snake.so'
-                        }
+                    if (!fileExists('lib/arcade_sfml.so')) {
+                        error "Missing graphical library: SFML"
+                    }
+                    if (!fileExists('lib/arcade_pacman.so')) {
+                        error "Missing game library: Pacman"
+                    }
+                    if (!fileExists('lib/arcade_snake.so')) {
+                        error "Missing game library: Snake"
                     }
                 }
+            }
+        }
+        stage('📦 Archive') {
+            steps {
+                archiveArtifacts BIN_NAME
+                archiveArtifacts 'lib/arcade_ncurses.so'
+                archiveArtifacts 'lib/arcade_sdl2.so'
+                archiveArtifacts 'lib/arcade_sfml.so'
+                archiveArtifacts 'lib/arcade_pacman.so'
+                archiveArtifacts 'lib/arcade_snake.so'
             }
         }
         stage ('🧪 Tests') {
