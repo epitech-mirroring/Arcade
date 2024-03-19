@@ -62,7 +62,7 @@ pipeline {
             steps {
                 ansiColor('xterm') {
                     // Add safe directory
-                    sh 'git config --global --add safe.directory "*"'
+                    sh 'git config --global --add safe.directory "*" && ssh-keygen -R github.com && ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts'
 
                     // Run make in the container
                     sh 'make re'
