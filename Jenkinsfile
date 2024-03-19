@@ -52,15 +52,6 @@ pipeline {
                 }
             }
         }
-        stage('🏁 Setup') {
-            steps {
-                sh 'git config --global user.email "jenkins@place2die.com"'
-                sh 'git config --global user.name "Jenkins"'
-                sh 'git config --global --add safe.directory "*"'
-                sh 'ssh-keygen -R github.com'
-                sh 'ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts'
-            }
-        }
         stage('🔨 Build') {
             steps {
                 // Build the project using the makefile inside epitest docker
