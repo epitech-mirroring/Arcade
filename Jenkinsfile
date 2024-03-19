@@ -8,7 +8,7 @@ pipeline {
         BIN_NAME = 'arcade'
     }
     stages {
-        stage('🔍 Checkout') {
+        stage('📥 Checkout') {
             steps {
                 // Clean before checkout
                 cleanWs()
