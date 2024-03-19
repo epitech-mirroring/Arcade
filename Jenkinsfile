@@ -109,7 +109,7 @@ pipeline {
                             sh "cd ${dir} && gcovr --cobertura cobertura.xml --exclude tests/"
                             junit(testResults: "${dir}/criterion.xml", allowEmptyResults : true)
                             recordCoverage(tools: [[parser: 'COBERTURA']],
-                                    id: ""${covID}", name: "Coverage ${dir}","
+                                    id: "${covID}", name: "Coverage ${dir}",
                                     sourceCodeRetention: 'EVERY_BUILD')
                         }
                     }
