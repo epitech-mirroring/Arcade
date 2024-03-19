@@ -64,7 +64,7 @@ pipeline {
         stage('🔨 Build') {
             steps {
                 // Build the project using the makefile inside epitest docker
-                sh 'docker run --rm --security-opt "label:disable" -v "$(pwd)":"/mnt/delivery" -w "/mnt/delivery" -u "$(id -u):$(id -g)" epitechcontent/epitest-docker:latest make'
+                sh 'docker run --rm --security-opt "label:disable" -v /etc/passwd:/etc/passwd:ro -v "$(pwd)":"/mnt/delivery" -w "/mnt/delivery" -u "$(id -u):$(id -g)" epitechcontent/epitest-docker:latest make'
             }
         }
         stage ('🔎 Verify') {
