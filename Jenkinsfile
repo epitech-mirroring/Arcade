@@ -53,16 +53,10 @@ pipeline {
             }
         }
         stage('🏗️ Build') {
-            agent {
-                docker {
-                    image 'epitechcontent/epitest-docker:latest'
-                    args '-v /var/run/docker.sock:/var/run/docker.sock'
-                }
-            }
             steps {
                 ansiColor('xterm') {
-                    // Run the build
-                    sh 'make'
+                    // Run make in the container
+                    sh 'docker run --rm --security-opt "label:disable" -v "$(pwd)":"/mnt/delivery" -w "/mnt/delivery" epitechcontent/epitest-docker:latest make'
 
                     // Check file presence (e.g. binary, library, etc.)
                     script {
@@ -85,7 +79,6 @@ pipeline {
                             error "Missing game library: Snake"
                         }
                     }
-
                     // Archive the binary
                     archiveArtifacts BIN_NAME
                 }
