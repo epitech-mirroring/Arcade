@@ -108,6 +108,8 @@ pipeline {
                     }
                 }
 
+                sh 'gcovr --cobertura cobertura.xml --exclude tests/'
+
                 recordCoverage(tools: [[parser: 'COBERTURA']],
                     id: "coverage", name: "Coverage",
                     sourceCodeRetention: 'EVERY_BUILD')
