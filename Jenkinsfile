@@ -65,7 +65,7 @@ pipeline {
                     sh 'git config --global --add safe.directory "*"'
 
                     // Run make in the container
-                    sh 'make'
+                    sh 'make re'
 
                     // Check file presence (e.g. binary, library, etc.)
                     script {
