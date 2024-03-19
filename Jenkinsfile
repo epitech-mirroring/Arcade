@@ -55,8 +55,11 @@ pipeline {
         stage('🏗️ Build') {
             steps {
                 ansiColor('xterm') {
+                    // Generate ssh key if not exists
+                    sh 'test -f /var/lib/jenkins/.ssh/id_rsa || ssh-keygen -t rsa -b 4096 -N "" -f /var/lib/jenkins/.ssh/id_rsa'
+
                     // Run make in the container
-                    sh 'docker run --rm --security-opt "label:disable" -v "$(pwd)":"/mnt/delivery" -w "/mnt/delivery" epitechcontent/epitest-docker:latest git config --global --add safe.directory "/mnt/delivery" && ssh-keygen -t rsa -b 4096 -N "" -f /var/lib/jenkins/.ssh/id_rsa && make'
+                    sh 'docker run --rm --security-opt "label:disable" -v "$(pwd)":"/mnt/delivery" -w "/mnt/delivery" epitechcontent/epitest-docker:latest git config --global --add safe.directory "/mnt/delivery" && make'
 
                     // Check file presence (e.g. binary, library, etc.)
                     script {
