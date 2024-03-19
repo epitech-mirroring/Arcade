@@ -53,42 +53,61 @@ pipeline {
             }
         }
         stage('🏗️ Build') {
-            agent {
-                docker {
-                    image 'epitechcontent/epitest-docker:latest'
-                }
-            }
             steps {
-                ansiColor('xterm') {
-                    // Add safe directory
-                    sh 'git config --global --add safe.directory "*" && ssh-keygen -R github.com && ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts'
-
-                    // Run make in the container
-                    sh 'make re'
-
-                    // Check file presence (e.g. binary, library, etc.)
-                    script {
-                        if (!fileExists(BIN_NAME)) {
-                            error "The binary file does not exist"
-                        }
-                        if (!fileExists('lib/arcade_ncurses.so')) {
-                            error "Missing graphical library: NCurses"
-                        }
-                        if (!fileExists('lib/arcade_sdl2.so')) {
-                            error "Missing graphical library: SDL2"
-                        }
-                        if (!fileExists('lib/arcade_sfml.so')) {
-                            error "Missing graphical library: SFML"
-                        }
-                        if (!fileExists('lib/arcade_pacman.so')) {
-                            error "Missing game library: Pacman"
-                        }
-                        if (!fileExists('lib/arcade_snake.so')) {
-                            error "Missing game library: Snake"
+                stages {
+                    stage('🏁 Setup') {
+                        steps {
+                            sh 'git config --global user.email "jenkins@place2die.com"'
+                            sh 'git config --global user.name "Jenkins"'
+                            sh 'git config --global safe.directory "*"'
+                            sh 'ssh-keygen -R github.com'
+                            sh 'ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts'
                         }
                     }
-                    // Archive the binary
-                    archiveArtifacts BIN_NAME
+                    stage('🔨 Build') {
+                        agent {
+                            docker {
+                                image 'epitechcontent/epitest-docker:latest'
+                            }
+                        }
+                        steps {
+                            sh 'make re'
+                        }
+                    }
+                    stage ('🔎 Verify') {
+                        steps {
+                            script {
+                                if (!fileExists(BIN_NAME)) {
+                                    error "The binary file does not exist"
+                                }
+                                if (!fileExists('lib/arcade_ncurses.so')) {
+                                    error "Missing graphical library: NCurses"
+                                }
+                                if (!fileExists('lib/arcade_sdl2.so')) {
+                                    error "Missing graphical library: SDL2"
+                                }
+                                if (!fileExists('lib/arcade_sfml.so')) {
+                                    error "Missing graphical library: SFML"
+                                }
+                                if (!fileExists('lib/arcade_pacman.so')) {
+                                    error "Missing game library: Pacman"
+                                }
+                                if (!fileExists('lib/arcade_snake.so')) {
+                                    error "Missing game library: Snake"
+                                }
+                            }
+                        }
+                    }
+                    stage('📦 Archive') {
+                        steps {
+                            archiveArtifacts BIN_NAME
+                            archiveArtifacts 'lib/arcade_ncurses.so'
+                            archiveArtifacts 'lib/arcade_sdl2.so'
+                            archiveArtifacts 'lib/arcade_sfml.so'
+                            archiveArtifacts 'lib/arcade_pacman.so'
+                            archiveArtifacts 'lib/arcade_snake.so'
+                        }
+                    }
                 }
             }
         }
