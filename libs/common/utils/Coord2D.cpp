@@ -15,7 +15,7 @@ Coord2D::Coord2D(int x, int y)
     this->_y = y;
 }
 
-Coord2D::Coord2D(const Coord2D &coord)
+Coord2D::Coord2D(const ICoordinate &coord)
 {
     this->_x = coord.getX();
     this->_y = coord.getY();

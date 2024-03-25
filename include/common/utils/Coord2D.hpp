@@ -16,7 +16,7 @@ protected:
     int _y;
 public:
     Coord2D(int x, int y);
-    Coord2D(const Coord2D &coord);
+    Coord2D(const ICoordinate &coord);
     Coord2D();
     ~Coord2D();
     int getX() const override;

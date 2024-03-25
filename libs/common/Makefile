@@ -8,11 +8,12 @@
 ##
 
 # All the source files
-CXX_SOURCES		= 	AGame.cpp			\
-					utils/RGBAColor.cpp	\
-					utils/Coord2D.cpp	\
-					utils/Picture.cpp	\
-					events/Event.cpp	\
+CXX_SOURCES		= 	AGame.cpp						\
+					utils/RGBAColor.cpp				\
+					utils/Coord2D.cpp				\
+					utils/Picture.cpp				\
+					events/Event.cpp				\
+					displayable/ADisplayable.cpp	\
 
 CXX_TESTS		=
 
