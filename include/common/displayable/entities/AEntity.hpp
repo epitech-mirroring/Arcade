@@ -8,8 +8,9 @@
 
 #pragma once
 #include "../../../shared/displayable/entities/IEntity.hpp"
+#include "../ADisplayable.hpp"
 
-class AEntity : public IEntity {
+class AEntity : public ADisplayable, public IEntity {
 protected:
     std::unique_ptr<ISprite> _sprite;
     AEntity(std::unique_ptr<ISprite> sprite);

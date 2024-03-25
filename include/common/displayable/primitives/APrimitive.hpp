@@ -8,8 +8,9 @@
 
 #pragma once
 #include "../../../shared/displayable/primitives/IPrimitive.hpp"
+#include "../ADisplayable.hpp"
 
-class APrimitive : public IPrimitive {
+class APrimitive : public ADisplayable, public IPrimitive {
 protected:
     std::unique_ptr<IColor> _color;
     APrimitive(std::unique_ptr<IColor> color);
