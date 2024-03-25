@@ -63,7 +63,7 @@ $(GAMES): shared
 		@LOWERCASE_DIR=$$(echo $@ | sed 's:.*/::' \
 		| tr '[:upper:]' '[:lower:]') ; \
 		SO_NAME=arcade_$${LOWERCASE_DIR}.so ; \
-		make -C $@
+		make -C $@ --silent
 
 $(DRIVERS): shared
 		@mkdir -p lib
@@ -71,7 +71,7 @@ $(DRIVERS): shared
 		@LOWERCASE_DIR=$$(echo $@ | sed 's:.*/::' \
 		| tr '[:upper:]' '[:lower:]') ; \
 		SO_NAME=arcade_$${LOWERCASE_DIR}.so ; \
-		make -C $@
+		make -C $@ --silent
 
 $(NAME):	$(CXX_OBJS)
 # Link the object files
