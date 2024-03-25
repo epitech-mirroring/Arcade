@@ -17,6 +17,7 @@ CXX_SOURCES		= 	AGame.cpp								\
 					displayable/entities/SimpleSprite.cpp	\
 					displayable/entities/AnimatedSprite.cpp	\
 					displayable/entities/AEntity.cpp		\
+					displayable/primitives/APrimitive.cpp	\
 
 CXX_TESTS		=
 
