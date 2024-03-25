@@ -12,6 +12,7 @@ CXX_SOURCES		= 	AGame.cpp			\
 					utils/RGBAColor.cpp	\
 					utils/Coord2D.cpp	\
 					utils/Picture.cpp	\
+					events/Event.cpp	\
 
 CXX_TESTS		=
 
