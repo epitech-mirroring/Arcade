@@ -1,0 +1,22 @@
+/*
+** EPITECH PROJECT, 2024
+** Arcade
+** File description:
+** No file there , just an epitech header example .
+** You can even have multiple lines if you want !
+*/
+
+#pragma once
+#include "../../../shared/displayable/entities/IEntity.hpp"
+
+class AEntity : public IEntity {
+protected:
+    std::unique_ptr<ISprite> _sprite;
+    AEntity(std::unique_ptr<ISprite> sprite);
+    AEntity(const std::string &path);
+
+public:
+    ~AEntity() = default;
+    const std::unique_ptr<ISprite> &getSprite() const override;
+    void setSprite(ISprite &sprite) override;
+};
