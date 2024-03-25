@@ -16,7 +16,10 @@ protected:
 
 public:
     AGame();
-    ~AGame() override;
+    ~AGame() override = default;
 
     void init(std::shared_ptr<IArcade> arcade) override;
+    void start() override = 0;
+    void run() override = 0;
+    int getScore() override;
 };

@@ -11,20 +11,20 @@
 
 AEntity::AEntity(std::unique_ptr<ISprite> sprite)
 {
-    _sprite = std::move(sprite);
+    this->_sprite = std::move(sprite);
 }
 
 AEntity::AEntity(const std::string &path)
 {
-    _sprite = std::make_unique<SimpleSprite>(path);
+    this->_sprite = std::make_unique<SimpleSprite>(path);
 }
 
 const std::unique_ptr<ISprite> &AEntity::getSprite() const
 {
-    return _sprite;
+    return this->_sprite;
 }
 
 void AEntity::setSprite(ISprite &sprite)
 {
-    _sprite = std::unique_ptr<ISprite>(&sprite);
+    this->_sprite = std::unique_ptr<ISprite>(&sprite);
 }

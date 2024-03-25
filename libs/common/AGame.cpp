@@ -13,8 +13,10 @@ AGame::AGame() {
     this->_score = 0;
 }
 
-AGame::~AGame() = default;
-
 void AGame::init(std::shared_ptr<IArcade> arcade) {
     this->_arcade = arcade;
+}
+
+int AGame::getScore() {
+    return this->_score;
 }
