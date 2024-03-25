@@ -8,18 +8,19 @@
 ##
 
 # All the source files
-CXX_SOURCES		= src/NCurses.cpp								\
+CXX_SOURCES		= 	src/NCurses.cpp								\
 
 CXX_TESTS		=
 
 # Compiler and linker settings
-NAME 			= arcade_ncurses.so
-XX				= g++
-XXFLAGS			= -W -Wall -Wextra -std=c++20 --coverage -I../../include -L../../lib -lcommon -fPIC
-CXX_OBJS		= $(CXX_SOURCES:.cpp=.o)
-CXX_TESTS_OBJS	= $(CXX_TESTS:.cpp=.o)
-LOG				= ./build.log
-COMMON_LIB      = ../../lib/libcommon.a
+NAME 			= 	arcade_ncurses.so
+XX				=	 g++
+XXFLAGS			= 	-W -Wall -Wextra -std=c++20 --coverage -I../../include \
+					-L../../lib -lcommon -fPIC
+CXX_OBJS		= 	$(CXX_SOURCES:.cpp=.o)
+CXX_TESTS_OBJS	= 	$(CXX_TESTS:.cpp=.o)
+LOG				= 	./build.log
+COMMON_LIB      = 	../../lib/libcommon.a
 
 .PHONY: $(NAME) all clean fclean re tests_run clean_test \
 	$(CXX_OBJS) $(CXX_TESTS_OBJS) common $(COMMON_LIB) \
@@ -66,7 +67,8 @@ common: $(COMMON_LIB)
 $(COMMON_LIB):
 		@printf "$(RUNNING) $(BLUE) 📚  Building common library$(RESET)"
 		@if [ -f $(COMMON_LIB) ]; then \
-			printf "\r$(SKIPPED) $(RESET) 📚  Building common library (already built)\n"; \
+			printf "\r$(SKIPPED) $(RESET) 📚  Building common \
+library (already built)\n"; \
 		else \
 			make -C ../../libs/common >> $(LOG) 2>&1 \
 			&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"; \

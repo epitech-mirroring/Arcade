@@ -55,7 +55,8 @@ $(NAME):	$(CXX_OBJS)
 		@printf "$(RUNNING) $(YELLOW) 📂  Creating lib directory$(RESET)"
 		@mkdir -p ../../lib >> $(LOG) 2>&1 \
 		&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
-		@printf "$(RUNNING) $(YELLOW) 📂  Moving $(NAME) to lib directory$(RESET)"
+		@printf "$(RUNNING) $(YELLOW) 📂  Moving $(NAME) to \
+lib directory$(RESET)"
 		@mv $(NAME) ../../lib >> $(LOG) 2>&1 \
 		&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
 
@@ -78,7 +79,8 @@ fclean: clean clean_test
 		@printf "$(RUNNING) $(RED) 🗑️   Deleting $(NAME)$(RESET)"
 		@rm -f $(NAME) >> $(LOG) 2>&1 \
 		&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
-		@printf "$(RUNNING) $(RED) 🗑️   Deleting $(NAME) in lib directory$(RESET)"
+		@printf "$(RUNNING) $(RED) 🗑️   Deleting $(NAME) in \
+lib directory$(RESET)"
 		@rm -f ../../lib/$(NAME) >> $(LOG) 2>&1 \
 		&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
 # Delete the log file
