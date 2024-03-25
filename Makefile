@@ -53,7 +53,7 @@ shared:
 		&& printf "\r$(SUCCESS)\n" || (printf "\r$(FAILURE)\n" \
 		&& cat $(LOG) && exit 1)
 		@printf "$(RUNNING) $(YELLOW) 📥  Update submodules$(RESET)"
-		@git submodule update >> $(LOG) 2>&1 \
+		@git submodule update --remote >> $(LOG) 2>&1 \
 		&& printf "\r$(SUCCESS)\n" || (printf "\r$(FAILURE)\n" \
 		&& cat $(LOG) && exit 1)
 
