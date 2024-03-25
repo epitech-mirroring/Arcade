@@ -10,6 +10,7 @@
 # All the source files
 CXX_SOURCES		= 	AGame.cpp			\
 					utils/RGBAColor.cpp	\
+					utils/Coord2D.cpp	\
 
 CXX_TESTS		=
 
