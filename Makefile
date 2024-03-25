@@ -20,7 +20,7 @@ CXX_TESTS		=
 
 # Compiler and linker settings
 NAME 			= arcade
-XX				= g++
+CXX				= g++
 CXXFLAGS		= -W -Wall -Wextra -std=c++20 --coverage -I./include
 CXX_OBJS		= $(CXX_SOURCES:.cpp=.o)
 CXX_TESTS_OBJS	= $(CXX_TESTS:.cpp=.o)
@@ -83,7 +83,7 @@ $(DRIVERS): shared
 $(NAME):	$(CXX_OBJS)
 # Link the object files
 		@printf "$(RUNNING) $(BLUE) 🔗  Linking$(RESET)"
-		@$(XX) -o $(NAME) $(CXX_OBJS) $(CXXFLAGS) >> $(LOG) 2>&1 \
+		@$(CXX) -o $(NAME) $(CXX_OBJS) $(CXXFLAGS) >> $(LOG) 2>&1 \
 		&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
 # Check if the binary was created
 		@if [ -f $(NAME) ]; then \
@@ -97,7 +97,7 @@ $(NAME):	$(CXX_OBJS)
 $(CXX_OBJS):	%.o: %.cpp
 # Compile the source file
 		@printf "$(RUNNING) $(BLUE) 🔨  $$(basename $<)$(RESET)"
-		@$(XX) -o $@ -c $< $(CXXFLAGS) >> $(LOG) 2>&1 \
+		@$(CXX) -o $@ -c $< $(CXXFLAGS) >> $(LOG) 2>&1 \
 		&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
 
 clean:
@@ -145,7 +145,7 @@ re:			fclean all
 
 $(CXX_TESTS_OBJS):	%.o: %.cpp
 		@printf "$(RUNNING) $(BLUE) 🔨  $$(basename $<)$(RESET)"
-		@$(XX) -o $@ -c $< $(CXXFLAGS) >> $(LOG) 2>&1 \
+		@$(CXX) -o $@ -c $< $(CXXFLAGS) >> $(LOG) 2>&1 \
 		&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
 
 tests_games:
@@ -170,7 +170,7 @@ tests_libs:
 tests_run: fclean $(CXX_OBJS) $(CXX_TESTS_OBJS)  tests_games tests_drivers \
 	tests_libs
 	@printf "$(RUNNING) $(BLUE) 🔗  Linking$(RESET)"
-	@$(XX) -o tests.out $(filter-out src/main.o, $(CXX_OBJS)) \
+	@$(CXX) -o tests.out $(filter-out src/main.o, $(CXX_OBJS)) \
 	$(CXX_TESTS_OBJS) $(CXXFLAGS) --coverage >> $(LOG) 2>&1 \
 	-lcriterion >> $(LOG) 2>&1 \
 	&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n";
