@@ -44,6 +44,7 @@ FAILURE = [$(RED)✘$(RESET)]
 
 all:		$(GAMES) $(DRIVERS) $(NAME)
 
+core:		$(NAME)
 games:		$(GAMES)
 graphicals:	$(DRIVERS)
 
@@ -96,12 +97,6 @@ $(CXX_OBJS):	%.o: %.cpp
 		@printf "$(RUNNING) $(BLUE) 🔨  $$(basename $<)$(RESET)"
 		@$(XX) -o $@ -c $< $(XXFLAGS) >> $(LOG) 2>&1 \
 		&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
-
-core: $(NAME)
-
-games: $(GAMES)
-
-graphicals: $(DRIVERS)
 
 clean:
 # Delete all the object files
