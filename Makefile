@@ -97,6 +97,12 @@ $(CXX_OBJS):	%.o: %.cpp
 		@$(XX) -o $@ -c $< $(XXFLAGS) >> $(LOG) 2>&1 \
 		&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
 
+core: $(NAME)
+
+games: $(GAMES)
+
+graphicals: $(DRIVERS)
+
 clean:
 # Delete all the object files
 		@for file in $(CXX_OBJS); do \
