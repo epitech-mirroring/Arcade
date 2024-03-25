@@ -8,7 +8,8 @@
 ##
 
 # All the source files
-CXX_SOURCES		=
+CXX_SOURCES		= 	AGame.cpp			\
+					utils/RGBAColor.cpp	\
 
 CXX_TESTS		=
 
