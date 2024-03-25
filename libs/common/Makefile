@@ -49,7 +49,14 @@ $(NAME):	$(CXX_OBJS)
 		else \
 			printf "$(FAILURE)$(RED)  🚨  $(NAME) build failed$(RESET)\n"; \
 			cat $(LOG); \
+			exit 1; \
 		fi
+		@printf "$(RUNNING) $(YELLOW) 📂  Creating lib directory$(RESET)"
+		@mkdir -p ../../lib >> $(LOG) 2>&1 \
+		&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
+		@printf "$(RUNNING) $(YELLOW) 📂  Moving $(NAME) to lib directory$(RESET)"
+		@mv $(NAME) ../../lib >> $(LOG) 2>&1 \
+		&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
 
 $(CXX_OBJS):	%.o: %.cpp
 # Compile the source file
@@ -69,6 +76,9 @@ fclean: clean clean_test
 # Delete the binary
 		@printf "$(RUNNING) $(RED) 🗑️   Deleting $(NAME)$(RESET)"
 		@rm -f $(NAME) >> $(LOG) 2>&1 \
+		&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
+		@printf "$(RUNNING) $(RED) 🗑️   Deleting $(NAME) in lib directory$(RESET)"
+		@rm -f ../../lib/$(NAME) >> $(LOG) 2>&1 \
 		&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
 # Delete the log file
 		@printf "$(RUNNING) $(RED) 🗑️   Deleting $(LOG)$(RESET)"

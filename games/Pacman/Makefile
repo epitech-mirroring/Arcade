@@ -15,13 +15,15 @@ CXX_TESTS		=
 # Compiler and linker settings
 NAME 			= arcade_pacman.so
 XX				= g++
-XXFLAGS			= -W -Wall -Wextra -std=c++20 --coverage -I../../include
+XXFLAGS			= -W -Wall -Wextra -std=c++20 --coverage -I../../include -L../../lib -lcommon -fPIC
 CXX_OBJS		= $(CXX_SOURCES:.cpp=.o)
 CXX_TESTS_OBJS	= $(CXX_TESTS:.cpp=.o)
 LOG				= ./build.log
+COMMON_LIB      = ../../lib/libcommon.a
 
 .PHONY: $(NAME) all clean fclean re tests_run clean_test \
-	$(CXX_OBJS) $(CXX_TESTS_OBJS)
+	$(CXX_OBJS) $(CXX_TESTS_OBJS) common $(COMMON_LIB) \
+	clean_common fclean_common
 
 # Colors and formatting
 GREEN =		\033[1;32m
@@ -29,15 +31,17 @@ YELLOW =	\033[1;33m
 RED =		\033[1;31m
 BLUE =		\033[1;36m
 GOLD =		\033[1;33m
+MAGENTA =	\033[1;35m
 RESET =		\033[0m
 
 RUNNING = [$(YELLOW)~$(RESET)]
 SUCCESS = [$(GREEN)✔$(RESET)]
 FAILURE = [$(RED)✘$(RESET)]
+SKIPPED = [$(MAGENTA)@$(RESET)]
 
 all:		$(NAME)
 
-$(NAME):	$(CXX_OBJS)
+$(NAME):	common $(CXX_OBJS)
 # Link the object files
 		@printf "$(RUNNING) $(BLUE) 🔗  Linking$(RESET)"
 		@$(XX) -shared -o $(NAME) $(CXX_OBJS) $(XXFLAGS) >> $(LOG) 2>&1 \
@@ -57,7 +61,28 @@ $(CXX_OBJS):	%.o: %.cpp
 		@$(XX) -o $@ -c $< $(XXFLAGS) >> $(LOG) 2>&1 \
 		&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
 
-clean:
+common: $(COMMON_LIB)
+
+$(COMMON_LIB):
+		@printf "$(RUNNING) $(BLUE) 📚  Building common library$(RESET)"
+		@if [ -f $(COMMON_LIB) ]; then \
+			printf "\r$(SKIPPED) $(RESET) 📚  Building common library (already built)\n"; \
+		else \
+			make -C ../../libs/common >> $(LOG) 2>&1 \
+			&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"; \
+		fi
+
+clean_common:
+		@printf "$(RUNNING) $(RED) 🗑️   Cleaning common library$(RESET)"
+		@make -C ../../libs/common clean >> $(LOG) 2>&1 \
+		&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
+
+fclean_common:
+		@printf "$(RUNNING) $(RED) 🗑️   Deleting common library$(RESET)"
+		@make -C ../../libs/common fclean >> $(LOG) 2>&1 \
+		&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
+
+clean: clean_common
 # Delete all the object files
 		@for file in $(CXX_OBJS); do \
 			printf "$(RUNNING) $(RED) 🗑️   Deleting $$file$(RESET)"; \
@@ -65,7 +90,7 @@ clean:
 			&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"; \
 		done
 
-fclean: clean clean_test
+fclean: clean clean_test fclean_common
 # Delete the binary
 		@printf "$(RUNNING) $(RED) 🗑️   Deleting $(NAME)$(RESET)"
 		@rm -f $(NAME) >> $(LOG) 2>&1 \

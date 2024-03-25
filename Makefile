@@ -28,7 +28,7 @@ LOG				= ./build.log
 
 .PHONY: $(NAME) all clean fclean re tests_run clean_test \
 	$(CXX_OBJS) $(CXX_TESTS_OBJS) games $(GAMES) graphicals $(DRIVERS) \
-	tests_games tests_drivers
+	tests_games tests_drivers tests_libs shared
 
 # Colors and formatting
 GREEN =		\033[1;32m
@@ -59,23 +59,19 @@ shared:
 
 $(GAMES): shared
 		@mkdir -p lib
-		@printf "$(RUNNING) $(BLUE) 🔨  Building $@$(RESET)"
+		@printf "$(RUNNING) $(BLUE) 🔨  Building $@$(RESET)\n"
 		@LOWERCASE_DIR=$$(echo $@ | sed 's:.*/::' \
 		| tr '[:upper:]' '[:lower:]') ; \
 		SO_NAME=arcade_$${LOWERCASE_DIR}.so ; \
-		make -C $@ >> $(LOG) 2>&1 \
-		&& (printf "\r$(SUCCESS)\n" && cp $@/$${SO_NAME} lib/) \
-		|| printf "\r$(FAILURE)\n"
+		make -C $@
 
 $(DRIVERS): shared
 		@mkdir -p lib
-		@printf "$(RUNNING) $(BLUE) 🔨  Building $@$(RESET)"
+		@printf "$(RUNNING) $(BLUE) 🔨  Building $@$(RESET)\n"
 		@LOWERCASE_DIR=$$(echo $@ | sed 's:.*/::' \
 		| tr '[:upper:]' '[:lower:]') ; \
 		SO_NAME=arcade_$${LOWERCASE_DIR}.so ; \
-		make -C $@ >> $(LOG) 2>&1 \
-		&& (printf "\r$(SUCCESS)\n" && cp $@/$${SO_NAME} lib/) \
-		|| printf "\r$(FAILURE)\n"
+		make -C $@
 
 $(NAME):	$(CXX_OBJS)
 # Link the object files
@@ -159,7 +155,13 @@ tests_drivers:
 			&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"; \
 		done
 
-tests_run: fclean $(CXX_OBJS) $(CXX_TESTS_OBJS)  tests_games tests_drivers
+tests_libs:
+	@printf "$(RUNNING) $(BLUE)  🧪  Tests common$(RESET)"
+	@make -C libs/common tests_run >> $(LOG) 2>&1 \
+	&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
+
+tests_run: fclean $(CXX_OBJS) $(CXX_TESTS_OBJS)  tests_games tests_drivers \
+	tests_libs
 	@printf "$(RUNNING) $(BLUE) 🔗  Linking$(RESET)"
 	@$(XX) -o tests.out $(filter-out src/main.o, $(CXX_OBJS)) \
 	$(CXX_TESTS_OBJS) $(XXFLAGS) --coverage >> $(LOG) 2>&1 \
