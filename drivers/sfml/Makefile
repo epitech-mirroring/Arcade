@@ -15,7 +15,7 @@ CXX_TESTS		=
 # Compiler and linker settings
 NAME 			= 	arcade_sfml.so
 XX				= 	g++
-XXFLAGS			= 	-W -Wall -Wextra -std=c++20 --coverage -I../../include \
+CXXFLAGS		= 	-W -Wall -Wextra -std=c++20 --coverage -I../../include \
 					-L../../lib -lcommon -fPIC
 CXX_OBJS		= 	$(CXX_SOURCES:.cpp=.o)
 CXX_TESTS_OBJS	= 	$(CXX_TESTS:.cpp=.o)
@@ -45,7 +45,7 @@ all:		$(NAME)
 $(NAME):	common $(CXX_OBJS)
 # Link the object files
 		@printf "$(RUNNING) $(BLUE) 🔗  Linking$(RESET)"
-		@$(XX) -shared -o $(NAME) $(CXX_OBJS) $(XXFLAGS) >> $(LOG) 2>&1 \
+		@$(XX) -shared -o $(NAME) $(CXX_OBJS) $(CXXFLAGS) >> $(LOG) 2>&1 \
 		&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
 # Check if the binary was created
 		@if [ -f $(NAME) ]; then \
@@ -59,7 +59,7 @@ $(NAME):	common $(CXX_OBJS)
 $(CXX_OBJS):	%.o: %.cpp
 # Compile the source file
 		@printf "$(RUNNING) $(BLUE) 🔨  $$(basename $<)$(RESET)"
-		@$(XX) -o $@ -c $< $(XXFLAGS) >> $(LOG) 2>&1 \
+		@$(XX) -o $@ -c $< $CXXFLAGS) >> $(LOG) 2>&1 \
 		&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
 
 common: $(COMMON_LIB)
@@ -106,13 +106,13 @@ re:			fclean all
 
 $(CXX_TESTS_OBJS):	%.o: %.cpp
 		@printf "$(RUNNING) $(BLUE) 🔨  $$(basename $<)$(RESET)"
-		@$(XX) -o $@ -c $< $(XXFLAGS) >> $(LOG) 2>&1 \
+		@$(XX) -o $@ -c $< $(CXXFLAGS) >> $(LOG) 2>&1 \
 		&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
 
 tests_run: fclean $(CXX_OBJS) $(CXX_TESTS_OBJS)
 	@printf "$(RUNNING) $(BLUE) 🔗  Linking$(RESET)"
 	@$(XX) -o tests.out $(filter-out src/main.o, $(CXX_OBJS)) \
-	$(CXX_TESTS_OBJS) $(XXFLAGS) --coverage >> $(LOG) 2>&1 \
+	$(CXX_TESTS_OBJS) $(CXXFLAGS) --coverage >> $(LOG) 2>&1 \
 	-lcriterion >> $(LOG) 2>&1 \
 	&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n";
 	@printf "$(RUNNING)$(BLUE)  🧪  Running tests$(RESET)" \

@@ -6,8 +6,7 @@
 ** You can even have multiple lines if you want !
 */
 
-#include "../../../include/common/utils/RGBAColor.hpp"
-#include <cstddef>
+#include "common/utils/RGBAColor.hpp"
 
 #define CLAMP_COLOR(x) ((x) > MAX_COLOR_VALUE ? MAX_COLOR_VALUE : (x))
 

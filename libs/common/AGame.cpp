@@ -6,7 +6,7 @@
 ** You can even have multiple lines if you want !
 */
 
-#include "../../include/common/AGame.hpp"
+#include "common/AGame.hpp"
 
 AGame::AGame() {
     this->_arcade = nullptr;
