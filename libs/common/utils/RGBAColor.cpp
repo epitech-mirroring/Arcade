@@ -9,9 +9,7 @@
 #include "../../../include/common/utils/RGBAColor.hpp"
 #include <cstddef>
 
-#define CLAMP_COLOR(x)                                                         \
-  (x < MIN_COLOR_VALUE ? MIN_COLOR_VALUE                                       \
-                       : (x > MAX_COLOR_VALUE ? MAX_COLOR_VALUE : x))
+#define CLAMP_COLOR(x) ((x) > MAX_COLOR_VALUE ? MAX_COLOR_VALUE : (x))
 
 RGBAColor::RGBAColor(size_t r, size_t g, size_t b, size_t a) {
   this->_r = CLAMP_COLOR(r);
