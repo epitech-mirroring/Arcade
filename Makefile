@@ -63,7 +63,10 @@ $(GAMES): shared
 		@LOWERCASE_DIR=$$(echo $@ | sed 's:.*/::' \
 		| tr '[:upper:]' '[:lower:]') ; \
 		SO_NAME=arcade_$${LOWERCASE_DIR}.so ; \
-		make -C $@ --silent
+		make -C $@ --silent && \
+		printf "$(RUNNING) $(BLUE) 📦  Copying $${SO_NAME}$(RESET)" && \
+		cp $@/$$SO_NAME lib/ && \
+		printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
 
 $(DRIVERS): shared
 		@mkdir -p lib
@@ -71,7 +74,10 @@ $(DRIVERS): shared
 		@LOWERCASE_DIR=$$(echo $@ | sed 's:.*/::' \
 		| tr '[:upper:]' '[:lower:]') ; \
 		SO_NAME=arcade_$${LOWERCASE_DIR}.so ; \
-		make -C $@ --silent
+		make -C $@ --silent && \
+		printf "$(RUNNING) $(BLUE) 📦  Copying $${SO_NAME}$(RESET)" && \
+		cp $@/$$SO_NAME lib/ && \
+		printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
 
 $(NAME):	$(CXX_OBJS)
 # Link the object files
