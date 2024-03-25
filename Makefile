@@ -44,6 +44,7 @@ FAILURE = [$(RED)✘$(RESET)]
 
 all:		$(GAMES) $(DRIVERS) $(NAME)
 
+core:		$(NAME)
 games:		$(GAMES)
 graphicals:	$(DRIVERS)
 
