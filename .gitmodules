@@ -1,3 +1,4 @@
 [submodule "include/shared"]
 	path = include/shared
 	url = https://github.com/epitech-mirroring/ArcadeShared.git
+	branch = bug/optimize-picture
