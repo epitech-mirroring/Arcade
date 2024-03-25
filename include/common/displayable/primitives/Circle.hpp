@@ -15,7 +15,7 @@ class Circle : public APrimitive, public ICircle {
 protected:
     size_t _radius;
 public:
-    Circle(std::unique_ptr<IColor> color, float radius);
+    Circle(std::unique_ptr<IColor> color, size_t radius);
     ~Circle() override = default;
     size_t getRadius() const override;
     void setRadius(size_t radius) override;
