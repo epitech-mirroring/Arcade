@@ -59,7 +59,7 @@ $(NAME):	common $(CXX_OBJS)
 $(CXX_OBJS):	%.o: %.cpp
 # Compile the source file
 		@printf "$(RUNNING) $(BLUE) 🔨  $$(basename $<)$(RESET)"
-		@$(XX) -o $@ -c $< $CXXFLAGS) >> $(LOG) 2>&1 \
+		@$(XX) -o $@ -c $< $(CXXFLAGS) >> $(LOG) 2>&1 \
 		&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
 
 common: $(COMMON_LIB)
