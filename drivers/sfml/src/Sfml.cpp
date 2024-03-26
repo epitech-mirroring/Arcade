@@ -7,3 +7,18 @@
 */
 
 #include "Sfml.hpp"
+#include <memory>
+#include <string>
+
+extern "C" {
+    std::unique_ptr<SFML> create_driver(void)
+    {
+        return nullptr;
+    }
+
+    const std::string &get_name(void)
+    {
+        const static std::string name = "SFML";
+        return name;
+    }
+}
