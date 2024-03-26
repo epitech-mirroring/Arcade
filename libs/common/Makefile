@@ -20,6 +20,7 @@ CXX_SOURCES		= 	AGame.cpp								\
 					displayable/primitives/APrimitive.cpp	\
 					displayable/primitives/Circle.cpp		\
 					displayable/primitives/Square.cpp		\
+					displayable/primitives/Text.cpp			\
 
 CXX_TESTS		=
 
