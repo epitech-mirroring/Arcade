@@ -1,30 +1,39 @@
 ##
 ## EPITECH PROJECT, 2024
-## Arcade | SDL2
+## Arcade | Common
 ## File description:
 ## This is the Makefile for the Arcade project
-## (more specifically the SDL2 driver)
+## (more specifically the Common library)
 ## It job is to compile, clean and tests the project
 ##
 
 # All the source files
-CXX_SOURCES		= 	src/Sdl2.cpp								\
+CXX_SOURCES		= 	AGame.cpp								\
+					utils/RGBAColor.cpp						\
+					utils/Coord2D.cpp						\
+					utils/Picture.cpp						\
+					events/Event.cpp						\
+					displayable/ADisplayable.cpp			\
+					displayable/entities/SimpleSprite.cpp	\
+					displayable/entities/AnimatedSprite.cpp	\
+					displayable/entities/AEntity.cpp		\
+					displayable/primitives/APrimitive.cpp	\
+					displayable/primitives/Circle.cpp		\
+					displayable/primitives/Square.cpp		\
+					displayable/primitives/Text.cpp			\
 
 CXX_TESTS		=
 
 # Compiler and linker settings
-NAME 			= 	arcade_sdl2.so
-CXX				= 	g++
-CXXFLAGS		= 	-W -Wall -Wextra -std=c++20 --coverage -I../../include \
-					-L../../lib -lcommon -fPIC
-CXX_OBJS		= 	$(CXX_SOURCES:.cpp=.o)
-CXX_TESTS_OBJS	= 	$(CXX_TESTS:.cpp=.o)
-LOG				= 	./build.log
-COMMON_LIB      = 	../../lib/libcommon.a
+NAME 			= libcommon.a
+CXX				= g++
+CXXFLAGS		= -W -Wall -Wextra -std=c++20 --coverage -I../../include -fPIC
+CXX_OBJS		= $(CXX_SOURCES:.cpp=.o)
+CXX_TESTS_OBJS	= $(CXX_TESTS:.cpp=.o)
+LOG				= ./build.log
 
 .PHONY: $(NAME) all clean fclean re tests_run clean_test \
-	$(CXX_OBJS) $(CXX_TESTS_OBJS) common $(COMMON_LIB) \
-	clean_common fclean_common
+	$(CXX_OBJS) $(CXX_TESTS_OBJS)
 
 # Colors and formatting
 GREEN =		\033[1;32m
@@ -32,17 +41,15 @@ YELLOW =	\033[1;33m
 RED =		\033[1;31m
 BLUE =		\033[1;36m
 GOLD =		\033[1;33m
-MAGENTA =	\033[1;35m
 RESET =		\033[0m
 
 RUNNING = [$(YELLOW)~$(RESET)]
 SUCCESS = [$(GREEN)✔$(RESET)]
 FAILURE = [$(RED)✘$(RESET)]
-SKIPPED = [$(MAGENTA)@$(RESET)]
 
 all:		$(NAME)
 
-$(NAME):	common $(CXX_OBJS)
+$(NAME):	$(CXX_OBJS)
 # Link the object files
 		@printf "$(RUNNING) $(BLUE) 🔗  Linking$(RESET)"
 		@$(CXX) -shared -o $(NAME) $(CXX_OBJS) $(CXXFLAGS) >> $(LOG) 2>&1 \
@@ -54,7 +61,15 @@ $(NAME):	common $(CXX_OBJS)
 		else \
 			printf "$(FAILURE)$(RED)  🚨  $(NAME) build failed$(RESET)\n"; \
 			cat $(LOG); \
+			exit 1; \
 		fi
+		@printf "$(RUNNING) $(YELLOW) 📂  Creating lib directory$(RESET)"
+		@mkdir -p ../../lib >> $(LOG) 2>&1 \
+		&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
+		@printf "$(RUNNING) $(YELLOW) 📂  Moving $(NAME) to \
+lib directory$(RESET)"
+		@mv $(NAME) ../../lib >> $(LOG) 2>&1 \
+		&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
 
 $(CXX_OBJS):	%.o: %.cpp
 # Compile the source file
@@ -62,29 +77,7 @@ $(CXX_OBJS):	%.o: %.cpp
 		@$(CXX) -o $@ -c $< $(CXXFLAGS) >> $(LOG) 2>&1 \
 		&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
 
-common: $(COMMON_LIB)
-
-$(COMMON_LIB):
-		@printf "$(RUNNING) $(BLUE) 📚  Building common library$(RESET)"
-		@if [ -f $(COMMON_LIB) ]; then \
-			printf "\r$(SKIPPED) $(RESET) 📚  Building common \
-library (already built)\n"; \
-		else \
-			make -C ../../libs/common >> $(LOG) 2>&1 \
-			&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"; \
-		fi
-
-clean_common:
-		@printf "$(RUNNING) $(RED) 🗑️   Cleaning common library$(RESET)"
-		@make -C ../../libs/common clean >> $(LOG) 2>&1 \
-		&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
-
-fclean_common:
-		@printf "$(RUNNING) $(RED) 🗑️   Deleting common library$(RESET)"
-		@make -C ../../libs/common fclean >> $(LOG) 2>&1 \
-		&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
-
-clean: clean_common
+clean:
 # Delete all the object files
 		@for file in $(CXX_OBJS); do \
 			printf "$(RUNNING) $(RED) 🗑️   Deleting $$file$(RESET)"; \
@@ -92,10 +85,14 @@ clean: clean_common
 			&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"; \
 		done
 
-fclean: clean clean_test fclean_common
+fclean: clean clean_test
 # Delete the binary
 		@printf "$(RUNNING) $(RED) 🗑️   Deleting $(NAME)$(RESET)"
 		@rm -f $(NAME) >> $(LOG) 2>&1 \
+		&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
+		@printf "$(RUNNING) $(RED) 🗑️   Deleting $(NAME) in \
+lib directory$(RESET)"
+		@rm -f ../../lib/$(NAME) >> $(LOG) 2>&1 \
 		&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
 # Delete the log file
 		@printf "$(RUNNING) $(RED) 🗑️   Deleting $(LOG)$(RESET)"

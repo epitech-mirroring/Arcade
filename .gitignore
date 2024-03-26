@@ -18,6 +18,8 @@
 *.out
 *.app
 *.log
+*.gcno
+*.gcda
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
@@ -26,6 +28,7 @@
 !.vscode/*.code-snippets
 .history/
 *.vsix
+.idea/copilot/
 .idea/**/workspace.xml
 .idea/**/tasks.xml
 .idea/**/usage.statistics.xml

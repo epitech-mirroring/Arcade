@@ -20,15 +20,15 @@ CXX_TESTS		=
 
 # Compiler and linker settings
 NAME 			= arcade
-XX				= g++
-XXFLAGS			= -W -Wall -Wextra -std=c++20 --coverage -I./include
+CXX				= g++
+CXXFLAGS		= -W -Wall -Wextra -std=c++20 --coverage -I./include
 CXX_OBJS		= $(CXX_SOURCES:.cpp=.o)
 CXX_TESTS_OBJS	= $(CXX_TESTS:.cpp=.o)
 LOG				= ./build.log
 
 .PHONY: $(NAME) all clean fclean re tests_run clean_test \
 	$(CXX_OBJS) $(CXX_TESTS_OBJS) games $(GAMES) graphicals $(DRIVERS) \
-	tests_games tests_drivers
+	tests_games tests_drivers tests_libs shared
 
 # Colors and formatting
 GREEN =		\033[1;32m
@@ -54,34 +54,36 @@ shared:
 		&& printf "\r$(SUCCESS)\n" || (printf "\r$(FAILURE)\n" \
 		&& cat $(LOG) && exit 1)
 		@printf "$(RUNNING) $(YELLOW) 📥  Update submodules$(RESET)"
-		@git submodule update >> $(LOG) 2>&1 \
+		@git submodule update --remote >> $(LOG) 2>&1 \
 		&& printf "\r$(SUCCESS)\n" || (printf "\r$(FAILURE)\n" \
 		&& cat $(LOG) && exit 1)
 
 $(GAMES): shared
 		@mkdir -p lib
-		@printf "$(RUNNING) $(BLUE) 🔨  Building $@$(RESET)"
+		@printf "$(RUNNING) $(BLUE) 🔨  Building $@$(RESET)\n"
 		@LOWERCASE_DIR=$$(echo $@ | sed 's:.*/::' \
 		| tr '[:upper:]' '[:lower:]') ; \
 		SO_NAME=arcade_$${LOWERCASE_DIR}.so ; \
-		make -C $@ >> $(LOG) 2>&1 \
-		&& (printf "\r$(SUCCESS)\n" && cp $@/$${SO_NAME} lib/) \
-		|| printf "\r$(FAILURE)\n"
+		make -C $@ --silent && \
+		printf "$(RUNNING) $(BLUE) 📦  Copying $${SO_NAME}$(RESET)" && \
+		cp $@/$$SO_NAME lib/ && \
+		printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
 
 $(DRIVERS): shared
 		@mkdir -p lib
-		@printf "$(RUNNING) $(BLUE) 🔨  Building $@$(RESET)"
+		@printf "$(RUNNING) $(BLUE) 🔨  Building $@$(RESET)\n"
 		@LOWERCASE_DIR=$$(echo $@ | sed 's:.*/::' \
 		| tr '[:upper:]' '[:lower:]') ; \
 		SO_NAME=arcade_$${LOWERCASE_DIR}.so ; \
-		make -C $@ >> $(LOG) 2>&1 \
-		&& (printf "\r$(SUCCESS)\n" && cp $@/$${SO_NAME} lib/) \
-		|| printf "\r$(FAILURE)\n"
+		make -C $@ --silent && \
+		printf "$(RUNNING) $(BLUE) 📦  Copying $${SO_NAME}$(RESET)" && \
+		cp $@/$$SO_NAME lib/ && \
+		printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
 
 $(NAME):	$(CXX_OBJS)
 # Link the object files
 		@printf "$(RUNNING) $(BLUE) 🔗  Linking$(RESET)"
-		@$(XX) -o $(NAME) $(CXX_OBJS) $(XXFLAGS) >> $(LOG) 2>&1 \
+		@$(CXX) -o $(NAME) $(CXX_OBJS) $(CXXFLAGS) >> $(LOG) 2>&1 \
 		&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
 # Check if the binary was created
 		@if [ -f $(NAME) ]; then \
@@ -95,7 +97,7 @@ $(NAME):	$(CXX_OBJS)
 $(CXX_OBJS):	%.o: %.cpp
 # Compile the source file
 		@printf "$(RUNNING) $(BLUE) 🔨  $$(basename $<)$(RESET)"
-		@$(XX) -o $@ -c $< $(XXFLAGS) >> $(LOG) 2>&1 \
+		@$(CXX) -o $@ -c $< $(CXXFLAGS) >> $(LOG) 2>&1 \
 		&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
 
 clean:
@@ -143,7 +145,7 @@ re:			fclean all
 
 $(CXX_TESTS_OBJS):	%.o: %.cpp
 		@printf "$(RUNNING) $(BLUE) 🔨  $$(basename $<)$(RESET)"
-		@$(XX) -o $@ -c $< $(XXFLAGS) >> $(LOG) 2>&1 \
+		@$(CXX) -o $@ -c $< $(CXXFLAGS) >> $(LOG) 2>&1 \
 		&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
 
 tests_games:
@@ -160,10 +162,16 @@ tests_drivers:
 			&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"; \
 		done
 
-tests_run: fclean $(CXX_OBJS) $(CXX_TESTS_OBJS)  tests_games tests_drivers
+tests_libs:
+	@printf "$(RUNNING) $(BLUE)  🧪  Tests common$(RESET)"
+	@make -C libs/common tests_run >> $(LOG) 2>&1 \
+	&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
+
+tests_run: fclean $(CXX_OBJS) $(CXX_TESTS_OBJS)  tests_games tests_drivers \
+	tests_libs
 	@printf "$(RUNNING) $(BLUE) 🔗  Linking$(RESET)"
-	@$(XX) -o tests.out $(filter-out src/main.o, $(CXX_OBJS)) \
-	$(CXX_TESTS_OBJS) $(XXFLAGS) --coverage >> $(LOG) 2>&1 \
+	@$(CXX) -o tests.out $(filter-out src/main.o, $(CXX_OBJS)) \
+	$(CXX_TESTS_OBJS) $(CXXFLAGS) --coverage >> $(LOG) 2>&1 \
 	-lcriterion >> $(LOG) 2>&1 \
 	&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n";
 	@printf "$(RUNNING)$(BLUE)  🧪  Running tests$(RESET)" \
