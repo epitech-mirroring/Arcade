@@ -26,7 +26,7 @@ CXX_TESTS		=
 
 # Compiler and linker settings
 CXX				= g++
-CXXFLAGS		= -W -Wall -Wextra -std=c++20 --coverage -I../../include
+CXXFLAGS		= -W -Wall -Wextra -std=c++20 --coverage -I../../include -fPIC
 CXX_OBJS		= $(CXX_SOURCES:.cpp=.o)
 CXX_TESTS_OBJS	= $(CXX_TESTS:.cpp=.o)
 LOG				= ./build.log
