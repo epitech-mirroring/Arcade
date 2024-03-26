@@ -134,5 +134,6 @@ void Arcade::run() {
         if (this->_game != nullptr) {
             this->_game->run();
         }
+        usleep((int) (1.f/60.f * 1000000.f));
     }
 }

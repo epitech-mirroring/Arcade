@@ -33,5 +33,6 @@ int main(int argc, char **argv) {
         std::cerr << "An error occurred" << std::endl;
         return 84;
     }
+    arcade->run();
     return 0;
 }
