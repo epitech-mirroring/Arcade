@@ -16,5 +16,5 @@ protected:
     APrimitive(std::unique_ptr<IColor> color);
 public:
     ~APrimitive() override = default;
-    const std::unique_ptr<IColor> &getColor() const override;
+    virtual const std::unique_ptr<IColor> &getColor() const override;
 };

@@ -18,6 +18,6 @@ protected:
 
 public:
     ~AEntity() = default;
-    const std::unique_ptr<ISprite> &getSprite() const override;
-    void setSprite(ISprite &sprite) override;
+    virtual const std::unique_ptr<ISprite> &getSprite() const override;
+    virtual void setSprite(ISprite &sprite) override;
 };
