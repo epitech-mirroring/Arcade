@@ -18,7 +18,19 @@ COMMON_LIB      = 	../../libs/common
 CXX				= 	g++
 CXXFLAGS		= 	-W -Wall -Wextra -std=c++20 --coverage -I../../include \
 					-fPIC
-COMMON_OBJS 	= 	$(shell find $(COMMON_LIB) -name \u201c\u002a.o\u201d)
+COMMON_OBJS 	= 	$(COMMON_LIB)/AGame.o									\
+					$(COMMON_LIB)/utils/RGBAColor.o							\
+					$(COMMON_LIB)/utils/Coord2D.o							\
+					$(COMMON_LIB)/utils/Picture.o							\
+					$(COMMON_LIB)/events/Event.o							\
+					$(COMMON_LIB)/displayable/ADisplayable.o				\
+					$(COMMON_LIB)/displayable/entities/SimpleSprite.o		\
+					$(COMMON_LIB)/displayable/entities/AnimatedSprite.o		\
+					$(COMMON_LIB)/displayable/entities/AEntity.o			\
+					$(COMMON_LIB)/displayable/primitives/APrimitive.o		\
+					$(COMMON_LIB)/displayable/primitives/Circle.o			\
+					$(COMMON_LIB)/displayable/primitives/Square.o			\
+					$(COMMON_LIB)/displayable/primitives/Text.o
 CXX_OBJS		= 	$(CXX_SOURCES:.cpp=.o)
 CXX_TESTS_OBJS	= 	$(CXX_TESTS:.cpp=.o)
 LOG				= 	./build.log
