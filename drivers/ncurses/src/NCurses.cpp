@@ -7,3 +7,18 @@
 */
 
 #include "NCurses.hpp"
+#include <memory>
+#include <string>
+
+extern "C" {
+    std::unique_ptr<NCurses> create_driver(void)
+    {
+        return nullptr;
+    }
+
+    const std::string &get_name(void)
+    {
+        const static std::string name = "NCurses";
+        return name;
+    }
+}
