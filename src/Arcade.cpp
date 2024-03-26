@@ -10,6 +10,8 @@
 #include "core/errors/NoSuchDriverException.hpp"
 #include "core/DLLoader.hpp"
 #include <dirent.h>
+#include <unistd.h>
+#include <algorithm>
 
 Arcade::Arcade(const std::string &firstDriverName) {
     this->_currentPlayer = nullptr;
