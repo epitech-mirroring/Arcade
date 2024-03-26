@@ -16,7 +16,8 @@ CXX_TESTS		=
 NAME 			= 	arcade_sfml.so
 CXX				= 	g++
 CXXFLAGS		= 	-W -Wall -Wextra -std=c++20 --coverage -I../../include \
-					-L../../lib -lcommon -fPIC
+					-L../../lib -lcommon -fPIC -lsfml-graphics -lsfml-window \
+					-lsfml-system -lsfml-audio
 CXX_OBJS		= 	$(CXX_SOURCES:.cpp=.o)
 CXX_TESTS_OBJS	= 	$(CXX_TESTS:.cpp=.o)
 LOG				= 	./build.log
