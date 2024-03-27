@@ -14,14 +14,19 @@
 #include <list>
 #include <memory>
 
+struct SharedLibrary {
+    std::string name;
+    std::string path;
+};
+
 class Arcade: public IArcade {
 private:
     std::unique_ptr<IDriver> _driver;
     std::unique_ptr<IGame> _game;
     std::list<Player> _players;
     std::unique_ptr<Player> _currentPlayer;
-    std::list<std::string> _games;
-    std::list<std::string> _drivers;
+    std::list<SharedLibrary> _games;
+    std::list<SharedLibrary> _drivers;
     int _currentGameIndex;
     int _currentDriverIndex;
 
@@ -44,8 +49,8 @@ public:
 
     void run();
 
-    [[nodiscard]] std::list<std::string> getGames() const;
-    [[nodiscard]] std::list<std::string> getDrivers() const;
+    [[nodiscard]] std::list<SharedLibrary> getGames() const;
+    [[nodiscard]] std::list<SharedLibrary> getDrivers() const;
 
     // Driver functions for games
     void display(std::shared_ptr<IDisplayable> displayable) override;

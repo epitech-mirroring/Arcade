@@ -18,8 +18,8 @@ Arcade::Arcade(const std::string &firstDriverName) {
     this->_game = nullptr;
     this->_driver = nullptr;
     this->_players = std::list<Player>();
-    this->_games = std::list<std::string>();
-    this->_drivers = std::list<std::string>();
+    this->_games = std::list<SharedLibrary>();
+    this->_drivers = std::list<SharedLibrary>();
     this->scanLibs();
     this->loadScore();
     this->bareLoadDriver(firstDriverName);
@@ -33,11 +33,14 @@ void Arcade::bareLoadDriver(const std::string &driverPath) {
 
 void Arcade::loadDriver(const std::string &driverName) {
     // Check if driver exists
-    if (std::find(this->_drivers.begin(), this->_drivers.end(), driverName) == this->_drivers.end()) {
+    if (std::find_if(this->_drivers.begin(), this->_drivers.end(), [driverName](const SharedLibrary &lib) { return lib.name == driverName; }) == this->_drivers.end()) {
         throw NoSuchDriverException(driverName);
     }
+    SharedLibrary driver = *std::find_if(this->_drivers.begin(), this->_drivers.end(), [driverName](const SharedLibrary &lib) {
+        return lib.name == driverName;
+    });
     // Load driver
-    DLLoader<IDriver> dl = DLLoader<IDriver>("./lib/" + driverName + ".so", "create_driver");
+    DLLoader<IDriver> dl = DLLoader<IDriver>("./lib/" + driver.path, "create_driver");
     // If driver already loaded, unload it
     if (this->_driver != nullptr) {
         this->_driver.reset();
@@ -49,11 +52,14 @@ void Arcade::loadDriver(const std::string &driverName) {
 
 void Arcade::loadGame(const std::string &gameName) {
     // Check if game exists
-    if (std::find(this->_games.begin(), this->_games.end(), gameName) == this->_games.end()) {
+    if (std::find_if(this->_games.begin(), this->_games.end(), [gameName](const SharedLibrary &lib) { return lib.name == gameName; }) == this->_games.end()) {
         throw NoSuchDriverException(gameName);
     }
+    SharedLibrary game = *std::find_if(this->_games.begin(), this->_games.end(), [gameName](const SharedLibrary &lib) {
+        return lib.name == gameName;
+    });
     // Load game
-    DLLoader<IGame> dl = DLLoader<IGame>("./lib/" + gameName + ".so", "create_game");
+    DLLoader<IGame> dl = DLLoader<IGame>("./lib/" + game.path, "create_game");
     // If game already loaded, unload it
     if (this->_game != nullptr) {
         this->_game.reset();
@@ -76,6 +82,9 @@ static std::string parseLibName(const std::string &filename) {
 void Arcade::scanLibs() {
     DIR *dir;
     struct dirent *ent;
+    // Clear lists
+    this->_games.clear();
+    this->_drivers.clear();
     if ((dir = opendir("./lib")) != nullptr) {
         while ((ent = readdir(dir)) != nullptr) {
             std::string filename = ent->d_name;
@@ -83,16 +92,16 @@ void Arcade::scanLibs() {
                 try {
                     DLLoader<IDriver> dl = DLLoader<IDriver>("./lib/" + filename, "create_driver");
                     if (dl.getLibName != nullptr)
-                        this->_drivers.push_back(dl.getLibName());
+                        this->_drivers.push_back({dl.getLibName(), filename});
                     else
-                        this->_drivers.push_back(parseLibName(filename));
+                        this->_drivers.push_back({filename, parseLibName(filename)});
                 } catch (LibraryFormatException &e) {
                     try {
                         DLLoader<IGame> dl = DLLoader<IGame>("./lib/" + filename, "create_game");
                         if (dl.getLibName != nullptr)
-                            this->_games.push_back(dl.getLibName());
+                            this->_games.push_back({dl.getLibName(), filename});
                         else
-                            this->_games.push_back(parseLibName(filename));
+                            this->_games.push_back({filename, parseLibName(filename)});
                     } catch (std::exception &e) {
                         std::cerr << e.what() << std::endl;
                         continue;
@@ -123,11 +132,11 @@ void Arcade::bindEvent(IEvent::EventType type, EventKey key, EventCallback callb
     this->_driver->bindEvent(type, key, callback);
 }
 
-std::list<std::string> Arcade::getGames() const {
+std::list<SharedLibrary> Arcade::getGames() const {
     return this->_games;
 }
 
-std::list<std::string> Arcade::getDrivers() const {
+std::list<SharedLibrary> Arcade::getDrivers() const {
     return this->_drivers;
 }
 
@@ -173,7 +182,7 @@ void Arcade::nextGame(IEvent &event) {
         if (this->_currentGameIndex >= this->_games.size()) {
             this->_currentGameIndex = 0;
         }
-        this->loadGame(*std::next(this->_games.begin(), this->_currentGameIndex));
+        this->loadGame(std::next(this->_games.begin(), this->_currentGameIndex)->name);
     }
 }
 
@@ -183,5 +192,5 @@ void Arcade::nextDriver(IEvent &event) {
     if (this->_currentDriverIndex >= this->_drivers.size()) {
         this->_currentDriverIndex = 0;
     }
-    this->loadDriver(*std::next(this->_drivers.begin(), this->_currentDriverIndex));
+    this->loadDriver(std::next(this->_drivers.begin(), this->_currentDriverIndex)->name);
 }
