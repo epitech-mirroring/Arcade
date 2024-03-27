@@ -84,7 +84,7 @@ $(DRIVERS): shared
 		cp $@/$$SO_NAME lib/ && \
 		printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
 
-$(NAME):	$(CXX_OBJS)
+$(NAME):	shared $(CXX_OBJS)
 # Link the object files
 		@printf "$(RUNNING) $(BLUE) 🔗  Linking$(RESET)"
 		@$(CXX) -o $(NAME) $(CXX_OBJS) $(CXXFLAGS) >> $(LOG) 2>&1 \
