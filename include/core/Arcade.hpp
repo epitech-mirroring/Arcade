@@ -22,6 +22,8 @@ private:
     std::unique_ptr<Player> _currentPlayer;
     std::list<std::string> _games;
     std::list<std::string> _drivers;
+    int _currentGameIndex;
+    int _currentDriverIndex;
 
     void bareLoadDriver(const std::string &driverPath);
 public:
@@ -32,11 +34,18 @@ public:
     void loadGame(const std::string &gameName);
     void scanLibs();
     void loadScore();
+    void rebindGlobalKeys();
+
+    void exit(IEvent &event);
+    void restart(IEvent &event);
+    void nextGame(IEvent &event);
+    void nextDriver(IEvent &event);
+    void menu(IEvent &event);
 
     void run();
 
-    std::list<std::string> getGames() const;
-    std::list<std::string> getDrivers() const;
+    [[nodiscard]] std::list<std::string> getGames() const;
+    [[nodiscard]] std::list<std::string> getDrivers() const;
 
     // Driver functions for games
     void display(std::shared_ptr<IDisplayable> displayable) override;

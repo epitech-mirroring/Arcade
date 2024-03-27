@@ -28,6 +28,7 @@ Arcade::Arcade(const std::string &firstDriverName) {
 void Arcade::bareLoadDriver(const std::string &driverPath) {
     DLLoader<IDriver> dl = DLLoader<IDriver>(driverPath, "create_driver");
     this->_driver = dl.getInstance();
+    this->rebindGlobalKeys();
 }
 
 void Arcade::loadDriver(const std::string &driverName) {
@@ -43,6 +44,7 @@ void Arcade::loadDriver(const std::string &driverName) {
     }
     // Replace driver
     this->_driver = dl.getInstance();
+    this->rebindGlobalKeys();
 }
 
 void Arcade::loadGame(const std::string &gameName) {
@@ -136,4 +138,50 @@ void Arcade::run() {
         }
         usleep((int) (1.f/60.f * 1000000.f));
     }
+}
+
+void Arcade::rebindGlobalKeys() {
+
+    this->_driver->bindEvent(IEvent::KEY_DOWN, KEY_ESCAPE, [this](IEvent &event) {this->exit(event);}); // Exit
+    this->_driver->bindEvent(IEvent::KEY_DOWN, KEY_R, [this](IEvent &event) {this->restart(event);}); // Restart
+    this->_driver->bindEvent(IEvent::KEY_DOWN, KEY_T, [this](IEvent &event) {this->menu(event);}); // Menu
+    this->_driver->bindEvent(IEvent::KEY_DOWN, KEY_P, [this](IEvent &event) {this->nextGame(event);}); // Next game
+    this->_driver->bindEvent(IEvent::KEY_DOWN, KEY_M, [this](IEvent &event) {this->nextDriver(event);}); // Next driver
+}
+
+void Arcade::exit(IEvent &event) {
+    (void) event;
+    std::exit(0);
+}
+
+void Arcade::restart(IEvent &event) {
+    (void) event;
+    if (this->_game != nullptr) {
+        this->_game->start();
+    }
+}
+
+void Arcade::menu(IEvent &event) {
+    (void) event;
+    //TODO
+}
+
+void Arcade::nextGame(IEvent &event) {
+    (void) event;
+    if (this->_game != nullptr) {
+        this->_currentGameIndex++;
+        if (this->_currentGameIndex >= this->_games.size()) {
+            this->_currentGameIndex = 0;
+        }
+        this->loadGame(*std::next(this->_games.begin(), this->_currentGameIndex));
+    }
+}
+
+void Arcade::nextDriver(IEvent &event) {
+    (void) event;
+    this->_currentDriverIndex++;
+    if (this->_currentDriverIndex >= this->_drivers.size()) {
+        this->_currentDriverIndex = 0;
+    }
+    this->loadDriver(*std::next(this->_drivers.begin(), this->_currentDriverIndex));
 }
