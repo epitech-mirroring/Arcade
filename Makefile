@@ -7,7 +7,11 @@
 ##
 
 # All the source files
-CXX_SOURCES		= src/main.cpp		\
+CXX_SOURCES		= 	src/main.cpp		\
+					src/Arcade.cpp		\
+					src/Player.cpp		\
+					src/errors/NoSuchDriverException.cpp	\
+					src/errors/LibraryFormatException.cpp	\
 
 GAMES			= games/Pacman 		\
 				  games/Snake		\
@@ -21,7 +25,7 @@ CXX_TESTS		=
 # Compiler and linker settings
 NAME 			= arcade
 CXX				= g++
-CXXFLAGS		= -W -Wall -Wextra -std=c++20 --coverage -I./include
+CXXFLAGS		= 	-W -Wall -Wextra -std=c++20 --coverage -I./include
 CXX_OBJS		= $(CXX_SOURCES:.cpp=.o)
 CXX_TESTS_OBJS	= $(CXX_TESTS:.cpp=.o)
 LOG				= ./build.log
@@ -80,7 +84,7 @@ $(DRIVERS): shared
 		cp $@/$$SO_NAME lib/ && \
 		printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
 
-$(NAME):	$(CXX_OBJS)
+$(NAME):	shared $(CXX_OBJS)
 # Link the object files
 		@printf "$(RUNNING) $(BLUE) 🔗  Linking$(RESET)"
 		@$(CXX) -o $(NAME) $(CXX_OBJS) $(CXXFLAGS) >> $(LOG) 2>&1 \

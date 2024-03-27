@@ -16,6 +16,7 @@ CXX_TESTS		=
 NAME 			= 	arcade_sfml.so
 CXX				= 	g++
 COMMON_LIB      = 	../../libs/common
+COMMON_LIB      = 	../../libs/common
 CXXFLAGS		= 	-W -Wall -Wextra -std=c++20 --coverage -I../../include \
 					-fPIC -fPIC -lsfml-graphics -lsfml-window -lsfml-system \
 					-lsfml-audio
@@ -61,6 +62,8 @@ $(NAME):	common $(CXX_OBJS)
 		@printf "$(RUNNING) $(BLUE) 🔗  Linking$(RESET)"
 		@$(CXX) -shared -o $(NAME) $(CXX_OBJS) $(CXXFLAGS) $(COMMON_OBJS) \
 		>> $(LOG) 2>&1 \
+		@$(CXX) -shared -o $(NAME) $(CXX_OBJS) $(CXXFLAGS) $(COMMON_OBJS) \
+		>> $(LOG) 2>&1 \
 		&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
 # Check if the binary was created
 		@if [ -f $(NAME) ]; then \
@@ -81,6 +84,7 @@ common: $(COMMON_LIB)
 
 $(COMMON_LIB):
 		@printf "$(RUNNING) $(BLUE) 📚  Building common library$(RESET)"
+		@if [ -f '../../libs/common/AGame.o' ]; then \
 		@if [ -f '../../libs/common/AGame.o' ]; then \
 			printf "\r$(SKIPPED) $(RESET) 📚  Building common \
 library (already built)\n"; \

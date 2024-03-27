@@ -6,35 +6,38 @@
 */
 
 #pragma once
-
 #include <dlfcn.h>
 #include <iostream>
+#include <memory>
+#include "errors/LibraryFormatException.hpp"
+#include <string>
 
 template <typename T>
 class DLLoader {
 public:
-    DLLoader(std::string const &libPath) {
+    const std::string &(*getLibName)();
+
+    DLLoader(std::string const &libPath, std::string const &entryPointName): getLibName(nullptr), _handle(nullptr), _entryPoint(nullptr) {
         this->_handle = dlopen(libPath.c_str(), RTLD_LAZY);
         if (!this->_handle) {
-            std::cerr << "Cannot open library: " << dlerror() << '\n';
-            exit(84); // Replace with exception
+            throw LibraryFormatException("Cannot open library: " + libPath);
         }
-        this->_entryPoint = reinterpret_cast<T *(*)()>(dlsym(this->_handle, "entryPoint"));
+        this->_entryPoint = reinterpret_cast<std::unique_ptr<T> (*)()>(dlsym(this->_handle, entryPointName.c_str()));
         if (!this->_entryPoint) {
-            std::cerr << "Cannot load symbol entryPoint: " << dlerror() << '\n';
-            exit(84); // Replace with exception
+            throw LibraryFormatException("Cannot find entry point: " + entryPointName);
         }
+        this->getLibName = reinterpret_cast<const std::string &(*)()>(dlsym(this->_handle, "get_name"));
     }
 
     ~DLLoader() {
         dlclose(this->_handle);
     }
 
-    T *getInstance() {
+    std::unique_ptr<T> getInstance() {
         return this->_entryPoint();
     }
 
 private:
     void *_handle;
-    T *(*_entryPoint)();
+    std::unique_ptr<T> (*_entryPoint)();
 };
