@@ -1,4 +1,4 @@
 [submodule "include/shared"]
 	path = include/shared
 	url = https://github.com/epitech-mirroring/ArcadeShared.git
-	branch = bug/fix-function-pointer
+	branch = bug/fix-virtuals-and-missing-things
