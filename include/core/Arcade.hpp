@@ -39,6 +39,7 @@ public:
     void loadGame(const std::string &gameName);
     void scanLibs();
     void loadScore();
+    void saveScore();
     void rebindGlobalKeys();
 
     void exit(IEvent &event);
