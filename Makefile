@@ -38,7 +38,8 @@ LOG				= ./build.log
 
 .PHONY: $(NAME) all clean fclean re tests_run clean_test \
 	$(CXX_OBJS) $(CXX_TESTS_OBJS) games $(GAMES) graphicals $(DRIVERS) \
-	tests_games tests_drivers tests_libs shared $(JSON_LIB) clean_json
+	tests_games tests_drivers tests_libs shared $(JSON_LIB) clean_json \
+	fclean_json
 
 # Colors and formatting
 GREEN =		\033[1;32m
@@ -146,7 +147,12 @@ clean: clean_json
 			&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"; \
 		done
 
-fclean: clean clean_test
+fclean_json:
+		@printf "$(RUNNING) $(RED) 🗑️   Deleting json library$(RESET)"
+		@make -C $(JSON_LIB) fclean >> $(LOG) 2>&1 \
+		&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
+
+fclean: clean clean_test fclean_json
 # Delete the binary
 		@printf "$(RUNNING) $(RED) 🗑️   Deleting $(NAME)$(RESET)"
 		@rm -f $(NAME) >> $(LOG) 2>&1 \
@@ -178,21 +184,24 @@ $(CXX_TESTS_OBJS):	%.o: %.cpp
 
 tests_games:
 		@for game in $(GAMES); do \
-			printf "$(RUNNING) $(BLUE)  🧪  Tests $$game$(RESET)"; \
+			printf "$(RUNNING) $(BLUE) 🧪  Tests $$game$(RESET)"; \
 			make -C $$game tests_run >> $(LOG) 2>&1 \
 			&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"; \
 		done
 
 tests_drivers:
 		@for driver in $(DRIVERS); do \
-			printf "$(RUNNING) $(BLUE)  🧪  Tests $$driver$(RESET)"; \
+			printf "$(RUNNING) $(BLUE) 🧪  Tests $$driver$(RESET)"; \
 			make -C $$driver tests_run >> $(LOG) 2>&1 \
 			&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"; \
 		done
 
 tests_libs:
-	@printf "$(RUNNING) $(BLUE)  🧪  Tests common$(RESET)"
+	@printf "$(RUNNING) $(BLUE) 🧪  Tests common$(RESET)"
 	@make -C libs/common tests_run >> $(LOG) 2>&1 \
+	&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
+	@printf "$(RUNNING) $(BLUE) 🧪  Tests json$(RESET)"
+	@make -C libs/json tests_run >> $(LOG) 2>&1 \
 	&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
 
 tests_run: fclean $(CXX_OBJS) $(CXX_TESTS_OBJS)  tests_games tests_drivers \
