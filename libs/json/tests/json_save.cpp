@@ -71,65 +71,63 @@ Test(json_save, simple_json)
     // Delete the file
     std::remove("tests/s_simple.json");
 }
-/**
+
 Test(json_save, array_of_int)
 {
-json_object_t *json = create_json("root");
+    JsonObject json = JsonObject();
 
-json_object_t *array = create_json_array("int");
-append_json_array_int(array, 42);
-append_json_array_int(array, 43);
-append_json_array_int(array, 44);
-add_json_array(json, array);
+    JsonArray array = JsonArray("int");
+    JsonInt i1 = JsonInt("", 42);
+    array.addValue(i1);
+    JsonInt i2 = JsonInt("", 43);
+    array.addValue(i2);
+    JsonInt i3 = JsonInt("", 44);
+    array.addValue(i3);
 
-save_json_to_file(json, "tests/json/s_array_of_int.json");
+    json.addValue(array);
 
-// Check if the file is present
-FILE *f1 = fopen("tests/json/s_array_of_int.json", "r");
-cr_assert(f1 != NULL);
+    json.writeToFile("tests/s_array_of_int.json");
 
-// Check if the file only contains {"null": null}
-char *str = malloc(sizeof(char) * 105);
-int size = fread(str, 1, 105, f1);
-str[size] = '\0';
-cr_assert_str_eq(str, "{\"int\":[42,43,44]}");
+    // Check if the file is present
+    std::ifstream f1("tests/s_array_of_int.json");
+    cr_assert(f1.is_open());
 
-// Delete the file
-remove("tests/json/s_array_of_int.json");
+    // Check if the file only contains {"int":[42,43,44]}
+    std::string content((std::istreambuf_iterator<char>(f1)),
+                        std::istreambuf_iterator<char>());
+
+    cr_assert_eq(content, "{\"int\":[42,43,44]}");
+    // Delete the file
+    std::remove("tests/s_array_of_int.json");
 }
 
 Test(json_save, obj_array)
 {
-json_object_t *json = create_json("root");
+    JsonObject json = JsonObject();
 
-json_object_t *array = create_json_array("array");
-json_object_t *obj1 = create_json("obj1");
-json_object_t *obj2 = create_json("obj2");
-add_json_string(obj1,
-"string", "value");
-add_json_int(obj2,
-"int", 42);
-append_json_array_object(array, obj1
-);
-append_json_array_object(array, obj2
-);
-add_json_array(json, array
-);
-save_json_to_file(json,
-"tests/json/s_obj_array.json");
+    JsonArray array = JsonArray("array");
+    JsonObject obj1 = JsonObject("obj1");
+    JsonObject obj2 = JsonObject("obj2");
+    JsonString s = JsonString("string", "value");
+    obj1.addValue(s);
+    JsonInt i = JsonInt("int", 42);
+    obj2.addValue(i);
+    array.addValue(obj1);
+    array.addValue(obj2);
 
-// Check if the file is present
-FILE *f1 = fopen("tests/json/s_obj_array.json", "r");
-cr_assert(f1
-!= NULL);
+    json.addValue(array);
+    json.writeToFile("tests/s_obj_array.json");
 
-// Check if the file only contains
-char *str = malloc(sizeof(char) * 105);
-int size = fread(str, 1, 105, f1);
-str[size] = '\0';
-cr_assert_str_eq(str,
-"{\"array\":[{\"string\":\"value\"},{\"int\":42}]}");
+    // Check if the file is present
+    std::ifstream f1("tests/s_obj_array.json");
+    cr_assert(f1.is_open());
 
-// Delete the file
-remove("tests/json/s_obj_array.json");
-}**/
+    // Check if the file only contains {"array":[{"string":"value"},{"int":42}]}
+    std::string content((std::istreambuf_iterator<char>(f1)),
+                        std::istreambuf_iterator<char>());
+
+    cr_assert_eq(content, "{\"array\":[{\"string\":\"value\"},{\"int\":42}]}");
+
+    // Delete the file
+    std::remove("tests/s_obj_array.json");
+}
