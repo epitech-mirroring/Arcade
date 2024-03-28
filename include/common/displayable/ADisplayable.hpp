@@ -9,8 +9,14 @@
 #pragma once
 #include "../../shared/displayable/IDisplayable.hpp"
 #include "../../shared/utils/ICanRotate.hpp"
+#include <cstddef>
+#include <memory>
+#include <cmath>
 
-class ADisplayable : public IDisplayable, public ICanRotate {
+#define IS_INSTANCE_OF(type, uniq_ptr) (dynamic_cast<type *>(uniq_ptr.get()) != nullptr)
+#define TRANSFORM_TO(type, uniq_ptr) (dynamic_cast<type *>(uniq_ptr.get()))
+
+class ADisplayable : public virtual IDisplayable, public virtual ICanRotate {
 protected:
     std::unique_ptr<ICoordinate> _position;
     int _size;
@@ -18,10 +24,10 @@ protected:
     ADisplayable();
 public:
     ~ADisplayable() override = default;
-    virtual const std::unique_ptr<ICoordinate> &getPosition() const override;
-    virtual int getSize() const override;
-    virtual void setPosition(ICoordinate &position) override;
-    virtual void setSize(int size) override;
-    virtual float getRotation() const override;
-    virtual void setRotation(float angle) override;
+    [[nodiscard]] const std::unique_ptr<ICoordinate> &getPosition() const override;
+    [[nodiscard]] int getSize() const override;
+    void setPosition(ICoordinate &position) override;
+    void setSize(int size) override;
+    [[nodiscard]] float getRotation() const override;
+    void setRotation(float angle) override;
 };

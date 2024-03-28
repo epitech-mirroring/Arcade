@@ -8,7 +8,7 @@
 
 #include "common/displayable/primitives/Circle.hpp"
 
-Circle::Circle(std::unique_ptr<IColor> color, size_t radius) : APrimitive(std::move(color)) {
+Circle::Circle(std::unique_ptr<IColor> &color, std::size_t radius) : APrimitive(color) {
     _radius = radius;
 }
 

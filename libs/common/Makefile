@@ -25,14 +25,13 @@ CXX_SOURCES		= 	AGame.cpp								\
 CXX_TESTS		=
 
 # Compiler and linker settings
-NAME 			= libcommon.a
 CXX				= g++
 CXXFLAGS		= -W -Wall -Wextra -std=c++20 --coverage -I../../include -fPIC
 CXX_OBJS		= $(CXX_SOURCES:.cpp=.o)
 CXX_TESTS_OBJS	= $(CXX_TESTS:.cpp=.o)
 LOG				= ./build.log
 
-.PHONY: $(NAME) all clean fclean re tests_run clean_test \
+.PHONY: all clean fclean re tests_run clean_test \
 	$(CXX_OBJS) $(CXX_TESTS_OBJS)
 
 # Colors and formatting
@@ -47,29 +46,7 @@ RUNNING = [$(YELLOW)~$(RESET)]
 SUCCESS = [$(GREEN)✔$(RESET)]
 FAILURE = [$(RED)✘$(RESET)]
 
-all:		$(NAME)
-
-$(NAME):	$(CXX_OBJS)
-# Link the object files
-		@printf "$(RUNNING) $(BLUE) 🔗  Linking$(RESET)"
-		@$(CXX) -shared -o $(NAME) $(CXX_OBJS) $(CXXFLAGS) >> $(LOG) 2>&1 \
-		&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
-# Check if the binary was created
-		@if [ -f $(NAME) ]; then \
-			printf \
-			"$(SUCCESS)$(GREEN)  🎉  $(NAME) built successfully$(RESET)\n";\
-		else \
-			printf "$(FAILURE)$(RED)  🚨  $(NAME) build failed$(RESET)\n"; \
-			cat $(LOG); \
-			exit 1; \
-		fi
-		@printf "$(RUNNING) $(YELLOW) 📂  Creating lib directory$(RESET)"
-		@mkdir -p ../../lib >> $(LOG) 2>&1 \
-		&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
-		@printf "$(RUNNING) $(YELLOW) 📂  Moving $(NAME) to \
-lib directory$(RESET)"
-		@mv $(NAME) ../../lib >> $(LOG) 2>&1 \
-		&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
+all:		$(CXX_OBJS)
 
 $(CXX_OBJS):	%.o: %.cpp
 # Compile the source file
@@ -86,14 +63,6 @@ clean:
 		done
 
 fclean: clean clean_test
-# Delete the binary
-		@printf "$(RUNNING) $(RED) 🗑️   Deleting $(NAME)$(RESET)"
-		@rm -f $(NAME) >> $(LOG) 2>&1 \
-		&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
-		@printf "$(RUNNING) $(RED) 🗑️   Deleting $(NAME) in \
-lib directory$(RESET)"
-		@rm -f ../../lib/$(NAME) >> $(LOG) 2>&1 \
-		&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
 # Delete the log file
 		@printf "$(RUNNING) $(RED) 🗑️   Deleting $(LOG)$(RESET)"
 		@rm -f $(LOG) >> $(LOG) 2>&1 \

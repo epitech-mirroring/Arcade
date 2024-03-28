@@ -9,8 +9,8 @@
 
 #include "common/displayable/primitives/Text.hpp"
 
-Text::Text(std::unique_ptr<IColor> color, const std::string &text)
-    : APrimitive(std::move(color))
+Text::Text(std::unique_ptr<IColor> &color, const std::string &text)
+    : APrimitive(color)
 {
     _text = text;
 }

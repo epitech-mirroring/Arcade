@@ -15,12 +15,25 @@ CXX_TESTS		=
 # Compiler and linker settings
 NAME 			= 	arcade_sfml.so
 CXX				= 	g++
+COMMON_LIB      = 	../../libs/common
 CXXFLAGS		= 	-W -Wall -Wextra -std=c++20 --coverage -I../../include \
-					-L../../lib -lcommon -fPIC
+					-fPIC
+COMMON_OBJS 	= 	$(COMMON_LIB)/AGame.o									\
+					$(COMMON_LIB)/utils/RGBAColor.o							\
+					$(COMMON_LIB)/utils/Coord2D.o							\
+					$(COMMON_LIB)/utils/Picture.o							\
+					$(COMMON_LIB)/events/Event.o							\
+					$(COMMON_LIB)/displayable/ADisplayable.o				\
+					$(COMMON_LIB)/displayable/entities/SimpleSprite.o		\
+					$(COMMON_LIB)/displayable/entities/AnimatedSprite.o		\
+					$(COMMON_LIB)/displayable/entities/AEntity.o			\
+					$(COMMON_LIB)/displayable/primitives/APrimitive.o		\
+					$(COMMON_LIB)/displayable/primitives/Circle.o			\
+					$(COMMON_LIB)/displayable/primitives/Square.o			\
+					$(COMMON_LIB)/displayable/primitives/Text.o
 CXX_OBJS		= 	$(CXX_SOURCES:.cpp=.o)
 CXX_TESTS_OBJS	= 	$(CXX_TESTS:.cpp=.o)
 LOG				= 	./build.log
-COMMON_LIB      = 	../../lib/libcommon.a
 
 .PHONY: $(NAME) all clean fclean re tests_run clean_test \
 	$(CXX_OBJS) $(CXX_TESTS_OBJS) common $(COMMON_LIB) \
@@ -45,7 +58,8 @@ all:		$(NAME)
 $(NAME):	common $(CXX_OBJS)
 # Link the object files
 		@printf "$(RUNNING) $(BLUE) 🔗  Linking$(RESET)"
-		@$(CXX) -shared -o $(NAME) $(CXX_OBJS) $(CXXFLAGS) >> $(LOG) 2>&1 \
+		@$(CXX) -shared -o $(NAME) $(CXX_OBJS) $(CXXFLAGS) $(COMMON_OBJS) \
+		>> $(LOG) 2>&1 \
 		&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
 # Check if the binary was created
 		@if [ -f $(NAME) ]; then \
@@ -66,7 +80,7 @@ common: $(COMMON_LIB)
 
 $(COMMON_LIB):
 		@printf "$(RUNNING) $(BLUE) 📚  Building common library$(RESET)"
-		@if [ -f $(COMMON_LIB) ]; then \
+		@if [ -f '../../libs/common/AGame.o' ]; then \
 			printf "\r$(SKIPPED) $(RESET) 📚  Building common \
 library (already built)\n"; \
 		else \
