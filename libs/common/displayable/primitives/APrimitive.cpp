@@ -8,7 +8,7 @@
 
 #include "common/displayable/primitives/APrimitive.hpp"
 
-APrimitive::APrimitive(std::unique_ptr<IColor> color)
+APrimitive::APrimitive(std::unique_ptr<IColor> &color)
 {
     _color = std::move(color);
 }

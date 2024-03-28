@@ -15,8 +15,8 @@ class Text : public APrimitive, public IText {
 protected:
     std::string _text;
 public:
-    Text(std::unique_ptr<IColor> color, const std::string &text = "");
+    Text(std::unique_ptr<IColor> &color, const std::string &text = "");
     ~Text() override = default;
-    const std::string &getText() const override;
+    [[nodiscard]] const std::string &getText() const override;
     void setText(const std::string &text) override;
 };

@@ -13,10 +13,10 @@ class SimpleSprite : public ISprite {
 protected:
     std::unique_ptr<IPicture> _picture;
 public:
-    SimpleSprite(std::unique_ptr<IPicture> picture);
-    SimpleSprite(const std::string &path);
-    ~SimpleSprite() = default;
+    explicit SimpleSprite(std::unique_ptr<IPicture> picture);
+    explicit SimpleSprite(const std::string &path);
+    ~SimpleSprite() override = default;
 
-    const std::unique_ptr<IPicture> &getPicture() const override;
+    [[nodiscard]] const std::unique_ptr<IPicture> &getPicture() const override;
     void setPicture(std::unique_ptr<IPicture> picture) override;
 };

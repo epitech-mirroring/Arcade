@@ -13,14 +13,14 @@
 
 class Square : public APrimitive, public ISquare {
 protected:
-    size_t _width;
-    size_t _height;
+    std::size_t _width;
+    std::size_t _height;
 public:
-    Square(std::unique_ptr<IColor> color, size_t width, size_t height);
+    Square(std::unique_ptr<IColor> &color, size_t width, std::size_t height);
     ~Square() override = default;
-    size_t getWidth() const override;
-    size_t getHeight() const override;
-    void setWidth(size_t width) override;
-    void setHeight(size_t height) override;
+    [[nodiscard]] std::size_t getWidth() const override;
+    [[nodiscard]] std::size_t getHeight() const override;
+    void setWidth(std::size_t width) override;
+    void setHeight(std::size_t height) override;
 };
 

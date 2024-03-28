@@ -8,7 +8,7 @@
 
 #include "common/displayable/primitives/Square.hpp"
 
-Square::Square(std::unique_ptr<IColor> color, size_t width, size_t height) : APrimitive(std::move(color))
+Square::Square(std::unique_ptr<IColor> &color, size_t width, size_t height) : APrimitive(color)
 {
     _width = width;
     _height = height;
