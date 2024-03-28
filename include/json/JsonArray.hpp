@@ -9,6 +9,7 @@
 #pragma once
 #include <cstddef>
 #include <vector>
+#include <functional>
 #include "IJsonObject.hpp"
 
 class JsonArray : public IJsonObject {
