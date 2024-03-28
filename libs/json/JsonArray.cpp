@@ -147,3 +147,7 @@ void JsonArray::writeToFile(const std::string &filename) const {
     file << this->stringify();
     file.close();
 }
+
+void JsonArray::addValue(IJsonObject &value) {
+    this->_values.push_back(&value);
+}
