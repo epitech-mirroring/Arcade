@@ -28,7 +28,7 @@ CXX				= g++
 CXXFLAGS		= 	-W -Wall -Wextra -std=c++20 --coverage -I./include
 CXX_OBJS		= $(CXX_SOURCES:.cpp=.o)
 CXX_TESTS_OBJS	= $(CXX_TESTS:.cpp=.o)
-JSON_LIB		= 	libs/json
+JSON_LIB		= 	./libs/json
 JSON_OBJS 		= 	$(JSON_LIB)/JsonObject.o	\
 					$(JSON_LIB)/JsonArray.o		\
 					$(JSON_LIB)/JsonString.o	\
