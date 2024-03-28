@@ -29,11 +29,12 @@ private:
     std::list<SharedLibrary> _drivers;
     int _currentGameIndex;
     int _currentDriverIndex;
+    bool _running;
 
     void bareLoadDriver(const std::string &driverPath);
 public:
     explicit Arcade(const std::string& firstDriverName);
-    ~Arcade() override = default;
+    ~Arcade() override;
 
     void loadDriver(const std::string &driverName);
     void loadGame(const std::string &gameName);

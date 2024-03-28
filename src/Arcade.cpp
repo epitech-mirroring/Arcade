@@ -24,6 +24,19 @@ Arcade::Arcade(const std::string &firstDriverName) {
     this->scanLibs();
     this->loadScore();
     this->bareLoadDriver(firstDriverName);
+    this->_currentDriverIndex = 0;
+    this->_currentGameIndex = 0;
+    this->_running = true;
+}
+
+Arcade::~Arcade() {
+    if (this->_game != nullptr) {
+        this->_game.reset();
+    }
+    if (this->_driver != nullptr) {
+        this->_driver.reset();
+    }
+    this->saveScore();
 }
 
 void Arcade::bareLoadDriver(const std::string &driverPath) {
@@ -181,7 +194,7 @@ std::list<SharedLibrary> Arcade::getDrivers() const {
 }
 
 void Arcade::run() {
-    while (true) {
+    while (this->_running) {
         if (this->_game != nullptr) {
             this->_game->run();
         }
@@ -199,7 +212,7 @@ void Arcade::rebindGlobalKeys() {
 
 void Arcade::exit(IEvent &event) {
     (void) event;
-    std::exit(0);
+    this->_running = false;
 }
 
 void Arcade::restart(IEvent &event) {
