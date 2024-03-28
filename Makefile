@@ -28,11 +28,17 @@ CXX				= g++
 CXXFLAGS		= 	-W -Wall -Wextra -std=c++20 --coverage -I./include
 CXX_OBJS		= $(CXX_SOURCES:.cpp=.o)
 CXX_TESTS_OBJS	= $(CXX_TESTS:.cpp=.o)
+JSON_LIB		= 	libs/json
+JSON_OBJS 		= 	$(JSON_LIB)/JsonObject.o	\
+					$(JSON_LIB)/JsonArray.o		\
+					$(JSON_LIB)/JsonString.o	\
+					$(JSON_LIB)/JsonInt.o		\
+					$(JSON_LIB)/JsonBoolean.o
 LOG				= ./build.log
 
 .PHONY: $(NAME) all clean fclean re tests_run clean_test \
 	$(CXX_OBJS) $(CXX_TESTS_OBJS) games $(GAMES) graphicals $(DRIVERS) \
-	tests_games tests_drivers tests_libs shared
+	tests_games tests_drivers tests_libs shared $(JSON_LIB) clean_json
 
 # Colors and formatting
 GREEN =		\033[1;32m
@@ -40,11 +46,13 @@ YELLOW =	\033[1;33m
 RED =		\033[1;31m
 BLUE =		\033[1;36m
 GOLD =		\033[1;33m
+MAGENTA =	\033[1;35m
 RESET =		\033[0m
 
 RUNNING = [$(YELLOW)~$(RESET)]
 SUCCESS = [$(GREEN)✔$(RESET)]
 FAILURE = [$(RED)✘$(RESET)]
+SKIPPED = [$(MAGENTA)@$(RESET)]
 
 all:		$(GAMES) $(DRIVERS) $(NAME)
 
@@ -84,10 +92,21 @@ $(DRIVERS): shared
 		cp $@/$$SO_NAME lib/ && \
 		printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
 
-$(NAME):	shared $(CXX_OBJS)
+$(JSON_LIB):
+		@printf "$(RUNNING) $(BLUE) 📚  Building json library$(RESET)"
+		@if [ -f './libs/json/JsonObject.o' ]; then \
+			printf "\r$(SKIPPED) $(RESET) 📚  Building json \
+library (already built)\n"; \
+		else \
+			make -C $(JSON_LIB) >> $(LOG) 2>&1 \
+			&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"; \
+		fi
+
+$(NAME):	shared $(JSON_LIB) $(CXX_OBJS)
 # Link the object files
 		@printf "$(RUNNING) $(BLUE) 🔗  Linking$(RESET)"
-		@$(CXX) -o $(NAME) $(CXX_OBJS) $(CXXFLAGS) >> $(LOG) 2>&1 \
+		@$(CXX) -o $(NAME) $(CXX_OBJS) $(CXXFLAGS) $(JSON_OBJS) \
+		>> $(LOG) 2>&1 \
 		&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
 # Check if the binary was created
 		@if [ -f $(NAME) ]; then \
@@ -104,7 +123,12 @@ $(CXX_OBJS):	%.o: %.cpp
 		@$(CXX) -o $@ -c $< $(CXXFLAGS) >> $(LOG) 2>&1 \
 		&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
 
-clean:
+clean_json:
+		@printf "$(RUNNING) $(RED) 🗑️   Cleaning json library$(RESET)"
+		@make -C $(JSON_LIB) clean >> $(LOG) 2>&1 \
+		&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
+
+clean: clean_json
 # Delete all the object files
 		@for file in $(CXX_OBJS); do \
 			printf "$(RUNNING) $(RED) 🗑️   Deleting $$file$(RESET)"; \
