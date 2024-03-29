@@ -17,7 +17,7 @@ NAME 			= 	arcade_ncurses.so
 COMMON_LIB      = 	../../libs/common
 CXX				=	g++
 CXXFLAGS		= 	-W -Wall -Wextra -std=c++20 --coverage -I../../include \
-					-fPIC
+					-fPIC -lncurses
 COMMON_OBJS 	= 	$(COMMON_LIB)/AGame.o									\
 					$(COMMON_LIB)/utils/RGBAColor.o							\
 					$(COMMON_LIB)/utils/Coord2D.o							\
