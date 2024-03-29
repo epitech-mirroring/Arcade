@@ -27,8 +27,8 @@ private:
     std::unique_ptr<Player> _currentPlayer;
     std::list<SharedLibrary> _games;
     std::list<SharedLibrary> _drivers;
-    int _currentGameIndex;
-    int _currentDriverIndex;
+    std::size_t _currentGameIndex;
+    std::size_t _currentDriverIndex;
     bool _running;
 
     void bareLoadDriver(const std::string &driverPath);
@@ -43,11 +43,11 @@ public:
     void saveScore();
     void rebindGlobalKeys();
 
-    void exit(IEvent &event);
-    void restart(IEvent &event);
-    void nextGame(IEvent &event);
-    void nextDriver(IEvent &event);
-    void menu(IEvent &event);
+    void exit(const IEvent &event);
+    void restart(const IEvent &event);
+    void nextGame(const IEvent &event);
+    void nextDriver(const IEvent &event);
+    void menu(const IEvent &event);
 
     void run();
 
@@ -55,7 +55,8 @@ public:
     [[nodiscard]] std::list<SharedLibrary> getDrivers() const;
 
     // Driver functions for games
-    void display(std::shared_ptr<IDisplayable> displayable) override;
+    void display(const IDisplayable &displayable) override;
     void flipFrame() override;
     void bindEvent(IEvent::EventType type, EventKey key, EventCallback callback) override;
+    void setPreferredSize(std::size_t width, std::size_t height) override;
 };

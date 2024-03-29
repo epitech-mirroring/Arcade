@@ -204,11 +204,11 @@ tests_libs:
 	@make -C libs/json tests_run >> $(LOG) 2>&1 \
 	&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
 
-tests_run: fclean $(CXX_OBJS) $(CXX_TESTS_OBJS)  tests_games tests_drivers \
-	tests_libs
+tests_run: fclean $(JSON_LIB) $(CXX_OBJS) $(CXX_TESTS_OBJS) \
+ 	tests_games tests_drivers tests_libs
 	@printf "$(RUNNING) $(BLUE) 🔗  Linking$(RESET)"
 	@$(CXX) -o tests.out $(filter-out src/main.o, $(CXX_OBJS)) \
-	$(CXX_TESTS_OBJS) $(CXXFLAGS) --coverage >> $(LOG) 2>&1 \
+	$(CXX_TESTS_OBJS) $(CXXFLAGS) $(JSON_OBJS) --coverage >> $(LOG) 2>&1 \
 	-lcriterion >> $(LOG) 2>&1 \
 	&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n";
 	@printf "$(RUNNING)$(BLUE)  🧪  Running tests$(RESET)" \

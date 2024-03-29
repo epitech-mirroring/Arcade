@@ -16,6 +16,7 @@ protected:
     std::size_t _radius;
 public:
     Circle(std::unique_ptr<IColor> &color, std::size_t radius);
+    Circle(const IColor &color, std::size_t radius);
     ~Circle() override = default;
     [[nodiscard]] std::size_t getRadius() const override;
     void setRadius(std::size_t radius) override;

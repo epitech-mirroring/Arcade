@@ -19,10 +19,12 @@ protected:
     std::size_t _currentDuration;
 public:
     AnimatedSprite(std::unique_ptr<IPicture> picture, std::size_t nbFrames, std::size_t frameDuration);
+    AnimatedSprite(const IPicture &picture, std::size_t nbFrames, std::size_t frameDuration);
     ~AnimatedSprite() override = default;
 
-    [[nodiscard]]  const std::unique_ptr<IPicture> &getPicture() const override;
+    [[nodiscard]]  const IPicture &getPicture() const override;
     void setPicture(std::unique_ptr<IPicture> picture) override;
+    void setPicture(const IPicture &picture) override;
     void update();
     [[nodiscard]] std::size_t getCurrentFrame() const;
     [[nodiscard]] std::size_t getNbFrames() const;

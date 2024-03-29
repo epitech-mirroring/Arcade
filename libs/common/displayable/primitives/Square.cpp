@@ -10,26 +10,32 @@
 
 Square::Square(std::unique_ptr<IColor> &color, size_t width, size_t height) : APrimitive(color)
 {
-    _width = width;
-    _height = height;
+    this->_width = width;
+    this->_height = height;
+}
+
+Square::Square(const IColor &color, size_t width, size_t height) : APrimitive(color)
+{
+    this->_width = width;
+    this->_height = height;
 }
 
 size_t Square::getWidth() const
 {
-    return _width;
+    return this->_width;
 }
 
 size_t Square::getHeight() const
 {
-    return _height;
+    return this->_height;
 }
 
 void Square::setWidth(size_t width)
 {
-    _width = width;
+    this->_width = width;
 }
 
 void Square::setHeight(size_t height)
 {
-    _height = height;
+    this->_height = height;
 }

@@ -24,9 +24,10 @@ protected:
     ADisplayable();
 public:
     ~ADisplayable() override = default;
-    [[nodiscard]] const std::unique_ptr<ICoordinate> &getPosition() const override;
+    [[nodiscard]] const ICoordinate &getPosition() const override;
     [[nodiscard]] int getSize() const override;
-    void setPosition(ICoordinate &position) override;
+    void setPosition(const ICoordinate &position) override;
+    void setPosition(std::unique_ptr<ICoordinate> position) override;
     void setSize(int size) override;
     [[nodiscard]] float getRotation() const override;
     void setRotation(float angle) override;
