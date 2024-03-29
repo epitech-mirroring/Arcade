@@ -84,7 +84,7 @@ void Arcade::loadGame(const std::string &gameName) {
     }
     // Replace game
     this->_game = dl.getInstance();
-    this->_game->init(std::shared_ptr<IArcade>(this));
+    this->_game->init(*this);
     this->_game->start();
 }
 
@@ -173,7 +173,7 @@ void Arcade::saveScore() {
     scores.writeToFile("scores.json");
 }
 
-void Arcade::display(std::shared_ptr<IDisplayable> displayable) {
+void Arcade::display(const IDisplayable &displayable) {
     this->_driver->display(displayable);
 }
 
@@ -203,31 +203,31 @@ void Arcade::run() {
 }
 
 void Arcade::rebindGlobalKeys() {
-    this->_driver->bindEvent(IEvent::KEY_DOWN, KEY_ESCAPE, [this](IEvent &event) {this->exit(event);}); // Exit
-    this->_driver->bindEvent(IEvent::KEY_DOWN, KEY_R, [this](IEvent &event) {this->restart(event);}); // Restart
-    this->_driver->bindEvent(IEvent::KEY_DOWN, KEY_T, [this](IEvent &event) {this->menu(event);}); // Menu
-    this->_driver->bindEvent(IEvent::KEY_DOWN, KEY_P, [this](IEvent &event) {this->nextGame(event);}); // Next game
-    this->_driver->bindEvent(IEvent::KEY_DOWN, KEY_M, [this](IEvent &event) {this->nextDriver(event);}); // Next driver
+    this->_driver->bindEvent(IEvent::KEY_DOWN, KEY_ESCAPE, [this](const IEvent &event) {this->exit(event);}); // Exit
+    this->_driver->bindEvent(IEvent::KEY_DOWN, KEY_R, [this](const IEvent &event) {this->restart(event);}); // Restart
+    this->_driver->bindEvent(IEvent::KEY_DOWN, KEY_T, [this](const IEvent &event) {this->menu(event);}); // Menu
+    this->_driver->bindEvent(IEvent::KEY_DOWN, KEY_P, [this](const IEvent &event) {this->nextGame(event);}); // Next game
+    this->_driver->bindEvent(IEvent::KEY_DOWN, KEY_M, [this](const IEvent &event) {this->nextDriver(event);}); // Next driver
 }
 
-void Arcade::exit(IEvent &event) {
+void Arcade::exit(const IEvent &event) {
     (void) event;
     this->_running = false;
 }
 
-void Arcade::restart(IEvent &event) {
+void Arcade::restart(const IEvent &event) {
     (void) event;
     if (this->_game != nullptr) {
         this->_game->start();
     }
 }
 
-void Arcade::menu(IEvent &event) {
+void Arcade::menu(const IEvent &event) {
     (void) event;
     //TODO
 }
 
-void Arcade::nextGame(IEvent &event) {
+void Arcade::nextGame(const IEvent &event) {
     (void) event;
     if (this->_game != nullptr) {
         this->_currentGameIndex++;
@@ -238,11 +238,15 @@ void Arcade::nextGame(IEvent &event) {
     }
 }
 
-void Arcade::nextDriver(IEvent &event) {
+void Arcade::nextDriver(const IEvent &event) {
     (void) event;
     this->_currentDriverIndex++;
     if (this->_currentDriverIndex >= this->_drivers.size()) {
         this->_currentDriverIndex = 0;
     }
     this->loadDriver(std::next(this->_drivers.begin(), this->_currentDriverIndex)->name);
+}
+
+void Arcade::setPreferredSize(std::size_t width, std::size_t height) {
+    this->_driver->setPreferredSize(width, height);
 }

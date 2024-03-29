@@ -13,9 +13,9 @@ class LibraryFormatException : public IError {
 private:
     std::string _message;
 public:
-    LibraryFormatException(std::string const &message);
+    explicit LibraryFormatException(std::string const &message);
     ~LibraryFormatException() override = default;
 
-    const char *what() const noexcept override;
-    int getCode() const override;
+    [[nodiscard]] const char *what() const noexcept override;
+    [[nodiscard]] int getCode() const override;
 };
