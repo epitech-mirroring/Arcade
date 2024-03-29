@@ -50,3 +50,7 @@ void ADisplayable::setRotation(float angle)
 {
     this->_rotation = angle;
 }
+
+char ADisplayable::getReplacingChar() const {
+    return this->_replacingChar;
+}

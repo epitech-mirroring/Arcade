@@ -21,6 +21,7 @@ protected:
     std::unique_ptr<ICoordinate> _position;
     int _size;
     float _rotation;
+    char _replacingChar;
     ADisplayable();
 public:
     ~ADisplayable() override = default;
@@ -31,4 +32,5 @@ public:
     void setSize(int size) override;
     [[nodiscard]] float getRotation() const override;
     void setRotation(float angle) override;
+    char getReplacingChar() const override;
 };
