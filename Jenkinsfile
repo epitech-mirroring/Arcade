@@ -79,9 +79,6 @@ pipeline {
                     if (!fileExists('lib/arcade_snake.so')) {
                         error "Missing game library: Snake"
                     }
-                    if (!fileExists('lib/libcommon.a')) {
-                        error "Missing common library"
-                    }
                 }
             }
         }
@@ -93,7 +90,6 @@ pipeline {
                 archiveArtifacts 'lib/arcade_sfml.so'
                 archiveArtifacts 'lib/arcade_pacman.so'
                 archiveArtifacts 'lib/arcade_snake.so'
-                archiveArtifacts 'lib/libcommon.a'
             }
         }
         stage ('🧪 Tests') {
@@ -105,7 +101,7 @@ pipeline {
                 sh 'python3 -m pip install -Iv gcovr==6.0'
 
                 script {
-                    def dirs = ['games/Pacman', 'games/Snake', 'drivers/ncurses', 'drivers/sdl2', 'drivers/sfml', 'libs/common']
+                    def dirs = ['games/Pacman', 'games/Snake', 'drivers/ncurses', 'drivers/sdl2', 'drivers/sfml', 'libs/common', 'libs/json']
 
                     for (dir in dirs) {
                         junit(testResults: "${dir}/criterion.xml", allowEmptyResults : true)

@@ -7,6 +7,7 @@
 */
 
 #include "Sfml.hpp"
+#include <memory>
 #include <iostream>
 
 extern "C" {

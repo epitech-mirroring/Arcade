@@ -10,14 +10,15 @@
 #include "../../../shared/displayable/entities/IEntity.hpp"
 #include "../ADisplayable.hpp"
 
-class AEntity : public ADisplayable, public IEntity {
+class AEntity : public virtual ADisplayable, public virtual IEntity {
 protected:
     std::unique_ptr<ISprite> _sprite;
     AEntity(std::unique_ptr<ISprite> sprite);
+    AEntity(const ISprite &sprite);
     AEntity(const std::string &path);
-
 public:
-    ~AEntity() = default;
-    virtual const std::unique_ptr<ISprite> &getSprite() const override;
-    virtual void setSprite(ISprite &sprite) override;
+    ~AEntity() override = default;
+    [[nodiscard]] const ISprite &getSprite() const override;
+    void setSprite(const ISprite &sprite) override;
+    void setSprite(std::unique_ptr<ISprite> sprite) override;
 };

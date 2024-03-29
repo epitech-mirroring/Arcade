@@ -23,9 +23,9 @@ int main(int argc, char **argv) {
         print_usage();
         return 84;
     }
-    std::shared_ptr<Arcade> arcade;
     try {
-        arcade = std::make_shared<Arcade>(argv[1]);
+        Arcade arcade = Arcade(argv[1]);
+        arcade.run();
     } catch (IError &e) {
         std::cerr << e.what() << std::endl;
         return e.getCode();
@@ -33,6 +33,5 @@ int main(int argc, char **argv) {
         std::cerr << "An error occurred" << std::endl;
         return 84;
     }
-    arcade->run();
     return 0;
 }

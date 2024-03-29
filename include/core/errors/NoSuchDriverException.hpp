@@ -13,9 +13,9 @@ class NoSuchDriverException : public IError {
 private:
     std::string _message;
 public:
-    NoSuchDriverException(std::string const &driverName);
+    explicit NoSuchDriverException(std::string const &driverName);
     ~NoSuchDriverException() override = default;
 
-    const char *what() const noexcept override;
-    int getCode() const override;
+    [[nodiscard]] const char *what() const noexcept override;
+    [[nodiscard]] int getCode() const override;
 };

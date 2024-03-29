@@ -7,17 +7,22 @@
 */
 
 #include "common/displayable/primitives/Circle.hpp"
+#include "common/utils/RGBAColor.hpp"
 
-Circle::Circle(std::unique_ptr<IColor> color, size_t radius) : APrimitive(std::move(color)) {
-    _radius = radius;
+Circle::Circle(std::unique_ptr<IColor> &color, std::size_t radius) : APrimitive(color) {
+    this->_radius = radius;
+}
+
+Circle::Circle(const IColor &color, std::size_t radius): APrimitive(color) {
+    this->_radius = radius;
 }
 
 size_t Circle::getRadius() const
 {
-    return _radius;
+    return this->_radius;
 }
 
 void Circle::setRadius(size_t radius)
 {
-    _radius = radius;
+    this->_radius = radius;
 }

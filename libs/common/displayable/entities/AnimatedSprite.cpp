@@ -7,48 +7,63 @@
 */
 
 #include "common/displayable/entities/AnimatedSprite.hpp"
+#include "common/utils/Picture.hpp"
 
-AnimatedSprite::AnimatedSprite(std::unique_ptr<IPicture> picture, size_t nbFrames, size_t frameDuration)
+AnimatedSprite::AnimatedSprite(std::unique_ptr<IPicture> picture, std::size_t nbFrames, std::size_t frameDuration)
 {
-    _picture = std::move(picture);
-    _nbFrames = nbFrames;
-    _frameDuration = frameDuration;
-    _currentFrame = 0;
-    _currentDuration = 0;
+    this->_picture = std::move(picture);
+    this->_nbFrames = nbFrames;
+    this->_frameDuration = frameDuration;
+    this->_currentFrame = 0;
+    this->_currentDuration = 0;
 }
 
-const std::unique_ptr<IPicture> &AnimatedSprite::getPicture() const
+AnimatedSprite::AnimatedSprite(const IPicture &picture, std::size_t nbFrames, std::size_t frameDuration)
 {
-    return _picture;
+    this->_picture = std::make_unique<Picture>(picture);
+    this->_nbFrames = nbFrames;
+    this->_frameDuration = frameDuration;
+    this->_currentFrame = 0;
+    this->_currentDuration = 0;
+}
+
+const IPicture &AnimatedSprite::getPicture() const
+{
+    return *this->_picture;
 }
 
 void AnimatedSprite::setPicture(std::unique_ptr<IPicture> picture)
 {
-    _picture = std::move(picture);
+    this->_picture = std::move(picture);
+}
+
+void AnimatedSprite::setPicture(const IPicture &picture)
+{
+    this->_picture = std::make_unique<Picture>(picture);
 }
 
 void AnimatedSprite::update()
 {
-    _currentDuration++;
-    if (_currentDuration >= _frameDuration) {
-        _currentDuration = 0;
-        _currentFrame++;
-        if (_currentFrame >= _nbFrames)
-            _currentFrame = 0;
+    this->_currentDuration++;
+    if (this->_currentDuration >= this->_frameDuration) {
+        this->_currentDuration = 0;
+        this->_currentFrame++;
+        if (this->_currentFrame >= this->_nbFrames)
+            this->_currentFrame = 0;
     }
 }
 
-size_t AnimatedSprite::getCurrentFrame() const
+std::size_t AnimatedSprite::getCurrentFrame() const
 {
-    return _currentFrame;
+    return this->_currentFrame;
 }
 
-size_t AnimatedSprite::getNbFrames() const
+std::size_t AnimatedSprite::getNbFrames() const
 {
-    return _nbFrames;
+    return this->_nbFrames;
 }
 
-size_t AnimatedSprite::getFrameDuration() const
+std::size_t AnimatedSprite::getFrameDuration() const
 {
-    return _frameDuration;
+    return this->_frameDuration;
 }

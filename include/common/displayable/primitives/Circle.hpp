@@ -13,11 +13,12 @@
 
 class Circle : public APrimitive, public ICircle {
 protected:
-    size_t _radius;
+    std::size_t _radius;
 public:
-    Circle(std::unique_ptr<IColor> color, size_t radius);
+    Circle(std::unique_ptr<IColor> &color, std::size_t radius);
+    Circle(const IColor &color, std::size_t radius);
     ~Circle() override = default;
-    size_t getRadius() const override;
-    void setRadius(size_t radius) override;
+    [[nodiscard]] std::size_t getRadius() const override;
+    void setRadius(std::size_t radius) override;
 };
 

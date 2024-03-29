@@ -10,11 +10,12 @@
 #include "../../../shared/displayable/primitives/IPrimitive.hpp"
 #include "../ADisplayable.hpp"
 
-class APrimitive : public ADisplayable, public IPrimitive {
+class APrimitive : public virtual ADisplayable, public virtual IPrimitive {
 protected:
     std::unique_ptr<IColor> _color;
-    APrimitive(std::unique_ptr<IColor> color);
+    explicit APrimitive(std::unique_ptr<IColor> &color);
+    explicit APrimitive(const IColor &color);
 public:
     ~APrimitive() override = default;
-    virtual const std::unique_ptr<IColor> &getColor() const override;
+    [[nodiscard]] const IColor &getColor() const override;
 };

@@ -160,3 +160,13 @@ std::ostream &operator<<(std::ostream &os, const RGBAColor &color) {
      << ", " << color.getA() << ")";
   return os;
 }
+
+const RGBAColor RGBAColor::BLACK = RGBAColor(0, 0, 0);
+const RGBAColor RGBAColor::WHITE = RGBAColor(255, 255, 255);
+const RGBAColor RGBAColor::RED = RGBAColor(255, 0, 0);
+const RGBAColor RGBAColor::GREEN = RGBAColor(0, 255, 0);
+const RGBAColor RGBAColor::BLUE = RGBAColor(0, 0, 255);
+const RGBAColor RGBAColor::YELLOW = RGBAColor(255, 255, 0);
+const RGBAColor RGBAColor::MAGENTA = RGBAColor(255, 0, 255);
+const RGBAColor RGBAColor::CYAN = RGBAColor(0, 255, 255);
+const RGBAColor RGBAColor::TRANSPARENT = RGBAColor(0, 0, 0, 0);

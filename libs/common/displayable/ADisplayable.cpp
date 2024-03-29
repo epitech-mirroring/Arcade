@@ -16,9 +16,9 @@ ADisplayable::ADisplayable()
     this->_rotation = 0;
 }
 
-const std::unique_ptr<ICoordinate> &ADisplayable::getPosition() const
+const ICoordinate &ADisplayable::getPosition() const
 {
-    return this->_position;
+    return *this->_position;
 }
 
 int ADisplayable::getSize() const
@@ -26,9 +26,14 @@ int ADisplayable::getSize() const
     return this->_size;
 }
 
-void ADisplayable::setPosition(ICoordinate &position)
+void ADisplayable::setPosition(const ICoordinate &position)
 {
     this->_position = std::make_unique<Coord2D>(position);
+}
+
+void ADisplayable::setPosition(std::unique_ptr<ICoordinate> position)
+{
+    this->_position = std::move(position);
 }
 
 void ADisplayable::setSize(int size)

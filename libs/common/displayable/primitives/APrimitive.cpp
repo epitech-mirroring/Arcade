@@ -7,13 +7,19 @@
 */
 
 #include "common/displayable/primitives/APrimitive.hpp"
+#include "common/utils/RGBAColor.hpp"
 
-APrimitive::APrimitive(std::unique_ptr<IColor> color)
+APrimitive::APrimitive(std::unique_ptr<IColor> &color)
 {
-    _color = std::move(color);
+    this->_color = std::move(color);
 }
 
-const std::unique_ptr<IColor> &APrimitive::getColor() const
+APrimitive::APrimitive(const IColor &color)
 {
-    return _color;
+    this->_color = std::make_unique<RGBAColor>(color.getR(), color.getG(), color.getB(), color.getA());
+}
+
+const IColor &APrimitive::getColor() const
+{
+    return *this->_color;
 }

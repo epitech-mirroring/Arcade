@@ -13,7 +13,7 @@ Picture::Picture(const std::string &path)
     this->_path = path;
 }
 
-Picture::Picture(const Picture &picture)
+Picture::Picture(const IPicture &picture)
 {
     this->_path = picture.getPath();
 }

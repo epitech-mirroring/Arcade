@@ -12,6 +12,7 @@
 #include <dirent.h>
 #include <unistd.h>
 #include <algorithm>
+#include "json/Json.hpp"
 
 Arcade::Arcade(const std::string &firstDriverName) {
     this->_currentPlayer = nullptr;
@@ -23,6 +24,19 @@ Arcade::Arcade(const std::string &firstDriverName) {
     this->scanLibs();
     this->loadScore();
     this->bareLoadDriver(firstDriverName);
+    this->_currentDriverIndex = 0;
+    this->_currentGameIndex = 0;
+    this->_running = true;
+}
+
+Arcade::~Arcade() {
+    if (this->_game != nullptr) {
+        this->_game.reset();
+    }
+    if (this->_driver != nullptr) {
+        this->_driver.reset();
+    }
+    this->saveScore();
 }
 
 void Arcade::bareLoadDriver(const std::string &driverPath) {
@@ -62,11 +76,15 @@ void Arcade::loadGame(const std::string &gameName) {
     DLLoader<IGame> dl = DLLoader<IGame>("./lib/" + game.path, "create_game");
     // If game already loaded, unload it
     if (this->_game != nullptr) {
+        if (this->_game->getScore() > this->_currentPlayer->getScore()) {
+            this->_currentPlayer->setScore(this->_game->getScore());
+        }
+        this->saveScore();
         this->_game.reset();
     }
     // Replace game
     this->_game = dl.getInstance();
-    this->_game->init(std::shared_ptr<IArcade>(this));
+    this->_game->init(*this);
     this->_game->start();
 }
 
@@ -117,10 +135,45 @@ void Arcade::scanLibs() {
 }
 
 void Arcade::loadScore() {
-    //TODO
+    // Check if file exists
+    if (access("scores.json", F_OK) == -1) {
+        return;
+    }
+    // Load scores
+    JsonArray scores = JsonArray::parseFile("scores.json");
+
+    this->_players.clear();
+    for (std::size_t i = 0; i < scores.size(); i++) {
+        JsonObject score = scores.getValue<JsonObject>(i);
+        std::string name = score.getValue<JsonString>("name").getValue();
+        int scoreValue = score.getValue<JsonInt>("score").getValue();
+        this->_players.push_back(Player(name, scoreValue));
+    }
+    // Update current player
+    // Find player with same name
+    auto it = std::find_if(this->_players.begin(), this->_players.end(), [this](const Player &player) {
+        return player.getName() == this->_currentPlayer->getName();
+    });
+    // If found, update current player
+    if (it != this->_players.end()) {
+        this->_currentPlayer = std::make_unique<Player>(*it);
+    }
 }
 
-void Arcade::display(std::shared_ptr<IDisplayable> displayable) {
+void Arcade::saveScore() {
+    JsonArray scores = JsonArray("scores");
+    for (const Player &player : this->_players) {
+        JsonObject score = JsonObject();
+        JsonString name = JsonString("name", player.getName());
+        JsonInt scoreValue = JsonInt("score", player.getScore());
+        score.addValue(name);
+        score.addValue(scoreValue);
+        scores.addValue(score);
+    }
+    scores.writeToFile("scores.json");
+}
+
+void Arcade::display(const IDisplayable &displayable) {
     this->_driver->display(displayable);
 }
 
@@ -141,7 +194,7 @@ std::list<SharedLibrary> Arcade::getDrivers() const {
 }
 
 void Arcade::run() {
-    while (true) {
+    while (this->_running) {
         if (this->_game != nullptr) {
             this->_game->run();
         }
@@ -150,32 +203,31 @@ void Arcade::run() {
 }
 
 void Arcade::rebindGlobalKeys() {
-
-    this->_driver->bindEvent(IEvent::KEY_DOWN, KEY_ESCAPE, [this](IEvent &event) {this->exit(event);}); // Exit
-    this->_driver->bindEvent(IEvent::KEY_DOWN, KEY_R, [this](IEvent &event) {this->restart(event);}); // Restart
-    this->_driver->bindEvent(IEvent::KEY_DOWN, KEY_T, [this](IEvent &event) {this->menu(event);}); // Menu
-    this->_driver->bindEvent(IEvent::KEY_DOWN, KEY_P, [this](IEvent &event) {this->nextGame(event);}); // Next game
-    this->_driver->bindEvent(IEvent::KEY_DOWN, KEY_M, [this](IEvent &event) {this->nextDriver(event);}); // Next driver
+    this->_driver->bindEvent(IEvent::KEY_DOWN, KEY_ESCAPE, [this](const IEvent &event) {this->exit(event);}); // Exit
+    this->_driver->bindEvent(IEvent::KEY_DOWN, KEY_R, [this](const IEvent &event) {this->restart(event);}); // Restart
+    this->_driver->bindEvent(IEvent::KEY_DOWN, KEY_T, [this](const IEvent &event) {this->menu(event);}); // Menu
+    this->_driver->bindEvent(IEvent::KEY_DOWN, KEY_P, [this](const IEvent &event) {this->nextGame(event);}); // Next game
+    this->_driver->bindEvent(IEvent::KEY_DOWN, KEY_M, [this](const IEvent &event) {this->nextDriver(event);}); // Next driver
 }
 
-void Arcade::exit(IEvent &event) {
+void Arcade::exit(const IEvent &event) {
     (void) event;
-    std::exit(0);
+    this->_running = false;
 }
 
-void Arcade::restart(IEvent &event) {
+void Arcade::restart(const IEvent &event) {
     (void) event;
     if (this->_game != nullptr) {
         this->_game->start();
     }
 }
 
-void Arcade::menu(IEvent &event) {
+void Arcade::menu(const IEvent &event) {
     (void) event;
     //TODO
 }
 
-void Arcade::nextGame(IEvent &event) {
+void Arcade::nextGame(const IEvent &event) {
     (void) event;
     if (this->_game != nullptr) {
         this->_currentGameIndex++;
@@ -186,11 +238,15 @@ void Arcade::nextGame(IEvent &event) {
     }
 }
 
-void Arcade::nextDriver(IEvent &event) {
+void Arcade::nextDriver(const IEvent &event) {
     (void) event;
     this->_currentDriverIndex++;
     if (this->_currentDriverIndex >= this->_drivers.size()) {
         this->_currentDriverIndex = 0;
     }
     this->loadDriver(std::next(this->_drivers.begin(), this->_currentDriverIndex)->name);
+}
+
+void Arcade::setPreferredSize(std::size_t width, std::size_t height) {
+    this->_driver->setPreferredSize(width, height);
 }
