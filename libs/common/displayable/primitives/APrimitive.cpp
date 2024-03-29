@@ -12,11 +12,13 @@
 APrimitive::APrimitive(std::unique_ptr<IColor> &color)
 {
     this->_color = std::move(color);
+    this->_replacingChar = '*';
 }
 
 APrimitive::APrimitive(const IColor &color)
 {
     this->_color = std::make_unique<RGBAColor>(color.getR(), color.getG(), color.getB(), color.getA());
+    this->_replacingChar = '*';
 }
 
 const IColor &APrimitive::getColor() const
