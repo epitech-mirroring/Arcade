@@ -18,9 +18,9 @@ protected:
 public:
     Event(EventType type, EventKey key);
     Event(EventType type, EventKey key, int x, int y);
-    Event(EventType type, EventKey key, Coord2D position);
+    Event(EventType type, EventKey key, const Coord2D &position);
     ~Event() override = default;
     EventType getType() override;
     EventKey getKey() override;
-    std::unique_ptr<ICoordinate> &getPosition() override;
+    const ICoordinate &getPosition() override;
 };

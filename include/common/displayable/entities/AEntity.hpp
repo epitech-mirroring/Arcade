@@ -14,9 +14,11 @@ class AEntity : public virtual ADisplayable, public virtual IEntity {
 protected:
     std::unique_ptr<ISprite> _sprite;
     AEntity(std::unique_ptr<ISprite> sprite);
+    AEntity(const ISprite &sprite);
     AEntity(const std::string &path);
 public:
     ~AEntity() override = default;
-    [[nodiscard]] const std::unique_ptr<ISprite> &getSprite() const override;
-    void setSprite(ISprite &sprite) override;
+    [[nodiscard]] const ISprite &getSprite() const override;
+    void setSprite(const ISprite &sprite) override;
+    void setSprite(std::unique_ptr<ISprite> sprite) override;
 };

@@ -15,7 +15,7 @@ protected:
     std::string _path;
 public:
     Picture(const std::string &path);
-    Picture(const Picture &picture);
+    Picture(const IPicture &picture);
     Picture();
     ~Picture();
     const std::string &getPath() const override;

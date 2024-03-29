@@ -16,6 +16,7 @@ protected:
     std::string _text;
 public:
     Text(std::unique_ptr<IColor> &color, const std::string &text = "");
+    Text(const IColor &color, const std::string &text = "");
     ~Text() override = default;
     [[nodiscard]] const std::string &getText() const override;
     void setText(const std::string &text) override;

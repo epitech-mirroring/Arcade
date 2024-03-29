@@ -14,7 +14,8 @@ class APrimitive : public virtual ADisplayable, public virtual IPrimitive {
 protected:
     std::unique_ptr<IColor> _color;
     explicit APrimitive(std::unique_ptr<IColor> &color);
+    explicit APrimitive(const IColor &color);
 public:
     ~APrimitive() override = default;
-    [[nodiscard]] const std::unique_ptr<IColor> &getColor() const override;
+    [[nodiscard]] const IColor &getColor() const override;
 };

@@ -12,15 +12,21 @@
 Text::Text(std::unique_ptr<IColor> &color, const std::string &text)
     : APrimitive(color)
 {
-    _text = text;
+    this->_text = text;
+}
+
+Text::Text(const IColor &color, const std::string &text)
+    : APrimitive(color)
+{
+    this->_text = text;
 }
 
 const std::string &Text::getText() const
 {
-    return _text;
+    return this->_text;
 }
 
 void Text::setText(const std::string &text)
 {
-    _text = text;
+    this->_text = text;
 }
