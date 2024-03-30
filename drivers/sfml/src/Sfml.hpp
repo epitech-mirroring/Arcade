@@ -13,6 +13,7 @@
 #include "shared/displayable/primitives/ICircle.hpp"
 #include "shared/displayable/primitives/ISquare.hpp"
 #include "shared/displayable/entities/IEntity.hpp"
+#include "shared/utils/ICanRotate.hpp"
 #include "common/displayable/ADisplayable.hpp"
 #include "common/events/Event.hpp"
 #include <SFML/Graphics.hpp>

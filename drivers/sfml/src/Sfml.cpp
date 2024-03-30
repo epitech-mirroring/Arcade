@@ -180,6 +180,9 @@ void SFML::displayText(const IText &text)
     sfText.setColor(color);
     sfText.setCharacterSize(text.getSize());
     sfText.setPosition(text.getPosition().getX(), text.getPosition().getY());
+    if (IS_INSTANCE_OF(const ICanRotate, text)) {
+        sfText.setRotation(TRANSFORM_TO(const ICanRotate, text)->getRotation());
+    }
     this->_window.draw(sfText);
 }
 
@@ -191,6 +194,9 @@ void SFML::displaySquare(const ISquare &square)
     sfSquare.setSize(sf::Vector2f(square.getWidth(), square.getHeight()));
     sfSquare.setFillColor(color);
     sfSquare.setPosition(square.getPosition().getX(), square.getPosition().getY());
+    if (IS_INSTANCE_OF(const ICanRotate, square)) {
+        sfSquare.setRotation(TRANSFORM_TO(const ICanRotate, square)->getRotation());
+    }
     this->_window.draw(sfSquare);
 }
 
@@ -202,6 +208,9 @@ void SFML::displayCircle(const ICircle &circle)
     sfCircle.setRadius(circle.getRadius());
     sfCircle.setFillColor(color);
     sfCircle.setPosition(circle.getPosition().getX(), circle.getPosition().getY());
+    if (IS_INSTANCE_OF(const ICanRotate, circle)) {
+        sfCircle.setRotation(TRANSFORM_TO(const ICanRotate, circle)->getRotation());
+    }
     this->_window.draw(sfCircle);
 }
 
@@ -219,5 +228,8 @@ void SFML::displayEntity(const IEntity &entity)
         sprite = this->_loadedSprites[path];
     }
     sprite.setPosition(entity.getPosition().getX(), entity.getPosition().getY());
+    if (IS_INSTANCE_OF(const ICanRotate, entity)) {
+        sprite.setRotation(TRANSFORM_TO(const ICanRotate, entity)->getRotation());
+    }
     this->_window.draw(sprite);
 }
