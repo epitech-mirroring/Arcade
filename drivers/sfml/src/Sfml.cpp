@@ -139,15 +139,39 @@ void SFML::handleEvents()
         }
     }
     if (this->_event.type == sf::Event::KeyPressed) {
-        this->handleKeyboardEvents(this->_event);
+        this->handleKeyDownEvents(this->_event);
+    }
+    this->handleKeyPressedEvents();
+    if (this->_event.type == sf::Event::KeyReleased) {
+        this->handleKeyUpEvents(this->_event);
     }
 }
 
-void SFML::handleKeyboardEvents(sf::Event event)
+void SFML::handleKeyDownEvents(sf::Event event)
 {
     EventCallback callback = this->_events[std::make_pair(IEvent::EventType::KEY_DOWN, this->_keyMap[event.key.code])];
     if (callback) {
         callback(Event(IEvent::EventType::KEY_DOWN, this->_keyMap[event.key.code]));
+    }
+    this->_pressedKeys.push_back(event.key.code);
+}
+
+void SFML::handleKeyUpEvents(sf::Event event)
+{
+    EventCallback callback = this->_events[std::make_pair(IEvent::EventType::KEY_UP, this->_keyMap[event.key.code])];
+    if (callback) {
+        callback(Event(IEvent::EventType::KEY_UP, this->_keyMap[event.key.code]));
+    }
+    this->_pressedKeys.erase(std::remove(this->_pressedKeys.begin(), this->_pressedKeys.end(), event.key.code), this->_pressedKeys.end());
+}
+
+void SFML::handleKeyPressedEvents()
+{
+    for (sf::Keyboard::Key key : this->_pressedKeys) {
+        EventCallback callback = this->_events[std::make_pair(IEvent::EventType::KEY_PRESS, this->_keyMap[key])];
+        if (callback) {
+            callback(Event(IEvent::EventType::KEY_PRESS, this->_keyMap[key]));
+        }
     }
 }
 

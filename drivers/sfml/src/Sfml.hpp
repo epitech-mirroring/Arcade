@@ -21,6 +21,7 @@
 #include <SFML/System.hpp>
 #include <SFML/Audio.hpp>
 #include <map>
+#include <deque>
 #include <cstddef>
 
 class SFML: public IDriver {
@@ -34,7 +35,9 @@ public:
 
 private:
     void handleEvents();
-    void handleKeyboardEvents(sf::Event event);
+    void handleKeyDownEvents(sf::Event event);
+    void handleKeyUpEvents(sf::Event event);
+    void handleKeyPressedEvents();
     void displayText(const IText &text);
     void displaySquare(const ISquare &square);
     void displayCircle(const ICircle &circle);
@@ -45,6 +48,7 @@ private:
     sf::Event _event;
     std::map<std::pair<IEvent::EventType, EventKey>, EventCallback> _events;
     std::map<sf::Keyboard::Key, EventKey> _keyMap;
+    std::deque<sf::Keyboard::Key> _pressedKeys;
     std::map<std::string, sf::Sprite> _loadedSprites;
     std::size_t _width;
     std::size_t _height;
