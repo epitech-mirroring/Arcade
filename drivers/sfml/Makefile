@@ -16,7 +16,6 @@ CXX_TESTS		=
 NAME 			= 	arcade_sfml.so
 CXX				= 	g++
 COMMON_LIB      = 	../../libs/common
-COMMON_LIB      = 	../../libs/common
 CXXFLAGS		= 	-W -Wall -Wextra -std=c++20 --coverage -I../../include \
 					-fPIC -fPIC -lsfml-graphics -lsfml-window -lsfml-system \
 					-lsfml-audio
