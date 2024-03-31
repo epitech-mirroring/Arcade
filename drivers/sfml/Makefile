@@ -17,7 +17,8 @@ NAME 			= 	arcade_sfml.so
 CXX				= 	g++
 COMMON_LIB      = 	../../libs/common
 CXXFLAGS		= 	-W -Wall -Wextra -std=c++20 --coverage -I../../include \
-					-fPIC
+					-fPIC -fPIC -lsfml-graphics -lsfml-window -lsfml-system \
+					-lsfml-audio
 COMMON_OBJS 	= 	$(COMMON_LIB)/AGame.o									\
 					$(COMMON_LIB)/utils/RGBAColor.o							\
 					$(COMMON_LIB)/utils/Coord2D.o							\

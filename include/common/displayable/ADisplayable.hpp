@@ -13,8 +13,8 @@
 #include <memory>
 #include <cmath>
 
-#define IS_INSTANCE_OF(type, uniq_ptr) (dynamic_cast<type *>(uniq_ptr.get()) != nullptr)
-#define TRANSFORM_TO(type, uniq_ptr) (dynamic_cast<type *>(uniq_ptr.get()))
+#define IS_INSTANCE_OF(type, obj) (dynamic_cast<type *>(&obj) != nullptr)
+#define TRANSFORM_TO(type, obj) (dynamic_cast<type *>(&obj))
 
 class ADisplayable : public virtual IDisplayable, public virtual ICanRotate {
 protected:
