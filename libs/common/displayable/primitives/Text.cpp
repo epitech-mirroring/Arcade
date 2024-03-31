@@ -9,13 +9,13 @@
 
 #include "common/displayable/primitives/Text.hpp"
 
-Text::Text(std::unique_ptr<IColor> &color, const std::string &text)
+Text::Text(std::unique_ptr<IColor> &color, const std::string &text, const std::string &fontPath)
     : APrimitive(color)
 {
     this->_text = text;
 }
 
-Text::Text(const IColor &color, const std::string &text)
+Text::Text(const IColor &color, const std::string &text, const std::string &fontPath)
     : APrimitive(color)
 {
     this->_text = text;
