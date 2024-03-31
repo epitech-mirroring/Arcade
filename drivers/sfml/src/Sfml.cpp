@@ -217,9 +217,11 @@ void SFML::displayText(const IText &text)
     sf::Text sfText;
     sf::Color color = sf::Color(text.getColor().getR(), text.getColor().getG(), text.getColor().getB(), text.getColor().getA());
 
-    if (!font.loadFromFile("assets/Arial.ttf")) {
-        std::cerr << "Error loading font" << std::endl;
-        return;
+    if (this->_loadedFonts.find(text.getFontPath()) == this->_loadedFonts.end()) {
+        font.loadFromFile(text.getFontPath());
+        this->_loadedFonts[text.getFontPath()] = font;
+    } else {
+        font = this->_loadedFonts[text.getFontPath()];
     }
     sfText.setFont(font);
     sfText.setString(text.getText());
