@@ -100,7 +100,19 @@ SFML::SFML()
         {sf::Keyboard::Key::Up, KEY_UP},
         {sf::Keyboard::Key::Down, KEY_DOWN},
         {sf::Keyboard::Key::Left, KEY_LEFT},
-        {sf::Keyboard::Key::Right, KEY_RIGHT}
+        {sf::Keyboard::Key::Right, KEY_RIGHT},
+        {sf::Keyboard::Key::F1, KEY_F1},
+        {sf::Keyboard::Key::F2, KEY_F2},
+        {sf::Keyboard::Key::F3, KEY_F3},
+        {sf::Keyboard::Key::F4, KEY_F4},
+        {sf::Keyboard::Key::F5, KEY_F5},
+        {sf::Keyboard::Key::F6, KEY_F6},
+        {sf::Keyboard::Key::F7, KEY_F7},
+        {sf::Keyboard::Key::F8, KEY_F8},
+        {sf::Keyboard::Key::F9, KEY_F9},
+        {sf::Keyboard::Key::F10, KEY_F10},
+        {sf::Keyboard::Key::F11, KEY_F11},
+        {sf::Keyboard::Key::F12, KEY_F12}
     };
 }
 
