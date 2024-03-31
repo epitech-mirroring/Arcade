@@ -38,9 +38,12 @@ extern "C" {
 
 SFML::SFML()
 {
-    this->_window.create(sf::VideoMode(800, 600), "Arcade");
+    this->_width = 800;
+    this->_height = 600;
+    this->_window.create(sf::VideoMode(800, 600), "Arcade", sf::Style::Close | sf::Style::Titlebar);
     this->_window.setFramerateLimit(60);
     this->_window.clear();
+    this->_window.setView(sf::View(sf::FloatRect(0, 0, 800, 600)));
     this->_keyMap = {
         {sf::Keyboard::Key::A, KEY_A},
         {sf::Keyboard::Key::B, KEY_B},
@@ -135,6 +138,7 @@ void SFML::setPreferredSize(std::size_t width, std::size_t height)
     this->_width = width;
     this->_height = height;
     this->_window.setSize(sf::Vector2u(width, height));
+    this->_window.setView(sf::View(sf::FloatRect(0, 0, width, height)));
 }
 
 void SFML::bindEvent(IEvent::EventType type, EventKey key, EventCallback callback)
