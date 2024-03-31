@@ -10,6 +10,7 @@
 CXX_SOURCES		= 	src/main.cpp		\
 					src/Arcade.cpp		\
 					src/Player.cpp		\
+					src/menu/Menu.cpp	\
 					src/errors/NoSuchDriverException.cpp	\
 					src/errors/LibraryFormatException.cpp	\
 
@@ -29,17 +30,31 @@ CXXFLAGS		= 	-W -Wall -Wextra -std=c++20 --coverage -I./include
 CXX_OBJS		= $(CXX_SOURCES:.cpp=.o)
 CXX_TESTS_OBJS	= $(CXX_TESTS:.cpp=.o)
 JSON_LIB		= 	./libs/json
+COMMON_LIB		= 	./libs/common
 JSON_OBJS 		= 	$(JSON_LIB)/JsonObject.o	\
 					$(JSON_LIB)/JsonArray.o		\
 					$(JSON_LIB)/JsonString.o	\
 					$(JSON_LIB)/JsonInt.o		\
 					$(JSON_LIB)/JsonBoolean.o
+COMMON_OBJS 	= 	$(COMMON_LIB)/AGame.o									\
+					$(COMMON_LIB)/utils/RGBAColor.o							\
+					$(COMMON_LIB)/utils/Coord2D.o							\
+					$(COMMON_LIB)/utils/Picture.o							\
+					$(COMMON_LIB)/events/Event.o							\
+					$(COMMON_LIB)/displayable/ADisplayable.o				\
+					$(COMMON_LIB)/displayable/entities/SimpleSprite.o		\
+					$(COMMON_LIB)/displayable/entities/AnimatedSprite.o		\
+					$(COMMON_LIB)/displayable/entities/AEntity.o			\
+					$(COMMON_LIB)/displayable/primitives/APrimitive.o		\
+					$(COMMON_LIB)/displayable/primitives/Circle.o			\
+					$(COMMON_LIB)/displayable/primitives/Square.o			\
+					$(COMMON_LIB)/displayable/primitives/Text.o
 LOG				= ./build.log
 
 .PHONY: $(NAME) all clean fclean re tests_run clean_test \
 	$(CXX_OBJS) $(CXX_TESTS_OBJS) games $(GAMES) graphicals $(DRIVERS) \
 	tests_games tests_drivers tests_libs shared $(JSON_LIB) clean_json \
-	fclean_json
+	fclean_json $(COMMON_LIB) clean_common fclean_common
 
 # Colors and formatting
 GREEN =		\033[1;32m
@@ -103,10 +118,20 @@ library (already built)\n"; \
 			&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"; \
 		fi
 
-$(NAME):	shared $(JSON_LIB) $(CXX_OBJS)
+$(COMMON_LIB):
+		@printf "$(RUNNING) $(BLUE) 📚  Building common library$(RESET)"
+		@if [ -f './libs/common/AGame.o' ]; then \
+			printf "\r$(SKIPPED) $(RESET) 📚  Building common \
+library (already built)\n"; \
+		else \
+			make -C $(COMMON_LIB) >> $(LOG) 2>&1 \
+			&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"; \
+		fi
+
+$(NAME):	shared $(JSON_LIB) $(COMMON_LIB) $(CXX_OBJS)
 # Link the object files
 		@printf "$(RUNNING) $(BLUE) 🔗  Linking$(RESET)"
-		@$(CXX) -o $(NAME) $(CXX_OBJS) $(CXXFLAGS) $(JSON_OBJS) \
+		@$(CXX) -o $(NAME) $(CXX_OBJS) $(CXXFLAGS) $(JSON_OBJS) $(COMMON_OBJS)\
 		>> $(LOG) 2>&1 \
 		&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
 # Check if the binary was created
@@ -129,7 +154,12 @@ clean_json:
 		@make -C $(JSON_LIB) clean >> $(LOG) 2>&1 \
 		&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
 
-clean: clean_json
+clean_common:
+		@printf "$(RUNNING) $(RED) 🗑️   Cleaning common library$(RESET)"
+		@make -C $(COMMON_LIB) clean >> $(LOG) 2>&1 \
+		&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
+
+clean: clean_json clean_common
 # Delete all the object files
 		@for file in $(CXX_OBJS); do \
 			printf "$(RUNNING) $(RED) 🗑️   Deleting $$file$(RESET)"; \
@@ -152,7 +182,12 @@ fclean_json:
 		@make -C $(JSON_LIB) fclean >> $(LOG) 2>&1 \
 		&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
 
-fclean: clean clean_test fclean_json
+fclean_common:
+		@printf "$(RUNNING) $(RED) 🗑️   Deleting common library$(RESET)"
+		@make -C $(COMMON_LIB) fclean >> $(LOG) 2>&1 \
+		&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
+
+fclean: clean clean_test fclean_json fclean_common
 # Delete the binary
 		@printf "$(RUNNING) $(RED) 🗑️   Deleting $(NAME)$(RESET)"
 		@rm -f $(NAME) >> $(LOG) 2>&1 \
@@ -204,11 +239,12 @@ tests_libs:
 	@make -C libs/json tests_run >> $(LOG) 2>&1 \
 	&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
 
-tests_run: fclean $(JSON_LIB) $(CXX_OBJS) $(CXX_TESTS_OBJS) \
+tests_run: fclean $(JSON_LIB) $(COMMON_LIB) $(CXX_OBJS) $(CXX_TESTS_OBJS) \
  	tests_games tests_drivers tests_libs
 	@printf "$(RUNNING) $(BLUE) 🔗  Linking$(RESET)"
 	@$(CXX) -o tests.out $(filter-out src/main.o, $(CXX_OBJS)) \
-	$(CXX_TESTS_OBJS) $(CXXFLAGS) $(JSON_OBJS) --coverage >> $(LOG) 2>&1 \
+	$(CXX_TESTS_OBJS) $(CXXFLAGS) $(JSON_OBJS) $(COMMON_OBJS) --coverage \
+	>> $(LOG) 2>&1 \
 	-lcriterion >> $(LOG) 2>&1 \
 	&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n";
 	@printf "$(RUNNING)$(BLUE)  🧪  Running tests$(RESET)" \
