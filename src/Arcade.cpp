@@ -15,7 +15,7 @@
 #include "core/menu/Menu.hpp"
 
 Arcade::Arcade(const std::string &firstDriverName) {
-    this->_currentPlayer = nullptr;
+    this->_currentPlayer = std::make_unique<Player>("Player", 0);
     this->_game = {nullptr, nullptr};
     this->_driver = {nullptr, nullptr};
     this->_players = std::list<Player>();
@@ -261,4 +261,8 @@ void Arcade::nextDriver(const IEvent &event) {
 
 void Arcade::setPreferredSize(std::size_t width, std::size_t height) {
     this->_driver.instance->setPreferredSize(width, height);
+}
+
+Player &Arcade::getCurrentPlayer() {
+    return *this->_currentPlayer;
 }

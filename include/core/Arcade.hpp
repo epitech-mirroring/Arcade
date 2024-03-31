@@ -49,6 +49,7 @@ public:
     void loadScore();
     void saveScore();
     void rebindGlobalKeys();
+    Player &getCurrentPlayer();
 
     void exit(const IEvent &event);
     void restart(const IEvent &event);
