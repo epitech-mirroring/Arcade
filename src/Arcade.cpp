@@ -216,10 +216,10 @@ void Arcade::run() {
 
 void Arcade::rebindGlobalKeys() {
     this->_driver.instance->bindEvent(IEvent::KEY_DOWN, KEY_ESCAPE, [this](const IEvent &event) {this->exit(event);}); // Exit
-    this->_driver.instance->bindEvent(IEvent::KEY_DOWN, KEY_R, [this](const IEvent &event) {this->restart(event);}); // Restart
-    this->_driver.instance->bindEvent(IEvent::KEY_DOWN, KEY_T, [this](const IEvent &event) {this->menu(event);}); // Menu
-    this->_driver.instance->bindEvent(IEvent::KEY_DOWN, KEY_P, [this](const IEvent &event) {this->nextGame(event);}); // Next game
-    this->_driver.instance->bindEvent(IEvent::KEY_DOWN, KEY_M, [this](const IEvent &event) {this->nextDriver(event);}); // Next driver
+    this->_driver.instance->bindEvent(IEvent::KEY_DOWN, KEY_F1, [this](const IEvent &event) {this->restart(event);}); // Restart
+    this->_driver.instance->bindEvent(IEvent::KEY_DOWN, KEY_F2, [this](const IEvent &event) {this->menu(event);}); // Menu
+    this->_driver.instance->bindEvent(IEvent::KEY_DOWN, KEY_F4, [this](const IEvent &event) {this->nextGame(event);}); // Next game
+    this->_driver.instance->bindEvent(IEvent::KEY_DOWN, KEY_F5, [this](const IEvent &event) {this->nextDriver(event);}); // Next driver
 }
 
 void Arcade::exit(const IEvent &event) {
