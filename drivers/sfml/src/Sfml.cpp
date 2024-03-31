@@ -209,11 +209,18 @@ void SFML::displayPrimitive(const IPrimitive &primitive)
 
 void SFML::displayText(const IText &text)
 {
+    static sf::Font font;
     sf::Text sfText;
     sf::Color color = sf::Color(text.getColor().getR(), text.getColor().getG(), text.getColor().getB(), text.getColor().getA());
 
+    if (!font.loadFromFile("assets/Arial.ttf")) {
+        std::cerr << "Error loading font" << std::endl;
+        return;
+    }
+    sfText.setFont(font);
     sfText.setString(text.getText());
-    sfText.setColor(color);
+    sfText.setFillColor(color);
+    sfText.setOutlineColor(color);
     sfText.setCharacterSize(text.getSize());
     sfText.setPosition(text.getPosition().getX(), text.getPosition().getY());
     if (IS_INSTANCE_OF(const ICanRotate, text)) {
