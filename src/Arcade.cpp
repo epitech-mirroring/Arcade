@@ -8,16 +8,16 @@
 
 #include "core/Arcade.hpp"
 #include "core/errors/NoSuchDriverException.hpp"
-#include "core/DLLoader.hpp"
 #include <dirent.h>
 #include <unistd.h>
 #include <algorithm>
 #include "json/Json.hpp"
+#include "core/menu/Menu.hpp"
 
 Arcade::Arcade(const std::string &firstDriverName) {
     this->_currentPlayer = nullptr;
-    this->_game = nullptr;
-    this->_driver = nullptr;
+    this->_game = {nullptr, nullptr};
+    this->_driver = {nullptr, nullptr};
     this->_players = std::list<Player>();
     this->_games = std::list<SharedLibrary>();
     this->_drivers = std::list<SharedLibrary>();
@@ -27,21 +27,28 @@ Arcade::Arcade(const std::string &firstDriverName) {
     this->_currentDriverIndex = 0;
     this->_currentGameIndex = 0;
     this->_running = true;
+    this->_game = {std::make_unique<Menu>(), nullptr};
+    this->_game.instance->init(*this);
+    this->_game.instance->start();
 }
 
 Arcade::~Arcade() {
-    if (this->_game != nullptr) {
-        this->_game.reset();
+    if (this->_game.instance != nullptr) {
+        this->_game.instance.reset();
+        if (this->_game.loader != nullptr)
+            this->_game.loader.reset();
     }
-    if (this->_driver != nullptr) {
-        this->_driver.reset();
+    if (this->_driver.instance != nullptr) {
+        this->_driver.instance.reset();
+        if (this->_game.loader != nullptr)
+            this->_game.loader.reset();
     }
     this->saveScore();
 }
 
 void Arcade::bareLoadDriver(const std::string &driverPath) {
-    DLLoader<IDriver> dl = DLLoader<IDriver>(driverPath, "create_driver");
-    this->_driver = dl.getInstance();
+    std::unique_ptr<DLLoader<IDriver>> dl = std::make_unique<DLLoader<IDriver>>(driverPath, "create_driver");
+    this->_driver = {dl->getInstance(), std::move(dl)};
     this->rebindGlobalKeys();
 }
 
@@ -54,13 +61,14 @@ void Arcade::loadDriver(const std::string &driverName) {
         return lib.name == driverName;
     });
     // Load driver
-    DLLoader<IDriver> dl = DLLoader<IDriver>("./lib/" + driver.path, "create_driver");
+    std::unique_ptr<DLLoader<IDriver>> dl = std::make_unique<DLLoader<IDriver>>("./lib/" + driver.path, "create_driver");
     // If driver already loaded, unload it
-    if (this->_driver != nullptr) {
-        this->_driver.reset();
+    if (this->_driver.instance != nullptr) {
+        this->_driver.instance.reset();
+        this->_driver.loader.reset();
     }
     // Replace driver
-    this->_driver = dl.getInstance();
+    this->_driver = {dl->getInstance(), std::move(dl)};
     this->rebindGlobalKeys();
 }
 
@@ -73,19 +81,21 @@ void Arcade::loadGame(const std::string &gameName) {
         return lib.name == gameName;
     });
     // Load game
-    DLLoader<IGame> dl = DLLoader<IGame>("./lib/" + game.path, "create_game");
+    std::unique_ptr<DLLoader<IGame>> dl = std::make_unique<DLLoader<IGame>>("./lib/" + game.path, "create_game");
     // If game already loaded, unload it
-    if (this->_game != nullptr) {
-        if (this->_game->getScore() > this->_currentPlayer->getScore()) {
-            this->_currentPlayer->setScore(this->_game->getScore());
+    if (this->_game.instance != nullptr) {
+        if (this->_game.instance->getScore() > this->_currentPlayer->getScore()) {
+            this->_currentPlayer->setScore(this->_game.instance->getScore());
         }
         this->saveScore();
-        this->_game.reset();
+        this->_game.instance.reset();
+        if (this->_game.loader != nullptr)
+            this->_game.loader.reset();
     }
     // Replace game
-    this->_game = dl.getInstance();
-    this->_game->init(*this);
-    this->_game->start();
+    this->_game = {dl->getInstance(), std::move(dl)};
+    this->_game.instance->init(*this);
+    this->_game.instance->start();
 }
 
 static std::string parseLibName(const std::string &filename) {
@@ -108,18 +118,20 @@ void Arcade::scanLibs() {
             std::string filename = ent->d_name;
             if (filename.find(".so") != std::string::npos) {
                 try {
-                    DLLoader<IDriver> dl = DLLoader<IDriver>("./lib/" + filename, "create_driver");
-                    if (dl.getLibName != nullptr)
-                        this->_drivers.push_back({dl.getLibName(), filename});
+                    std::unique_ptr<DLLoader<IDriver>> dl = std::make_unique<DLLoader<IDriver>>("./lib/" + filename, "create_driver");
+                    if (dl->getLibName != nullptr)
+                        this->_drivers.push_back({dl->getLibName(), filename});
                     else
                         this->_drivers.push_back({filename, parseLibName(filename)});
+                    dl.reset();
                 } catch (LibraryFormatException &e) {
                     try {
-                        DLLoader<IGame> dl = DLLoader<IGame>("./lib/" + filename, "create_game");
-                        if (dl.getLibName != nullptr)
-                            this->_games.push_back({dl.getLibName(), filename});
+                        std::unique_ptr<DLLoader<IGame>> dl = std::make_unique<DLLoader<IGame>>("./lib/" + filename, "create_game");
+                        if (dl->getLibName != nullptr)
+                            this->_games.push_back({dl->getLibName(), filename});
                         else
                             this->_games.push_back({filename, parseLibName(filename)});
+                        dl.reset();
                     } catch (std::exception &e) {
                         std::cerr << e.what() << std::endl;
                         continue;
@@ -174,15 +186,15 @@ void Arcade::saveScore() {
 }
 
 void Arcade::display(const IDisplayable &displayable) {
-    this->_driver->display(displayable);
+    this->_driver.instance->display(displayable);
 }
 
 void Arcade::flipFrame() {
-    this->_driver->flipFrame();
+    this->_driver.instance->flipFrame();
 }
 
 void Arcade::bindEvent(IEvent::EventType type, EventKey key, EventCallback callback) {
-    this->_driver->bindEvent(type, key, callback);
+    this->_driver.instance->bindEvent(type, key, callback);
 }
 
 std::list<SharedLibrary> Arcade::getGames() const {
@@ -195,19 +207,19 @@ std::list<SharedLibrary> Arcade::getDrivers() const {
 
 void Arcade::run() {
     while (this->_running) {
-        if (this->_game != nullptr) {
-            this->_game->run();
+        if (this->_game.instance != nullptr) {
+            this->_game.instance->run();
         }
         usleep((int) (1.f/60.f * 1000000.f));
     }
 }
 
 void Arcade::rebindGlobalKeys() {
-    this->_driver->bindEvent(IEvent::KEY_DOWN, KEY_ESCAPE, [this](const IEvent &event) {this->exit(event);}); // Exit
-    this->_driver->bindEvent(IEvent::KEY_DOWN, KEY_R, [this](const IEvent &event) {this->restart(event);}); // Restart
-    this->_driver->bindEvent(IEvent::KEY_DOWN, KEY_T, [this](const IEvent &event) {this->menu(event);}); // Menu
-    this->_driver->bindEvent(IEvent::KEY_DOWN, KEY_P, [this](const IEvent &event) {this->nextGame(event);}); // Next game
-    this->_driver->bindEvent(IEvent::KEY_DOWN, KEY_M, [this](const IEvent &event) {this->nextDriver(event);}); // Next driver
+    this->_driver.instance->bindEvent(IEvent::KEY_DOWN, KEY_ESCAPE, [this](const IEvent &event) {this->exit(event);}); // Exit
+    this->_driver.instance->bindEvent(IEvent::KEY_DOWN, KEY_R, [this](const IEvent &event) {this->restart(event);}); // Restart
+    this->_driver.instance->bindEvent(IEvent::KEY_DOWN, KEY_T, [this](const IEvent &event) {this->menu(event);}); // Menu
+    this->_driver.instance->bindEvent(IEvent::KEY_DOWN, KEY_P, [this](const IEvent &event) {this->nextGame(event);}); // Next game
+    this->_driver.instance->bindEvent(IEvent::KEY_DOWN, KEY_M, [this](const IEvent &event) {this->nextDriver(event);}); // Next driver
 }
 
 void Arcade::exit(const IEvent &event) {
@@ -217,8 +229,8 @@ void Arcade::exit(const IEvent &event) {
 
 void Arcade::restart(const IEvent &event) {
     (void) event;
-    if (this->_game != nullptr) {
-        this->_game->start();
+    if (this->_game.instance != nullptr) {
+        this->_game.instance->start();
     }
 }
 
@@ -229,7 +241,7 @@ void Arcade::menu(const IEvent &event) {
 
 void Arcade::nextGame(const IEvent &event) {
     (void) event;
-    if (this->_game != nullptr) {
+    if (this->_game.instance != nullptr) {
         this->_currentGameIndex++;
         if (this->_currentGameIndex >= this->_games.size()) {
             this->_currentGameIndex = 0;
@@ -248,5 +260,5 @@ void Arcade::nextDriver(const IEvent &event) {
 }
 
 void Arcade::setPreferredSize(std::size_t width, std::size_t height) {
-    this->_driver->setPreferredSize(width, height);
+    this->_driver.instance->setPreferredSize(width, height);
 }

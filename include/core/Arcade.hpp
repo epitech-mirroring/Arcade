@@ -11,6 +11,7 @@
 #include "shared/IDriver.hpp"
 #include "shared/IGame.hpp"
 #include "core/Player.hpp"
+#include "DLLoader.hpp"
 #include <list>
 #include <memory>
 
@@ -19,10 +20,16 @@ struct SharedLibrary {
     std::string path;
 };
 
+template<typename T>
+struct LoadedLibrary {
+    std::unique_ptr<T> instance;
+    std::unique_ptr<DLLoader<T>> loader;
+};
+
 class Arcade: public IArcade {
 private:
-    std::unique_ptr<IDriver> _driver;
-    std::unique_ptr<IGame> _game;
+    LoadedLibrary<IDriver> _driver;
+    LoadedLibrary<IGame> _game;
     std::list<Player> _players;
     std::unique_ptr<Player> _currentPlayer;
     std::list<SharedLibrary> _games;
