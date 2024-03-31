@@ -266,3 +266,7 @@ void Arcade::setPreferredSize(std::size_t width, std::size_t height) {
 Player &Arcade::getCurrentPlayer() {
     return *this->_currentPlayer;
 }
+
+const std::list<Player> &Arcade::getPlayers() {
+    return this->_players;
+}

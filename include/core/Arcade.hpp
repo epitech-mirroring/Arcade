@@ -50,6 +50,7 @@ public:
     void saveScore();
     void rebindGlobalKeys();
     Player &getCurrentPlayer();
+    const std::list<Player> &getPlayers();
 
     void exit(const IEvent &event);
     void restart(const IEvent &event);
