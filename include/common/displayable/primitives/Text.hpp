@@ -14,6 +14,7 @@
 class Text : public APrimitive, public IText {
 protected:
     std::string _text;
+    std::string _fontPath;
 public:
     Text(std::unique_ptr<IColor> &color, const std::string &text = "", const std::string &fontPath = "assets/Arial.ttf");
     Text(const IColor &color, const std::string &text = "", const std::string &fontPath = "assets/Arial.ttf");
