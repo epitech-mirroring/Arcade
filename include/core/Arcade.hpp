@@ -30,10 +30,10 @@ class Arcade: public IArcade {
 private:
     LoadedLibrary<IDriver> _driver;
     LoadedLibrary<IGame> _game;
-    std::list<Player> _players;
+    std::vector<Player> _players;
     std::unique_ptr<Player> _currentPlayer;
-    std::list<SharedLibrary> _games;
-    std::list<SharedLibrary> _drivers;
+    std::vector<SharedLibrary> _games;
+    std::vector<SharedLibrary> _drivers;
     std::size_t _currentGameIndex;
     std::size_t _currentDriverIndex;
     bool _running;
@@ -50,7 +50,7 @@ public:
     void saveScore();
     void rebindGlobalKeys();
     Player &getCurrentPlayer();
-    const std::list<Player> &getPlayers();
+    const std::vector<Player> &getPlayers();
 
     void exit(const IEvent &event);
     void restart(const IEvent &event);
@@ -60,8 +60,8 @@ public:
 
     void run();
 
-    [[nodiscard]] std::list<SharedLibrary> getGames() const;
-    [[nodiscard]] std::list<SharedLibrary> getDrivers() const;
+    [[nodiscard]] std::vector<SharedLibrary> getGames() const;
+    [[nodiscard]] std::vector<SharedLibrary> getDrivers() const;
 
     // Driver functions for games
     void display(const IDisplayable &displayable) override;

@@ -11,6 +11,7 @@
 #include <dirent.h>
 #include <unistd.h>
 #include <algorithm>
+#include <memory>
 #include "json/Json.hpp"
 #include "core/menu/Menu.hpp"
 
@@ -18,9 +19,9 @@ Arcade::Arcade(const std::string &firstDriverName) {
     this->_currentPlayer = std::make_unique<Player>("Player", 0);
     this->_game = {nullptr, nullptr};
     this->_driver = {nullptr, nullptr};
-    this->_players = std::list<Player>();
-    this->_games = std::list<SharedLibrary>();
-    this->_drivers = std::list<SharedLibrary>();
+    this->_players = std::vector<Player>();
+    this->_games = std::vector<SharedLibrary>();
+    this->_drivers = std::vector<SharedLibrary>();
     this->scanLibs();
     this->loadScore();
     this->bareLoadDriver(firstDriverName);
@@ -40,8 +41,8 @@ Arcade::~Arcade() {
     }
     if (this->_driver.instance != nullptr) {
         this->_driver.instance.reset();
-        if (this->_game.loader != nullptr)
-            this->_game.loader.reset();
+        if (this->_driver.loader != nullptr)
+            this->_driver.loader.reset();
     }
     this->saveScore();
 }
@@ -159,7 +160,7 @@ void Arcade::loadScore() {
         JsonObject score = scores.getValue<JsonObject>(i);
         std::string name = score.getValue<JsonString>("name").getValue();
         int scoreValue = score.getValue<JsonInt>("score").getValue();
-        this->_players.push_back(Player(name, scoreValue));
+        this->_players.emplace_back(name, scoreValue);
     }
     // Update current player
     // Find player with same name
@@ -197,11 +198,11 @@ void Arcade::bindEvent(IEvent::EventType type, EventKey key, EventCallback callb
     this->_driver.instance->bindEvent(type, key, callback);
 }
 
-std::list<SharedLibrary> Arcade::getGames() const {
+std::vector<SharedLibrary> Arcade::getGames() const {
     return this->_games;
 }
 
-std::list<SharedLibrary> Arcade::getDrivers() const {
+std::vector<SharedLibrary> Arcade::getDrivers() const {
     return this->_drivers;
 }
 
@@ -246,7 +247,7 @@ void Arcade::nextGame(const IEvent &event) {
         if (this->_currentGameIndex >= this->_games.size()) {
             this->_currentGameIndex = 0;
         }
-        this->loadGame(std::next(this->_games.begin(), this->_currentGameIndex)->name);
+        this->loadGame(this->_games[this->_currentGameIndex].name);
     }
 }
 
@@ -256,7 +257,7 @@ void Arcade::nextDriver(const IEvent &event) {
     if (this->_currentDriverIndex >= this->_drivers.size()) {
         this->_currentDriverIndex = 0;
     }
-    this->loadDriver(std::next(this->_drivers.begin(), this->_currentDriverIndex)->name);
+    this->loadDriver(this->_drivers[this->_currentDriverIndex].name);
 }
 
 void Arcade::setPreferredSize(std::size_t width, std::size_t height) {
@@ -267,6 +268,6 @@ Player &Arcade::getCurrentPlayer() {
     return *this->_currentPlayer;
 }
 
-const std::list<Player> &Arcade::getPlayers() {
+const std::vector<Player> &Arcade::getPlayers() {
     return this->_players;
 }
