@@ -24,8 +24,8 @@ int main(int argc, char **argv) {
         return 84;
     }
     try {
-        Arcade arcade = Arcade(argv[1]);
-        arcade.run();
+        auto arcade = std::shared_ptr<Arcade>(new Arcade(argv[1]));
+        arcade->run();
     } catch (IError &e) {
         std::cerr << e.what() << std::endl;
         return e.getCode();
