@@ -36,6 +36,7 @@ private:
     std::vector<SharedLibrary> _drivers;
     std::size_t _currentGameIndex;
     std::size_t _currentDriverIndex;
+    std::shared_ptr<IArcade> _arcade;
     bool _running;
 
     void bareLoadDriver(const std::string &driverPath);

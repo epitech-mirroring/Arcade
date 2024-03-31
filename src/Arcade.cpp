@@ -16,6 +16,7 @@
 #include "core/menu/Menu.hpp"
 
 Arcade::Arcade(const std::string &firstDriverName) {
+    this->_arcade = std::shared_ptr<IArcade>(this);
     this->_currentPlayer = std::make_unique<Player>("Player", 0);
     this->_game = {nullptr, nullptr};
     this->_driver = {nullptr, nullptr};
@@ -29,7 +30,7 @@ Arcade::Arcade(const std::string &firstDriverName) {
     this->_currentGameIndex = 0;
     this->_running = true;
     this->_game = {std::make_unique<Menu>(), nullptr};
-    this->_game.instance->init(*this);
+    this->_game.instance->init(this->_arcade);
     this->_game.instance->start();
 }
 
@@ -95,7 +96,7 @@ void Arcade::loadGame(const std::string &gameName) {
     }
     // Replace game
     this->_game = {dl->getInstance(), std::move(dl)};
-    this->_game.instance->init(*this);
+    this->_game.instance->init(this->_arcade);
     this->_game.instance->start();
 }
 

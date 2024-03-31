@@ -13,8 +13,8 @@ AGame::AGame() {
     this->_score = 0;
 }
 
-void AGame::init(IArcade &arcade) {
-    this->_arcade = std::shared_ptr<IArcade>(&arcade);
+void AGame::init(std::shared_ptr<IArcade> arcade) {
+    this->_arcade = arcade;
 }
 
 int AGame::getScore() {
