@@ -28,6 +28,7 @@ COMMON_OBJS 	= 	$(COMMON_LIB)/AGame.o									\
 					$(COMMON_LIB)/displayable/entities/SimpleSprite.o		\
 					$(COMMON_LIB)/displayable/entities/AnimatedSprite.o		\
 					$(COMMON_LIB)/displayable/entities/AEntity.o			\
+					$(COMMON_LIB)/displayable/entities/SimpleEntity.o		\
 					$(COMMON_LIB)/displayable/primitives/APrimitive.o		\
 					$(COMMON_LIB)/displayable/primitives/Circle.o			\
 					$(COMMON_LIB)/displayable/primitives/Square.o			\
