@@ -265,10 +265,14 @@ void Arcade::setPreferredSize(std::size_t width, std::size_t height) {
     this->_driver.instance->setPreferredSize(width, height);
 }
 
-Player &Arcade::getCurrentPlayer() {
+Player &Arcade::getCurrentPlayer() const {
     return *this->_currentPlayer;
 }
 
-const std::vector<Player> &Arcade::getPlayers() {
+const std::vector<Player> &Arcade::getPlayers() const {
     return this->_players;
+}
+
+std::shared_ptr<IArcade> Arcade::getArcade() const {
+    return this->_arcade;
 }

@@ -24,8 +24,11 @@ int main(int argc, char **argv) {
         return 84;
     }
     try {
-        auto arcade = std::shared_ptr<Arcade>(new Arcade(argv[1]));
+        std::shared_ptr<IArcade> arcadePtr;
+        auto *arcade = new Arcade(argv[1]);
+        arcadePtr = arcade->getArcade();
         arcade->run();
+        arcadePtr.reset();
     } catch (IError &e) {
         std::cerr << e.what() << std::endl;
         return e.getCode();
