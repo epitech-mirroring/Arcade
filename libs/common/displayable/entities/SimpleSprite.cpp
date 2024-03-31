@@ -14,14 +14,14 @@ SimpleSprite::SimpleSprite(std::unique_ptr<IPicture> picture)
     this->_picture = std::move(picture);
 }
 
-SimpleSprite::SimpleSprite(const std::string &path)
+SimpleSprite::SimpleSprite(const std::string &path, const std::size_t &width, const std::size_t &height)
 {
-    this->_picture = std::make_unique<Picture>(path);
+    this->_picture = std::make_unique<Picture>(path, width, height);
 }
 
-SimpleSprite::SimpleSprite(const SimpleSprite &sprite)
+SimpleSprite::SimpleSprite(const ISprite &sprite)
 {
-    this->_picture = std::make_unique<Picture>(sprite.getPicture().getPath());
+    this->_picture = std::make_unique<Picture>(sprite.getPicture());
 }
 
 const IPicture &SimpleSprite::getPicture() const
@@ -36,5 +36,5 @@ void SimpleSprite::setPicture(std::unique_ptr<IPicture> picture)
 
 void SimpleSprite::setPicture(const IPicture &picture)
 {
-    this->_picture = std::make_unique<Picture>(picture.getPath());
+    this->_picture = std::make_unique<Picture>(picture);
 }

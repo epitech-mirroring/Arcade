@@ -15,8 +15,8 @@ protected:
 public:
     explicit SimpleSprite(const IPicture &picture);
     explicit SimpleSprite(std::unique_ptr<IPicture> picture);
-    explicit SimpleSprite(const std::string &path);
-    explicit SimpleSprite(const SimpleSprite &sprite);
+    explicit SimpleSprite(const std::string &path, const std::size_t &width, const std::size_t &height);
+    explicit SimpleSprite(const ISprite &sprite);
     ~SimpleSprite() override = default;
 
     [[nodiscard]] const IPicture &getPicture() const override;
