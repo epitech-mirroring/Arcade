@@ -365,6 +365,8 @@ void SDL2::displayEntity(const IEntity &entity)
     float scale = entity.getSize();
     float w = entity.getSprite().getPicture().getWidth() * scale;
     float h = entity.getSprite().getPicture().getHeight() * scale;
+    DrawRect drawRect = entity.getSprite().getDrawRect();
+    SDL_Rect drawRectSDL = {static_cast<int>(drawRect.x), static_cast<int>(drawRect.y), static_cast<int>(drawRect.width), static_cast<int>(drawRect.height)};
     SDL_Rect rect = {entity.getPosition().getX(), entity.getPosition().getY(), (int)w, (int)h};
 
     if (this->_images.find(path) == this->_images.end()) {
@@ -380,7 +382,7 @@ void SDL2::displayEntity(const IEntity &entity)
     if (IS_INSTANCE_OF(const ICanRotate, entity)) {
         angle = TRANSFORM_TO(const ICanRotate, entity)->getRotation();
     }
-    if (SDL_RenderCopyEx(this->_renderer.get(), texture.get(), nullptr, &rect, angle, nullptr, SDL_FLIP_NONE) != 0) {
+    if (SDL_RenderCopyEx(this->_renderer.get(), texture.get(), &drawRectSDL, &rect, angle, nullptr, SDL_FLIP_NONE) != 0) {
         throw SDL2Exception("Error while rendering image", *this);
     }
 }

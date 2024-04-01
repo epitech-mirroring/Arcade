@@ -17,6 +17,7 @@ protected:
     std::size_t _currentFrame;
     std::size_t _frameDuration;
     std::size_t _currentDuration;
+    DrawRect _drawRect;
 public:
     AnimatedSprite(std::unique_ptr<IPicture> picture, std::size_t nbFrames, std::size_t frameDuration);
     AnimatedSprite(const IPicture &picture, std::size_t nbFrames, std::size_t frameDuration);
@@ -29,4 +30,6 @@ public:
     [[nodiscard]] std::size_t getCurrentFrame() const;
     [[nodiscard]] std::size_t getNbFrames() const;
     [[nodiscard]] std::size_t getFrameDuration() const;
+    [[nodiscard]] const DrawRect &getDrawRect() const override;
+    void setDrawRect(const DrawRect &drawRect) override;
 };
