@@ -9,8 +9,21 @@
 #include "NCurses.hpp"
 #include <memory>
 #include <string>
+#include <iostream>
 
 extern "C" {
+    __attribute__((constructor))
+    void load_lib()
+    {
+        std::cout << "Loading NCurses driver" << std::endl;
+    }
+
+    __attribute__((destructor))
+    void unload_lib()
+    {
+        std::cout << "Unloading NCurses driver" << std::endl;
+    }
+
     std::unique_ptr<NCurses> create_driver(void)
     {
         return nullptr;

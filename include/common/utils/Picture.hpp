@@ -13,8 +13,10 @@
 class Picture: public IPicture {
 protected:
     std::string _path;
+    std::size_t _width;
+    std::size_t _height;
 public:
-    Picture(const std::string &path);
+    Picture(const std::string &path, std::size_t width, std::size_t height);
     Picture(const IPicture &picture);
     Picture();
     ~Picture();
@@ -24,4 +26,6 @@ public:
     bool operator!=(const Picture &picture) const;
     Picture &operator=(const Picture &picture);
     friend std::ostream &operator<<(std::ostream &os, const Picture &picture);
+    std::size_t getWidth() const override;
+    std::size_t getHeight() const override;
 };

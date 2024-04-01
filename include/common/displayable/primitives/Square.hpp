@@ -16,8 +16,8 @@ protected:
     std::size_t _width;
     std::size_t _height;
 public:
-    Square(std::unique_ptr<IColor> &color, size_t width, std::size_t height);
-    Square(const IColor &color, size_t width, std::size_t height);
+    Square(std::unique_ptr<IColor> &color, size_t width, std::size_t height, char replacingChar = '*');
+    Square(const IColor &color, size_t width, std::size_t height, char replacingChar = '*');
     ~Square() override = default;
     [[nodiscard]] std::size_t getWidth() const override;
     [[nodiscard]] std::size_t getHeight() const override;

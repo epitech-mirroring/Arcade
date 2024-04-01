@@ -32,7 +32,7 @@ public:
     void flipFrame() override;
     void bindEvent(IEvent::EventType type, EventKey key, EventCallback callback) override;
     void setPreferredSize(std::size_t width, std::size_t height) override;
-
+    void unbindAll() override;
 private:
     void handleEvents();
     void handleKeyDownEvents(sf::Event event);
@@ -49,7 +49,8 @@ private:
     std::map<std::pair<IEvent::EventType, EventKey>, EventCallback> _events;
     std::map<sf::Keyboard::Key, EventKey> _keyMap;
     std::deque<sf::Keyboard::Key> _pressedKeys;
-    std::map<std::string, sf::Sprite> _loadedSprites;
+    std::map<std::string, sf::Texture> _loadedTextures;
+    std::map<std::string, sf::Font> _loadedFonts;
     std::size_t _width;
     std::size_t _height;
 };

@@ -17,7 +17,7 @@ RGBAColor::RGBAColor(size_t r, size_t g, size_t b, size_t a) {
   this->_a = CLAMP_COLOR(a);
 }
 
-RGBAColor::RGBAColor(const RGBAColor &color) {
+RGBAColor::RGBAColor(const IColor &color) {
   this->_r = color.getR();
   this->_g = color.getG();
   this->_b = color.getB();

@@ -20,7 +20,7 @@ public:
     Event(EventType type, EventKey key, int x, int y);
     Event(EventType type, EventKey key, const Coord2D &position);
     ~Event() override = default;
-    EventType getType() override;
-    EventKey getKey() override;
-    const ICoordinate &getPosition() override;
+    EventType getType() const override;
+    EventKey getKey() const override;
+    const ICoordinate &getPosition() const override;
 };
