@@ -240,7 +240,7 @@ void SFML::displaySquare(const ISquare &square)
     sf::RectangleShape sfSquare;
     sf::Color color = sf::Color(square.getColor().getR(), square.getColor().getG(), square.getColor().getB(), square.getColor().getA());
 
-    sfSquare.setSize(sf::Vector2f(square.getWidth(), square.getHeight()));
+    sfSquare.setSize(sf::Vector2f(square.getWidth() * square.getSize(), square.getHeight() * square.getSize()));
     sfSquare.setFillColor(color);
     sfSquare.setPosition(square.getPosition().getX(), square.getPosition().getY());
     if (IS_INSTANCE_OF(const ICanRotate, square)) {
@@ -254,7 +254,7 @@ void SFML::displayCircle(const ICircle &circle)
     sf::CircleShape sfCircle;
     sf::Color color = sf::Color(circle.getColor().getR(), circle.getColor().getG(), circle.getColor().getB(), circle.getColor().getA());
 
-    sfCircle.setRadius(circle.getRadius());
+    sfCircle.setRadius(circle.getRadius() * circle.getSize());
     sfCircle.setFillColor(color);
     sfCircle.setPosition(circle.getPosition().getX(), circle.getPosition().getY());
     if (IS_INSTANCE_OF(const ICanRotate, circle)) {

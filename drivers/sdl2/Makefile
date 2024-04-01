@@ -9,6 +9,7 @@
 
 # All the source files
 CXX_SOURCES		= 	src/Sdl2.cpp								\
+					src/SDL2Exception.cpp
 
 CXX_TESTS		=
 
@@ -17,7 +18,7 @@ NAME 			= 	arcade_sdl2.so
 COMMON_LIB      = 	../../libs/common
 CXX				= 	g++
 CXXFLAGS		= 	-W -Wall -Wextra -std=c++20 --coverage -I../../include \
-					-fPIC
+					-fPIC -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2main
 COMMON_OBJS 	= 	$(COMMON_LIB)/AGame.o									\
 					$(COMMON_LIB)/utils/RGBAColor.o							\
 					$(COMMON_LIB)/utils/Coord2D.o							\
