@@ -8,7 +8,6 @@
 
 #include <iostream>
 #include "core/Arcade.hpp"
-#include "shared/errors/IError.hpp"
 #include <memory>
 
 static void print_usage() {

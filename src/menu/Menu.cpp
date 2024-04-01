@@ -12,6 +12,7 @@
 #include "common/utils/Coord2D.hpp"
 #include "common/utils/RGBAColor.hpp"
 #include "core/Arcade.hpp"
+#include <unordered_map>
 
 Menu::Menu() = default;
 
@@ -106,8 +107,6 @@ void Menu::run() {
     if (frame >= 55)
         frame = 0;
 }
-
-#include <unordered_map>
 
 void Menu::typeUsername(const IEvent &event) const {
     static const std::unordered_map<EventKey, char> keyMap = {
