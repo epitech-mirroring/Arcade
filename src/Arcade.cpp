@@ -97,6 +97,8 @@ void Arcade::loadGame(const std::string &gameName) {
         if (this->_game.loader != nullptr)
             this->_game.loader.reset();
         this->_driver.instance->unbindAll();
+        this->_events.clear();
+        this->rebindGlobalKeys();
     }
     // Replace game
     this->_game.instance = dl->getInstance();
@@ -278,6 +280,8 @@ void Arcade::menu() {
             if (this->_game.loader != nullptr)
                 this->_game.loader.reset();
             this->_driver.instance->unbindAll();
+            this->_events.clear();
+            this->rebindGlobalKeys();
         }
         this->_game.instance = std::make_unique<Menu>();
         this->_game.loader = nullptr;
