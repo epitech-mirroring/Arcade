@@ -9,11 +9,11 @@
 #include "common/displayable/primitives/Circle.hpp"
 #include "common/utils/RGBAColor.hpp"
 
-Circle::Circle(std::unique_ptr<IColor> &color, std::size_t radius) : APrimitive(color) {
+Circle::Circle(std::unique_ptr<IColor> &color, std::size_t radius, char replacingChar): APrimitive(color, replacingChar) {
     this->_radius = radius;
 }
 
-Circle::Circle(const IColor &color, std::size_t radius): APrimitive(color) {
+Circle::Circle(const IColor &color, std::size_t radius, char replacingChar): APrimitive(color, replacingChar) {
     this->_radius = radius;
 }
 
