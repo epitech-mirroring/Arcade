@@ -18,4 +18,6 @@ protected:
 public:
     ~APrimitive() override = default;
     [[nodiscard]] const IColor &getColor() const override;
+    void setColor(const IColor &color) override;
+    void setColor(std::unique_ptr<IColor> color) override;
 };

@@ -25,3 +25,13 @@ const IColor &APrimitive::getColor() const
 {
     return *this->_color;
 }
+
+void APrimitive::setColor(const IColor &color)
+{
+    this->_color = std::make_unique<RGBAColor>(color);
+}
+
+void APrimitive::setColor(std::unique_ptr<IColor> color)
+{
+    this->_color = std::move(color);
+}
