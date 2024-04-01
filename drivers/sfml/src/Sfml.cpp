@@ -38,9 +38,12 @@ extern "C" {
 
 SFML::SFML()
 {
-    this->_window.create(sf::VideoMode(800, 600), "Arcade");
+    this->_width = 800;
+    this->_height = 600;
+    this->_window.create(sf::VideoMode(800, 600), "Arcade", sf::Style::Close | sf::Style::Titlebar);
     this->_window.setFramerateLimit(60);
     this->_window.clear();
+    this->_window.setView(sf::View(sf::FloatRect(0, 0, 800, 600)));
     this->_keyMap = {
         {sf::Keyboard::Key::A, KEY_A},
         {sf::Keyboard::Key::B, KEY_B},
@@ -100,7 +103,19 @@ SFML::SFML()
         {sf::Keyboard::Key::Up, KEY_UP},
         {sf::Keyboard::Key::Down, KEY_DOWN},
         {sf::Keyboard::Key::Left, KEY_LEFT},
-        {sf::Keyboard::Key::Right, KEY_RIGHT}
+        {sf::Keyboard::Key::Right, KEY_RIGHT},
+        {sf::Keyboard::Key::F1, KEY_F1},
+        {sf::Keyboard::Key::F2, KEY_F2},
+        {sf::Keyboard::Key::F3, KEY_F3},
+        {sf::Keyboard::Key::F4, KEY_F4},
+        {sf::Keyboard::Key::F5, KEY_F5},
+        {sf::Keyboard::Key::F6, KEY_F6},
+        {sf::Keyboard::Key::F7, KEY_F7},
+        {sf::Keyboard::Key::F8, KEY_F8},
+        {sf::Keyboard::Key::F9, KEY_F9},
+        {sf::Keyboard::Key::F10, KEY_F10},
+        {sf::Keyboard::Key::F11, KEY_F11},
+        {sf::Keyboard::Key::F12, KEY_F12}
     };
 }
 
@@ -123,6 +138,7 @@ void SFML::setPreferredSize(std::size_t width, std::size_t height)
     this->_width = width;
     this->_height = height;
     this->_window.setSize(sf::Vector2u(width, height));
+    this->_window.setView(sf::View(sf::FloatRect(0, 0, width, height)));
 }
 
 void SFML::bindEvent(IEvent::EventType type, EventKey key, EventCallback callback)
@@ -197,11 +213,20 @@ void SFML::displayPrimitive(const IPrimitive &primitive)
 
 void SFML::displayText(const IText &text)
 {
+    static sf::Font font;
     sf::Text sfText;
     sf::Color color = sf::Color(text.getColor().getR(), text.getColor().getG(), text.getColor().getB(), text.getColor().getA());
 
+    if (this->_loadedFonts.find(text.getFontPath()) == this->_loadedFonts.end()) {
+        font.loadFromFile(text.getFontPath());
+        this->_loadedFonts[text.getFontPath()] = font;
+    } else {
+        font = this->_loadedFonts[text.getFontPath()];
+    }
+    sfText.setFont(font);
     sfText.setString(text.getText());
-    sfText.setColor(color);
+    sfText.setFillColor(color);
+    sfText.setOutlineColor(color);
     sfText.setCharacterSize(text.getSize());
     sfText.setPosition(text.getPosition().getX(), text.getPosition().getY());
     if (IS_INSTANCE_OF(const ICanRotate, text)) {
@@ -215,7 +240,7 @@ void SFML::displaySquare(const ISquare &square)
     sf::RectangleShape sfSquare;
     sf::Color color = sf::Color(square.getColor().getR(), square.getColor().getG(), square.getColor().getB(), square.getColor().getA());
 
-    sfSquare.setSize(sf::Vector2f(square.getWidth(), square.getHeight()));
+    sfSquare.setSize(sf::Vector2f(square.getWidth() * square.getSize(), square.getHeight() * square.getSize()));
     sfSquare.setFillColor(color);
     sfSquare.setPosition(square.getPosition().getX(), square.getPosition().getY());
     if (IS_INSTANCE_OF(const ICanRotate, square)) {
@@ -229,7 +254,7 @@ void SFML::displayCircle(const ICircle &circle)
     sf::CircleShape sfCircle;
     sf::Color color = sf::Color(circle.getColor().getR(), circle.getColor().getG(), circle.getColor().getB(), circle.getColor().getA());
 
-    sfCircle.setRadius(circle.getRadius());
+    sfCircle.setRadius(circle.getRadius() * circle.getSize());
     sfCircle.setFillColor(color);
     sfCircle.setPosition(circle.getPosition().getX(), circle.getPosition().getY());
     if (IS_INSTANCE_OF(const ICanRotate, circle)) {
@@ -244,14 +269,16 @@ void SFML::displayEntity(const IEntity &entity)
     sf::Texture texture;
     std::string path = entity.getSprite().getPicture().getPath();
 
-    if (this->_loadedSprites.find(path) == this->_loadedSprites.end()) {
+    if (this->_loadedTextures.find(path) == this->_loadedTextures.end()) {
         texture.loadFromFile(path);
-        sprite.setTexture(texture);
-        this->_loadedSprites[path] = sprite;
+        this->_loadedTextures[path] = texture;
     } else {
-        sprite = this->_loadedSprites[path];
+        texture = this->_loadedTextures[path];
     }
+    sprite.setTexture(texture, true);
+    sprite.setTextureRect(sf::IntRect(0, 0, entity.getSprite().getPicture().getWidth(), entity.getSprite().getPicture().getHeight()));
     sprite.setPosition(entity.getPosition().getX(), entity.getPosition().getY());
+    sprite.setScale(entity.getSize(), entity.getSize());
     if (IS_INSTANCE_OF(const ICanRotate, entity)) {
         sprite.setRotation(TRANSFORM_TO(const ICanRotate, entity)->getRotation());
     }
