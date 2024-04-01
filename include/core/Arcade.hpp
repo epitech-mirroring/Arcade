@@ -14,6 +14,8 @@
 #include "DLLoader.hpp"
 #include <list>
 #include <memory>
+#include <queue>
+#include <functional>
 
 struct SharedLibrary {
     std::string name;
@@ -37,6 +39,7 @@ private:
     std::size_t _currentGameIndex;
     std::size_t _currentDriverIndex;
     std::shared_ptr<IArcade> _arcade;
+    std::queue<std::function<void()>> _endFrameCallbacks;
     bool _running;
 
     void bareLoadDriver(const std::string &driverPath);
@@ -55,7 +58,7 @@ public:
     void setArcadePtr(std::shared_ptr<IArcade> arcade);
 
     void exit();
-    void restart() const;
+    void restart();
     void nextGame();
     void nextDriver();
     void menu();

@@ -23,6 +23,7 @@ Arcade::Arcade(const std::string &firstDriverName) {
     this->_players = std::vector<Player>();
     this->_games = std::vector<SharedLibrary>();
     this->_drivers = std::vector<SharedLibrary>();
+    this->_endFrameCallbacks = std::queue<std::function<void()>>();
     this->scanLibs();
     this->loadScore();
     this->bareLoadDriver(firstDriverName);
@@ -47,7 +48,8 @@ Arcade::~Arcade() {
 
 void Arcade::bareLoadDriver(const std::string &driverPath) {
     std::unique_ptr<DLLoader<IDriver>> dl = std::make_unique<DLLoader<IDriver>>(driverPath, "create_driver");
-    this->_driver = {dl->getInstance(), std::move(dl)};
+    this->_driver.instance = dl->getInstance();
+    this->_driver.loader = std::move(dl);
     this->rebindGlobalKeys();
 }
 
@@ -64,10 +66,12 @@ void Arcade::loadDriver(const std::string &driverName) {
     // If driver already loaded, unload it
     if (this->_driver.instance != nullptr) {
         this->_driver.instance.reset();
-        this->_driver.loader.reset();
+        if (this->_driver.loader != nullptr)
+            this->_driver.loader.reset();
     }
     // Replace driver
-    this->_driver = {dl->getInstance(), std::move(dl)};
+    this->_driver.instance = dl->getInstance();
+    this->_driver.loader = std::move(dl);
     this->rebindGlobalKeys();
 }
 
@@ -92,7 +96,8 @@ void Arcade::loadGame(const std::string &gameName) {
             this->_game.loader.reset();
     }
     // Replace game
-    this->_game = {dl->getInstance(), std::move(dl)};
+    this->_game.instance = dl->getInstance();
+    this->_game.loader = std::move(dl);
     this->_game.instance->init(this->_arcade);
     this->_game.instance->start();
 }
@@ -212,6 +217,10 @@ void Arcade::run() {
         if (this->_game.instance != nullptr) {
             this->_game.instance->run();
         }
+        while (!this->_endFrameCallbacks.empty()) {
+            this->_endFrameCallbacks.front()();
+            this->_endFrameCallbacks.pop();
+        }
         usleep((int) (1.f/60.f * 1000000.f));
     }
 }
@@ -228,27 +237,33 @@ void Arcade::exit() {
     this->_running = false;
 }
 
-void Arcade::restart() const {
-    if (this->_game.instance != nullptr) {
-        this->_game.instance->start();
-    }
+void Arcade::restart() {
+    this->_endFrameCallbacks.emplace([this]() {
+        if (this->_game.instance != nullptr) {
+            this->_game.instance->start();
+        }
+    });
 }
 
 void Arcade::menu() {
-    this->_currentGameIndex = 0;
-    if (this->_game.instance != nullptr) {
-        if (this->_game.instance->getScore() > this->_currentPlayer->getScore()) {
-            this->_currentPlayer->setScore(this->_game.instance->getScore());
+    this->_endFrameCallbacks.emplace([this]() {
+        this->_currentGameIndex = 0;
+        if (this->_game.instance != nullptr) {
+            if (this->_game.instance->getScore() >
+                this->_currentPlayer->getScore()) {
+                this->_currentPlayer->setScore(
+                        this->_game.instance->getScore());
+            }
+            this->saveScore();
+            this->_game.instance.reset();
+            if (this->_game.loader != nullptr)
+                this->_game.loader.reset();
         }
-        this->saveScore();
-        this->_game.instance.reset();
-        if (this->_game.loader != nullptr)
-            this->_game.loader.reset();
-    }
-    this->_game.instance = std::make_unique<Menu>();
-    this->_game.loader = nullptr;
-    this->_game.instance->init(this->_arcade);
-    this->_game.instance->start();
+        this->_game.instance = std::make_unique<Menu>();
+        this->_game.loader = nullptr;
+        this->_game.instance->init(this->_arcade);
+        this->_game.instance->start();
+    });
 }
 
 void Arcade::nextGame() {
@@ -257,7 +272,7 @@ void Arcade::nextGame() {
         if (this->_currentGameIndex >= this->_games.size()) {
             this->_currentGameIndex = 0;
         }
-        this->loadGame(this->_games[this->_currentGameIndex].name);
+        this->_endFrameCallbacks.emplace([this]() {this->loadGame(this->_games[this->_currentGameIndex].name);});
     }
 }
 
@@ -266,7 +281,7 @@ void Arcade::nextDriver() {
     if (this->_currentDriverIndex >= this->_drivers.size()) {
         this->_currentDriverIndex = 0;
     }
-    this->loadDriver(this->_drivers[this->_currentDriverIndex].name);
+    this->_endFrameCallbacks.emplace([this]() {this->loadDriver(this->_drivers[this->_currentDriverIndex].name);});
 }
 
 void Arcade::setPreferredSize(std::size_t width, std::size_t height) {
