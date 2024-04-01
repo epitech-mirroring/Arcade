@@ -253,6 +253,10 @@ void SDL2::displayPrimitive(const IPrimitive &primitive)
 
 void SDL2::displayText(const IText &text)
 {
+    if (text.getFontPath().empty() || text.getText().empty()) {
+        return;
+    }
+    
     std::string path = text.getFontPath();
     std::size_t fontSize = text.getSize();
     std::pair<std::string, std::size_t> fontKey = std::make_pair(path, fontSize);
