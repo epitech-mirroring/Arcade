@@ -96,6 +96,7 @@ void Arcade::loadGame(const std::string &gameName) {
         this->_game.instance.reset();
         if (this->_game.loader != nullptr)
             this->_game.loader.reset();
+        this->_driver.instance->unbindAll();
     }
     // Replace game
     this->_game.instance = dl->getInstance();
@@ -246,7 +247,7 @@ void Arcade::rebindCustomKeys() {
     }
 }
 
-void Arcade::reApplyPreferences() {
+void Arcade::reApplyPreferences() const {
     this->_driver.instance->setPreferredSize(this->_preferredWidth,
                                              this->_preferredHeight);
 }
@@ -276,6 +277,7 @@ void Arcade::menu() {
             this->_game.instance.reset();
             if (this->_game.loader != nullptr)
                 this->_game.loader.reset();
+            this->_driver.instance->unbindAll();
         }
         this->_game.instance = std::make_unique<Menu>();
         this->_game.loader = nullptr;

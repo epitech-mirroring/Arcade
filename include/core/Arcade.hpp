@@ -59,7 +59,7 @@ public:
     void saveScore();
     void rebindGlobalKeys();
     void rebindCustomKeys();
-    void reApplyPreferences();
+    void reApplyPreferences() const;
     [[nodiscard]] Player &getCurrentPlayer() const;
     [[nodiscard]] const std::vector<Player> &getPlayers() const;
     void setArcadePtr(std::shared_ptr<IArcade> arcade);
