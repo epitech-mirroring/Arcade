@@ -116,29 +116,29 @@ void Arcade::scanLibs() {
         while ((ent = readdir(dir)) != nullptr) {
             std::string filename = ent->d_name;
             if (filename.find(".so") != std::string::npos) {
+                std::unique_ptr<DLLoader<IGame>> gameDl = nullptr;
+                std::unique_ptr<DLLoader<IDriver>> driverDl = nullptr;
                 try {
-                    std::unique_ptr<DLLoader<IDriver>> dl = std::make_unique<DLLoader<IDriver>>("./lib/" + filename, "create_driver");
-                    if (dl->getLibName != nullptr)
-                        this->_drivers.push_back({dl->getLibName(), filename});
+                    driverDl = std::make_unique<DLLoader<IDriver>>("./lib/" + filename, "create_driver");
+                    if (driverDl->getLibName != nullptr)
+                        this->_drivers.push_back({driverDl->getLibName(), filename});
                     else
-                        this->_drivers.push_back({filename, parseLibName(filename)});
-                    dl.reset();
+                        this->_drivers.push_back({parseLibName(filename), filename});
                 } catch (LibraryFormatException &e) {
                     try {
-                        std::unique_ptr<DLLoader<IGame>> dl = std::make_unique<DLLoader<IGame>>("./lib/" + filename, "create_game");
-                        if (dl->getLibName != nullptr)
-                            this->_games.push_back({dl->getLibName(), filename});
+                        gameDl = std::make_unique<DLLoader<IGame>>("./lib/" + filename, "create_game");
+                        if (gameDl->getLibName != nullptr)
+                            this->_games.push_back({gameDl->getLibName(), filename});
                         else
-                            this->_games.push_back({filename, parseLibName(filename)});
-                        dl.reset();
+                            this->_games.push_back({parseLibName(filename), filename});
                     } catch (std::exception &e) {
                         std::cerr << e.what() << std::endl;
-                        continue;
                     }
                 } catch (std::exception &e) {
                     std::cerr << "Unexpected error on library scan:\n" << e.what() << std::endl;
-                    continue;
                 }
+                gameDl.reset();
+                driverDl.reset();
             }
         }
         closedir(dir);
