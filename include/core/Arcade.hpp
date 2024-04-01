@@ -50,15 +50,15 @@ public:
     void loadScore();
     void saveScore();
     void rebindGlobalKeys();
-    Player &getCurrentPlayer() const;
-    const std::vector<Player> &getPlayers() const;
-    std::shared_ptr<IArcade> getArcade() const;
+    [[nodiscard]] Player &getCurrentPlayer() const;
+    [[nodiscard]] const std::vector<Player> &getPlayers() const;
+    void setArcadePtr(std::shared_ptr<IArcade> arcade);
 
-    void exit(const IEvent &event);
-    void restart(const IEvent &event);
-    void nextGame(const IEvent &event);
-    void nextDriver(const IEvent &event);
-    void menu(const IEvent &event);
+    void exit();
+    void restart() const;
+    void nextGame();
+    void nextDriver();
+    void menu();
 
     void run();
 

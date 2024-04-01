@@ -12,11 +12,11 @@
 #include <unistd.h>
 #include <algorithm>
 #include <memory>
+#include <utility>
 #include "json/Json.hpp"
 #include "core/menu/Menu.hpp"
 
 Arcade::Arcade(const std::string &firstDriverName) {
-    this->_arcade = std::shared_ptr<IArcade>(this);
     this->_currentPlayer = std::make_unique<Player>("Player", 0);
     this->_game = {nullptr, nullptr};
     this->_driver = {nullptr, nullptr};
@@ -29,9 +29,6 @@ Arcade::Arcade(const std::string &firstDriverName) {
     this->_currentDriverIndex = 0;
     this->_currentGameIndex = 0;
     this->_running = true;
-    this->_game = {std::make_unique<Menu>(), nullptr};
-    this->_game.instance->init(this->_arcade);
-    this->_game.instance->start();
 }
 
 Arcade::~Arcade() {
@@ -208,6 +205,9 @@ std::vector<SharedLibrary> Arcade::getDrivers() const {
 }
 
 void Arcade::run() {
+    if (this->_game.instance == nullptr) {
+        this->menu();
+    }
     while (this->_running) {
         if (this->_game.instance != nullptr) {
             this->_game.instance->run();
@@ -217,32 +217,41 @@ void Arcade::run() {
 }
 
 void Arcade::rebindGlobalKeys() {
-    this->_driver.instance->bindEvent(IEvent::KEY_DOWN, KEY_ESCAPE, [this](const IEvent &event) {this->exit(event);}); // Exit
-    this->_driver.instance->bindEvent(IEvent::KEY_DOWN, KEY_F1, [this](const IEvent &event) {this->restart(event);}); // Restart
-    this->_driver.instance->bindEvent(IEvent::KEY_DOWN, KEY_F2, [this](const IEvent &event) {this->menu(event);}); // Menu
-    this->_driver.instance->bindEvent(IEvent::KEY_DOWN, KEY_F4, [this](const IEvent &event) {this->nextGame(event);}); // Next game
-    this->_driver.instance->bindEvent(IEvent::KEY_DOWN, KEY_F5, [this](const IEvent &event) {this->nextDriver(event);}); // Next driver
+    this->_driver.instance->bindEvent(IEvent::KEY_DOWN, KEY_ESCAPE, [this](const IEvent &event) {(void) event; this->exit();}); // Exit
+    this->_driver.instance->bindEvent(IEvent::KEY_DOWN, KEY_F1, [this](const IEvent &event) {(void) event; this->restart();}); // Restart
+    this->_driver.instance->bindEvent(IEvent::KEY_DOWN, KEY_F2, [this](const IEvent &event) {(void) event; this->menu();}); // Menu
+    this->_driver.instance->bindEvent(IEvent::KEY_DOWN, KEY_F4, [this](const IEvent &event) {(void) event; this->nextGame();}); // Next game
+    this->_driver.instance->bindEvent(IEvent::KEY_DOWN, KEY_F5, [this](const IEvent &event) {(void) event; this->nextDriver();}); // Next driver
 }
 
-void Arcade::exit(const IEvent &event) {
-    (void) event;
+void Arcade::exit() {
     this->_running = false;
 }
 
-void Arcade::restart(const IEvent &event) {
-    (void) event;
+void Arcade::restart() const {
     if (this->_game.instance != nullptr) {
         this->_game.instance->start();
     }
 }
 
-void Arcade::menu(const IEvent &event) {
-    (void) event;
-    //TODO
+void Arcade::menu() {
+    this->_currentGameIndex = 0;
+    if (this->_game.instance != nullptr) {
+        if (this->_game.instance->getScore() > this->_currentPlayer->getScore()) {
+            this->_currentPlayer->setScore(this->_game.instance->getScore());
+        }
+        this->saveScore();
+        this->_game.instance.reset();
+        if (this->_game.loader != nullptr)
+            this->_game.loader.reset();
+    }
+    this->_game.instance = std::make_unique<Menu>();
+    this->_game.loader = nullptr;
+    this->_game.instance->init(this->_arcade);
+    this->_game.instance->start();
 }
 
-void Arcade::nextGame(const IEvent &event) {
-    (void) event;
+void Arcade::nextGame() {
     if (this->_game.instance != nullptr) {
         this->_currentGameIndex++;
         if (this->_currentGameIndex >= this->_games.size()) {
@@ -252,8 +261,7 @@ void Arcade::nextGame(const IEvent &event) {
     }
 }
 
-void Arcade::nextDriver(const IEvent &event) {
-    (void) event;
+void Arcade::nextDriver() {
     this->_currentDriverIndex++;
     if (this->_currentDriverIndex >= this->_drivers.size()) {
         this->_currentDriverIndex = 0;
@@ -273,6 +281,6 @@ const std::vector<Player> &Arcade::getPlayers() const {
     return this->_players;
 }
 
-std::shared_ptr<IArcade> Arcade::getArcade() const {
-    return this->_arcade;
+void Arcade::setArcadePtr(std::shared_ptr<IArcade> arcade) {
+    this->_arcade = std::move(arcade);
 }
