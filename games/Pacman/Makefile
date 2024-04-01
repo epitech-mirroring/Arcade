@@ -9,6 +9,7 @@
 
 # All the source files
 CXX_SOURCES		= 	src/Pacman.cpp								\
+					src/entities/Wall.cpp						\
 
 CXX_TESTS		=
 
