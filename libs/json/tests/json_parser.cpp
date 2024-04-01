@@ -7,7 +7,7 @@
 */
 
 #include "json/Json.hpp"
-#include "criterion/criterion.h"
+#include <criterion/criterion.h>
 #include <fstream>
 #include <cstdio>
 
@@ -242,4 +242,66 @@ Test(json_parser, json_root_array)
 
     // Delete the file
     std::remove("tests/json_root_array.json");
+}
+
+Test(json_parser, empty_root_array) {
+    // Create a file that contains an empty array as root
+    std::ofstream file("tests/empty_root_array.json");
+    file << "[]";
+    file.close();
+
+    // Parse the file
+    JsonArray json = JsonArray::parseFile("tests/empty_root_array.json");
+    // Check if the file is correct
+    cr_assert_eq(json.getType(), "array");
+    cr_assert_eq(json.getName(), "root");
+    cr_assert_eq(json.size(), 0);
+
+    for (size_t i = 0; i < json.size(); i++) {
+        cr_expect(false, "The array should be empty");
+    }
+
+    // Delete the file
+    std::remove("tests/empty_root_array.json");
+}
+
+Test(json_parser, empty_array_in_object)
+{
+    // Create a file that contains an empty array in an object
+    std::ofstream file("tests/empty_array_in_object.json");
+    file << "{\"array\": []}";
+    file.close();
+
+    // Parse the file
+    JsonObject json = JsonObject::parseFile("tests/empty_array_in_object.json");
+    // Check if the file is correct
+    cr_assert_eq(json.getType(), "object");
+    cr_assert_eq(json.getName(), "root");
+
+    // Get the array
+    JsonArray arr = json.getValue<JsonArray>("array");
+    cr_assert_eq(arr.getType(), "array");
+    cr_assert_eq(arr.getName(), "array");
+    cr_assert_eq(arr.size(), 0);
+
+    // Delete the file
+    std::remove("tests/empty_array_in_object.json");
+}
+
+Test(json_parser, empty_root_object) {
+    // Create a file that contains an empty object as root
+    std::ofstream file("tests/empty_root_object.json");
+    file << "{}";
+    file.close();
+
+    // Parse the file
+    JsonObject json = JsonObject::parseFile("tests/empty_root_object.json");
+    // Check if the file is correct
+    cr_assert_eq(json.getType(), "object");
+    cr_assert_eq(json.getName(), "root");
+
+    cr_assert_any_throw(json.getValue<JsonString>("key"));
+
+    // Delete the file
+    std::remove("tests/empty_root_object.json");
 }
