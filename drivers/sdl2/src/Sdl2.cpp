@@ -7,6 +7,9 @@
 */
 
 #include "Sdl2.hpp"
+#include <memory>
+#include <string>
+#include <iostream>
 
 extern "C" {
     __attribute__((constructor))

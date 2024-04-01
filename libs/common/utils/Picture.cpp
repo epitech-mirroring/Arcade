@@ -8,14 +8,18 @@
 
 #include "common/utils/Picture.hpp"
 
-Picture::Picture(const std::string &path)
+Picture::Picture(const std::string &path, std::size_t width, std::size_t height)
 {
     this->_path = path;
+    this->_width = width;
+    this->_height = height;
 }
 
 Picture::Picture(const IPicture &picture)
 {
     this->_path = picture.getPath();
+    this->_width = picture.getWidth();
+    this->_height = picture.getHeight();
 }
 
 Picture::Picture()
@@ -57,4 +61,14 @@ std::ostream &operator<<(std::ostream &os, const Picture &picture)
 {
     os << picture.getPath();
     return os;
+}
+
+std::size_t Picture::getWidth() const
+{
+    return this->_width;
+}
+
+std::size_t Picture::getHeight() const
+{
+    return this->_height;
 }

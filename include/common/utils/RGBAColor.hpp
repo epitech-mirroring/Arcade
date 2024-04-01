@@ -23,7 +23,7 @@ protected:
 
 public:
   RGBAColor(size_t r, size_t g, size_t b, size_t a = 255);
-  RGBAColor(const RGBAColor &color);
+  RGBAColor(const IColor &color);
   RGBAColor();
   ~RGBAColor() override;
   size_t getR() const override;

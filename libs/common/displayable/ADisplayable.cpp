@@ -21,7 +21,7 @@ const ICoordinate &ADisplayable::getPosition() const
     return *this->_position;
 }
 
-int ADisplayable::getSize() const
+float ADisplayable::getSize() const
 {
     return this->_size;
 }
@@ -36,7 +36,7 @@ void ADisplayable::setPosition(std::unique_ptr<ICoordinate> position)
     this->_position = std::move(position);
 }
 
-void ADisplayable::setSize(int size)
+void ADisplayable::setSize(float size)
 {
     this->_size = size;
 }
@@ -49,4 +49,8 @@ float ADisplayable::getRotation() const
 void ADisplayable::setRotation(float angle)
 {
     this->_rotation = angle;
+}
+
+char ADisplayable::getReplacingChar() const {
+    return this->_replacingChar;
 }

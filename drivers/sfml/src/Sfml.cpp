@@ -284,3 +284,8 @@ void SFML::displayEntity(const IEntity &entity)
     }
     this->_window.draw(sprite);
 }
+
+void SFML::unbindAll()
+{
+    this->_events.clear();
+}
