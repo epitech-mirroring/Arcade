@@ -14,21 +14,21 @@ CXX_SOURCES		= 	src/main.cpp		\
 					src/errors/NoSuchDriverException.cpp	\
 					src/errors/LibraryFormatException.cpp	\
 
-GAMES			= games/Pacman 		\
-				  games/Snake		\
+GAMES			= 	games/Pacman 		\
+				  	games/Snake		\
 
-DRIVERS			= drivers/ncurses	\
-				  drivers/sdl2		\
-				  drivers/sfml		\
+DRIVERS			= 	drivers/ncurses	\
+				  	drivers/sdl2		\
+				  	drivers/sfml		\
 
 CXX_TESTS		=
 
 # Compiler and linker settings
-NAME 			= arcade
-CXX				= g++
+NAME 			= 	arcade
+CXX				= 	g++
 CXXFLAGS		= 	-W -Wall -Wextra -std=c++20 --coverage -I./include
-CXX_OBJS		= $(CXX_SOURCES:.cpp=.o)
-CXX_TESTS_OBJS	= $(CXX_TESTS:.cpp=.o)
+CXX_OBJS		= 	$(CXX_SOURCES:.cpp=.o)
+CXX_TESTS_OBJS	= 	$(CXX_TESTS:.cpp=.o)
 JSON_LIB		= 	./libs/json
 COMMON_LIB		= 	./libs/common
 JSON_OBJS 		= 	$(JSON_LIB)/JsonObject.o	\
@@ -133,7 +133,7 @@ $(NAME):	shared $(JSON_LIB) $(COMMON_LIB) $(CXX_OBJS)
 # Link the object files
 		@printf "$(RUNNING) $(BLUE) 🔗  Linking$(RESET)"
 		@$(CXX) -o $(NAME) $(CXX_OBJS) $(CXXFLAGS) $(JSON_OBJS) $(COMMON_OBJS)\
-		>> $(LOG) 2>&1 \
+		$(shell [ `uname` != "Darwin" ] && echo "-fno-gnu-unique") \
 		&& printf "\r$(SUCCESS)\n" || printf "\r$(FAILURE)\n"
 # Check if the binary was created
 		@if [ -f $(NAME) ]; then \
