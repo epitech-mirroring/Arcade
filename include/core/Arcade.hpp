@@ -16,6 +16,7 @@
 #include <memory>
 #include <queue>
 #include <functional>
+#include <map>
 
 struct SharedLibrary {
     std::string name;
@@ -41,6 +42,10 @@ private:
     std::shared_ptr<IArcade> _arcade;
     std::queue<std::function<void()>> _endFrameCallbacks;
     bool _running;
+    std::size_t _preferredWidth;
+    std::size_t _preferredHeight;
+    std::map<IEvent::EventType, std::map<EventKey, EventCallback>> _events;
+
 
     void bareLoadDriver(const std::string &driverPath);
 public:
@@ -53,6 +58,8 @@ public:
     void loadScore();
     void saveScore();
     void rebindGlobalKeys();
+    void rebindCustomKeys();
+    void reApplyPreferences();
     [[nodiscard]] Player &getCurrentPlayer() const;
     [[nodiscard]] const std::vector<Player> &getPlayers() const;
     void setArcadePtr(std::shared_ptr<IArcade> arcade);

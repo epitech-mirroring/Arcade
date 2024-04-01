@@ -23,6 +23,8 @@ Arcade::Arcade(const std::string &firstDriverName) {
     this->_players = std::vector<Player>();
     this->_games = std::vector<SharedLibrary>();
     this->_drivers = std::vector<SharedLibrary>();
+    this->_preferredHeight = 800;
+    this->_preferredWidth = 800;
     this->_endFrameCallbacks = std::queue<std::function<void()>>();
     this->scanLibs();
     this->loadScore();
@@ -199,6 +201,7 @@ void Arcade::flipFrame() {
 
 void Arcade::bindEvent(IEvent::EventType type, EventKey key, EventCallback callback) {
     this->_driver.instance->bindEvent(type, key, callback);
+    this->_events[type][key] = callback;
 }
 
 std::vector<SharedLibrary> Arcade::getGames() const {
@@ -231,6 +234,21 @@ void Arcade::rebindGlobalKeys() {
     this->_driver.instance->bindEvent(IEvent::KEY_DOWN, KEY_F2, [this](const IEvent &event) {(void) event; this->menu();}); // Menu
     this->_driver.instance->bindEvent(IEvent::KEY_DOWN, KEY_F4, [this](const IEvent &event) {(void) event; this->nextGame();}); // Next game
     this->_driver.instance->bindEvent(IEvent::KEY_DOWN, KEY_F5, [this](const IEvent &event) {(void) event; this->nextDriver();}); // Next driver
+    this->rebindCustomKeys();
+    this->reApplyPreferences();
+}
+
+void Arcade::rebindCustomKeys() {
+    for (const auto &[type, keys] : this->_events) {
+        for (const auto &[key, callback] : keys) {
+            this->_driver.instance->bindEvent(type, key, callback);
+        }
+    }
+}
+
+void Arcade::reApplyPreferences() {
+    this->_driver.instance->setPreferredSize(this->_preferredWidth,
+                                             this->_preferredHeight);
 }
 
 void Arcade::exit() {
@@ -285,6 +303,8 @@ void Arcade::nextDriver() {
 }
 
 void Arcade::setPreferredSize(std::size_t width, std::size_t height) {
+    this->_preferredWidth = width;
+    this->_preferredHeight = height;
     this->_driver.instance->setPreferredSize(width, height);
 }
 
