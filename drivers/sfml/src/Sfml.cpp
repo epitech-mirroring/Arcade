@@ -267,6 +267,7 @@ void SFML::displayEntity(const IEntity &entity)
 {
     sf::Sprite sprite;
     sf::Texture texture;
+    DrawRect drawRect = entity.getSprite().getDrawRect();
     std::string path = entity.getSprite().getPicture().getPath();
 
     if (this->_loadedTextures.find(path) == this->_loadedTextures.end()) {
@@ -276,7 +277,7 @@ void SFML::displayEntity(const IEntity &entity)
         texture = this->_loadedTextures[path];
     }
     sprite.setTexture(texture, true);
-    sprite.setTextureRect(sf::IntRect(0, 0, entity.getSprite().getPicture().getWidth(), entity.getSprite().getPicture().getHeight()));
+    sprite.setTextureRect(sf::IntRect(drawRect.x, drawRect.y, drawRect.width, drawRect.height));
     sprite.setPosition(entity.getPosition().getX(), entity.getPosition().getY());
     sprite.setScale(entity.getSize(), entity.getSize());
     if (IS_INSTANCE_OF(const ICanRotate, entity)) {

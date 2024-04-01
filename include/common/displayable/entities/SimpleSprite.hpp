@@ -12,6 +12,7 @@
 class SimpleSprite : public ISprite {
 protected:
     std::unique_ptr<IPicture> _picture;
+    DrawRect _drawRect;
 public:
     explicit SimpleSprite(const IPicture &picture);
     explicit SimpleSprite(std::unique_ptr<IPicture> picture);
@@ -22,4 +23,6 @@ public:
     [[nodiscard]] const IPicture &getPicture() const override;
     void setPicture(std::unique_ptr<IPicture> picture) override;
     void setPicture(const IPicture &picture) override;
+    [[nodiscard]] const DrawRect &getDrawRect() const override;
+    void setDrawRect(const DrawRect &drawRect) override;
 };
