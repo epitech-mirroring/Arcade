@@ -34,6 +34,7 @@ public:
     void flipFrame() override;
     void bindEvent(IEvent::EventType type, EventKey key, EventCallback callback) override;
     void setPreferredSize(std::size_t width, std::size_t height) override;
+    void unbindAll() override;
 
 private:
     void handleEvents();

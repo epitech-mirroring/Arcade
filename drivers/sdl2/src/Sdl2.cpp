@@ -377,3 +377,8 @@ void SDL2::displayEntity(const IEntity &entity)
         throw SDL2Exception("Error while rendering image", *this);
     }
 }
+
+void SDL2::unbindAll()
+{
+    this->_events.clear();
+}
