@@ -256,7 +256,7 @@ void SDL2::displayText(const IText &text)
     std::string path = text.getFontPath();
     std::size_t fontSize = text.getSize();
     std::pair<std::string, std::size_t> fontKey = std::make_pair(path, fontSize);
-    SDL_Color color = {text.getColor().getR(), text.getColor().getG(), text.getColor().getB(), text.getColor().getA()};
+    SDL_Color color = convertColor(text.getColor());
     if (this->_fonts.find(fontKey) == this->_fonts.end()) {
         this->_fonts[fontKey] = TTF_OpenFont(path.c_str(), text.getSize());
         if (this->_fonts[fontKey] == nullptr) {
@@ -307,7 +307,7 @@ static std::pair<std::vector<SDL_Vertex>, std::vector<SDL_Vertex>> getSquareVert
 
 void SDL2::displaySquare(const ISquare &square)
 {
-    SDL_Color color = {square.getColor().getR(), square.getColor().getG(), square.getColor().getB(), square.getColor().getA()};
+    SDL_Color color = convertColor(square.getColor());
     float posX = square.getPosition().getX();
     float posY = square.getPosition().getY();
     float sizeX = square.getWidth() * square.getSize();
@@ -331,7 +331,7 @@ void SDL2::displaySquare(const ISquare &square)
 
 void SDL2::displayCircle(const ICircle &circle)
 {
-    SDL_Color color = {circle.getColor().getR(), circle.getColor().getG(), circle.getColor().getB(), circle.getColor().getA()};
+    SDL_Color color = convertColor(circle.getColor());
     int radius = (int)circle.getRadius() * circle.getSize();
     int posX = circle.getPosition().getX();
     int posY = circle.getPosition().getY();
@@ -384,4 +384,12 @@ void SDL2::displayEntity(const IEntity &entity)
 void SDL2::unbindAll()
 {
     this->_events.clear();
+}
+
+SDL_Color SDL2::convertColor(const IColor &color)
+{
+    if (color.getA() > 255 || color.getR() > 255 || color.getG() > 255 || color.getB() > 255) {
+        throw SDL2Exception("Invalid color", *this);
+    }
+    return {static_cast<Uint8>(color.getR()), static_cast<Uint8>(color.getG()), static_cast<Uint8>(color.getB()), static_cast<Uint8>(color.getA())};
 }
