@@ -45,77 +45,77 @@ SFML::SFML()
     this->_window.clear();
     this->_window.setView(sf::View(sf::FloatRect(0, 0, 800, 600)));
     this->_keyMap = {
-        {sf::Keyboard::Key::A, KEY_A},
-        {sf::Keyboard::Key::B, KEY_B},
-        {sf::Keyboard::Key::C, KEY_C},
-        {sf::Keyboard::Key::D, KEY_D},
-        {sf::Keyboard::Key::E, KEY_E},
-        {sf::Keyboard::Key::F, KEY_F},
-        {sf::Keyboard::Key::G, KEY_G},
-        {sf::Keyboard::Key::H, KEY_H},
-        {sf::Keyboard::Key::I, KEY_I},
-        {sf::Keyboard::Key::J, KEY_J},
-        {sf::Keyboard::Key::K, KEY_K},
-        {sf::Keyboard::Key::L, KEY_L},
-        {sf::Keyboard::Key::M, KEY_M},
-        {sf::Keyboard::Key::N, KEY_N},
-        {sf::Keyboard::Key::O, KEY_O},
-        {sf::Keyboard::Key::P, KEY_P},
-        {sf::Keyboard::Key::Q, KEY_Q},
-        {sf::Keyboard::Key::R, KEY_R},
-        {sf::Keyboard::Key::S, KEY_S},
-        {sf::Keyboard::Key::T, KEY_T},
-        {sf::Keyboard::Key::U, KEY_U},
-        {sf::Keyboard::Key::V, KEY_V},
-        {sf::Keyboard::Key::W, KEY_W},
-        {sf::Keyboard::Key::X, KEY_X},
-        {sf::Keyboard::Key::Y, KEY_Y},
-        {sf::Keyboard::Key::Z, KEY_Z},
-        {sf::Keyboard::Key::Num0, KEY_DIGIT_0},
-        {sf::Keyboard::Key::Numpad0, KEY_DIGIT_0},
-        {sf::Keyboard::Key::Num1, KEY_DIGIT_1},
-        {sf::Keyboard::Key::Numpad1, KEY_DIGIT_1},
-        {sf::Keyboard::Key::Num2, KEY_DIGIT_2},
-        {sf::Keyboard::Key::Numpad2, KEY_DIGIT_2},
-        {sf::Keyboard::Key::Num3, KEY_DIGIT_3},
-        {sf::Keyboard::Key::Numpad3, KEY_DIGIT_3},
-        {sf::Keyboard::Key::Num4, KEY_DIGIT_4},
-        {sf::Keyboard::Key::Numpad4, KEY_DIGIT_4},
-        {sf::Keyboard::Key::Num5, KEY_DIGIT_5},
-        {sf::Keyboard::Key::Numpad5, KEY_DIGIT_5},
-        {sf::Keyboard::Key::Num6, KEY_DIGIT_6},
-        {sf::Keyboard::Key::Numpad6, KEY_DIGIT_6},
-        {sf::Keyboard::Key::Num7, KEY_DIGIT_7},
-        {sf::Keyboard::Key::Numpad7, KEY_DIGIT_7},
-        {sf::Keyboard::Key::Num8, KEY_DIGIT_8},
-        {sf::Keyboard::Key::Numpad8, KEY_DIGIT_8},
-        {sf::Keyboard::Key::Num9, KEY_DIGIT_9},
-        {sf::Keyboard::Key::Numpad9, KEY_DIGIT_9},
-        {sf::Keyboard::Key::Escape, KEY_ESCAPE},
-        {sf::Keyboard::Key::LControl, KEY_CTRL},
-        {sf::Keyboard::Key::RControl, KEY_CTRL},
-        {sf::Keyboard::Key::LShift, KEY_SHIFT},
-        {sf::Keyboard::Key::RShift, KEY_SHIFT},
-        {sf::Keyboard::Key::Tab, KEY_TAB},
-        {sf::Keyboard::Key::Space, KEY_SPACE},
-        {sf::Keyboard::Key::Return, KEY_ENTER},
-        {sf::Keyboard::Key::BackSpace, KEY_BACKSPACE},
-        {sf::Keyboard::Key::Up, KEY_UP},
-        {sf::Keyboard::Key::Down, KEY_DOWN},
-        {sf::Keyboard::Key::Left, KEY_LEFT},
-        {sf::Keyboard::Key::Right, KEY_RIGHT},
-        {sf::Keyboard::Key::F1, KEY_F1},
-        {sf::Keyboard::Key::F2, KEY_F2},
-        {sf::Keyboard::Key::F3, KEY_F3},
-        {sf::Keyboard::Key::F4, KEY_F4},
-        {sf::Keyboard::Key::F5, KEY_F5},
-        {sf::Keyboard::Key::F6, KEY_F6},
-        {sf::Keyboard::Key::F7, KEY_F7},
-        {sf::Keyboard::Key::F8, KEY_F8},
-        {sf::Keyboard::Key::F9, KEY_F9},
-        {sf::Keyboard::Key::F10, KEY_F10},
-        {sf::Keyboard::Key::F11, KEY_F11},
-        {sf::Keyboard::Key::F12, KEY_F12}
+        {sf::Keyboard::Key::A, _KEY_A},
+        {sf::Keyboard::Key::B, _KEY_B},
+        {sf::Keyboard::Key::C, _KEY_C},
+        {sf::Keyboard::Key::D, _KEY_D},
+        {sf::Keyboard::Key::E, _KEY_E},
+        {sf::Keyboard::Key::F, _KEY_F},
+        {sf::Keyboard::Key::G, _KEY_G},
+        {sf::Keyboard::Key::H, _KEY_H},
+        {sf::Keyboard::Key::I, _KEY_I},
+        {sf::Keyboard::Key::J, _KEY_J},
+        {sf::Keyboard::Key::K, _KEY_K},
+        {sf::Keyboard::Key::L, _KEY_L},
+        {sf::Keyboard::Key::M, _KEY_M},
+        {sf::Keyboard::Key::N, _KEY_N},
+        {sf::Keyboard::Key::O, _KEY_O},
+        {sf::Keyboard::Key::P, _KEY_P},
+        {sf::Keyboard::Key::Q, _KEY_Q},
+        {sf::Keyboard::Key::R, _KEY_R},
+        {sf::Keyboard::Key::S, _KEY_S},
+        {sf::Keyboard::Key::T, _KEY_T},
+        {sf::Keyboard::Key::U, _KEY_U},
+        {sf::Keyboard::Key::V, _KEY_V},
+        {sf::Keyboard::Key::W, _KEY_W},
+        {sf::Keyboard::Key::X, _KEY_X},
+        {sf::Keyboard::Key::Y, _KEY_Y},
+        {sf::Keyboard::Key::Z, _KEY_Z},
+        {sf::Keyboard::Key::Num0, _KEY_DIGIT_0},
+        {sf::Keyboard::Key::Numpad0, _KEY_DIGIT_0},
+        {sf::Keyboard::Key::Num1, _KEY_DIGIT_1},
+        {sf::Keyboard::Key::Numpad1, _KEY_DIGIT_1},
+        {sf::Keyboard::Key::Num2, _KEY_DIGIT_2},
+        {sf::Keyboard::Key::Numpad2, _KEY_DIGIT_2},
+        {sf::Keyboard::Key::Num3, _KEY_DIGIT_3},
+        {sf::Keyboard::Key::Numpad3, _KEY_DIGIT_3},
+        {sf::Keyboard::Key::Num4, _KEY_DIGIT_4},
+        {sf::Keyboard::Key::Numpad4, _KEY_DIGIT_4},
+        {sf::Keyboard::Key::Num5, _KEY_DIGIT_5},
+        {sf::Keyboard::Key::Numpad5, _KEY_DIGIT_5},
+        {sf::Keyboard::Key::Num6, _KEY_DIGIT_6},
+        {sf::Keyboard::Key::Numpad6, _KEY_DIGIT_6},
+        {sf::Keyboard::Key::Num7, _KEY_DIGIT_7},
+        {sf::Keyboard::Key::Numpad7, _KEY_DIGIT_7},
+        {sf::Keyboard::Key::Num8, _KEY_DIGIT_8},
+        {sf::Keyboard::Key::Numpad8, _KEY_DIGIT_8},
+        {sf::Keyboard::Key::Num9, _KEY_DIGIT_9},
+        {sf::Keyboard::Key::Numpad9, _KEY_DIGIT_9},
+        {sf::Keyboard::Key::Escape, _KEY_ESCAPE},
+        {sf::Keyboard::Key::LControl, _KEY_CTRL},
+        {sf::Keyboard::Key::RControl, _KEY_CTRL},
+        {sf::Keyboard::Key::LShift, _KEY_SHIFT},
+        {sf::Keyboard::Key::RShift, _KEY_SHIFT},
+        {sf::Keyboard::Key::Tab, _KEY_TAB},
+        {sf::Keyboard::Key::Space, _KEY_SPACE},
+        {sf::Keyboard::Key::Return, _KEY_ENTER},
+        {sf::Keyboard::Key::BackSpace, _KEY_BACKSPACE},
+        {sf::Keyboard::Key::Up, _KEY_UP},
+        {sf::Keyboard::Key::Down, _KEY_DOWN},
+        {sf::Keyboard::Key::Left, _KEY_LEFT},
+        {sf::Keyboard::Key::Right, _KEY_RIGHT},
+        {sf::Keyboard::Key::F1, _KEY_F1},
+        {sf::Keyboard::Key::F2, _KEY_F2},
+        {sf::Keyboard::Key::F3, _KEY_F3},
+        {sf::Keyboard::Key::F4, _KEY_F4},
+        {sf::Keyboard::Key::F5, _KEY_F5},
+        {sf::Keyboard::Key::F6, _KEY_F6},
+        {sf::Keyboard::Key::F7, _KEY_F7},
+        {sf::Keyboard::Key::F8, _KEY_F8},
+        {sf::Keyboard::Key::F9, _KEY_F9},
+        {sf::Keyboard::Key::F10, _KEY_F10},
+        {sf::Keyboard::Key::F11, _KEY_F11},
+        {sf::Keyboard::Key::F12, _KEY_F12}
     };
 }
 
@@ -149,9 +149,9 @@ void SFML::bindEvent(IEvent::EventType type, EventKey key, EventCallback callbac
 void SFML::handleEvents()
 {
     if (this->_event.type == sf::Event::Closed) {
-        EventCallback callback = this->_events[std::make_pair(IEvent::EventType::KEY_DOWN, KEY_ESCAPE)];
+        EventCallback callback = this->_events[std::make_pair(IEvent::EventType::_KEY_DOWN, _KEY_ESCAPE)];
         if (callback) {
-            callback(Event(IEvent::EventType::KEY_DOWN, KEY_ESCAPE));
+            callback(Event(IEvent::EventType::_KEY_DOWN, _KEY_ESCAPE));
         }
     }
     if (this->_event.type == sf::Event::KeyPressed) {
@@ -165,18 +165,18 @@ void SFML::handleEvents()
 
 void SFML::handleKeyDownEvents(sf::Event event)
 {
-    EventCallback callback = this->_events[std::make_pair(IEvent::EventType::KEY_DOWN, this->_keyMap[event.key.code])];
+    EventCallback callback = this->_events[std::make_pair(IEvent::EventType::_KEY_DOWN, this->_keyMap[event.key.code])];
     if (callback) {
-        callback(Event(IEvent::EventType::KEY_DOWN, this->_keyMap[event.key.code]));
+        callback(Event(IEvent::EventType::_KEY_DOWN, this->_keyMap[event.key.code]));
     }
     this->_pressedKeys.push_back(event.key.code);
 }
 
 void SFML::handleKeyUpEvents(sf::Event event)
 {
-    EventCallback callback = this->_events[std::make_pair(IEvent::EventType::KEY_UP, this->_keyMap[event.key.code])];
+    EventCallback callback = this->_events[std::make_pair(IEvent::EventType::_KEY_UP, this->_keyMap[event.key.code])];
     if (callback) {
-        callback(Event(IEvent::EventType::KEY_UP, this->_keyMap[event.key.code]));
+        callback(Event(IEvent::EventType::_KEY_UP, this->_keyMap[event.key.code]));
     }
     this->_pressedKeys.erase(std::remove(this->_pressedKeys.begin(), this->_pressedKeys.end(), event.key.code), this->_pressedKeys.end());
 }
@@ -184,9 +184,9 @@ void SFML::handleKeyUpEvents(sf::Event event)
 void SFML::handleKeyPressedEvents()
 {
     for (sf::Keyboard::Key key : this->_pressedKeys) {
-        EventCallback callback = this->_events[std::make_pair(IEvent::EventType::KEY_PRESS, this->_keyMap[key])];
+        EventCallback callback = this->_events[std::make_pair(IEvent::EventType::_KEY_PRESS, this->_keyMap[key])];
         if (callback) {
-            callback(Event(IEvent::EventType::KEY_PRESS, this->_keyMap[key]));
+            callback(Event(IEvent::EventType::_KEY_PRESS, this->_keyMap[key]));
         }
     }
 }
