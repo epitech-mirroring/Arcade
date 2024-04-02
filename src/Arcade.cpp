@@ -15,8 +15,11 @@
 #include <utility>
 #include "json/Json.hpp"
 #include "core/menu/Menu.hpp"
+#include "common/displayable/primitives/Square.hpp"
+#include "common/displayable/primitives/Line.hpp"
+#include "common/displayable/primitives/Circle.hpp"
 
-Arcade::Arcade(const std::string &firstDriverName) {
+Arcade::Arcade(const std::string &firstDriverName, bool isGizmosEnabled) {
     this->_currentPlayer = std::make_unique<Player>("Player", 0);
     this->_game = {nullptr, nullptr};
     this->_driver = {nullptr, nullptr};
@@ -32,6 +35,7 @@ Arcade::Arcade(const std::string &firstDriverName) {
     this->_currentDriverIndex = 0;
     this->_currentGameIndex = 0;
     this->_running = true;
+    this->_gizmosEnabled = isGizmosEnabled;
 }
 
 Arcade::~Arcade() {
@@ -237,6 +241,7 @@ void Arcade::rebindGlobalKeys() {
     this->_driver.instance->bindEvent(IEvent::_KEY_DOWN, _KEY_F2, [this](const IEvent &event) {(void) event; this->menu();}); // Menu
     this->_driver.instance->bindEvent(IEvent::_KEY_DOWN, _KEY_F4, [this](const IEvent &event) {(void) event; this->nextGame();}); // Next game
     this->_driver.instance->bindEvent(IEvent::_KEY_DOWN, _KEY_F5, [this](const IEvent &event) {(void) event; this->nextDriver();}); // Next driver
+    this->_driver.instance->bindEvent(IEvent::_KEY_DOWN, _KEY_F7, [this](const IEvent &event) {(void) event; this->_gizmosEnabled = !this->_gizmosEnabled;}); // Toggle gizmos
     this->rebindCustomKeys();
     this->reApplyPreferences();
 }
@@ -324,4 +329,36 @@ const std::vector<Player> &Arcade::getPlayers() const {
 
 void Arcade::setArcadePtr(std::shared_ptr<IArcade> arcade) {
     this->_arcade = std::move(arcade);
+}
+
+void Arcade::drawCircle(const ICoordinate &center, std::size_t radius,
+                        const IColor &color) {
+    Circle circle(color, radius);
+    circle.setPosition(center);
+    this->_gizmos.emplace([this, circle]() {
+        this->display(circle);
+    });
+}
+
+void Arcade::drawLine(const ICoordinate &start, const ICoordinate &end,
+                      const IColor &color) {
+    Line line(end, color);
+    line.setPosition(start);
+    this->_gizmos.emplace([this, line]() {
+        this->display(line);
+    });
+}
+
+void Arcade::drawRect(const ICoordinate &topLeft, const ICoordinate &bottomRight,
+                      bool filled, const IColor &color) {
+    Square square(color, bottomRight.getX() - topLeft.getX(), bottomRight.getY() - topLeft.getY());
+    square.setPosition(topLeft);
+    square.setIsFilled(filled);
+    this->_gizmos.emplace([this, square]() {
+        this->display(square);
+    });
+}
+
+bool Arcade::isGizmosEnabled() const {
+    return this->_gizmosEnabled;
 }
