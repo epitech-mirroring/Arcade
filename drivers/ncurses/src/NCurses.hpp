@@ -14,6 +14,7 @@
 #include "shared/displayable/primitives/IText.hpp"
 #include "shared/displayable/primitives/ICircle.hpp"
 #include "shared/displayable/primitives/ISquare.hpp"
+#include "shared/displayable/primitives/ILine.hpp"
 #include "shared/displayable/entities/IEntity.hpp"
 #include "shared/utils/ICanRotate.hpp"
 #include "common/displayable/ADisplayable.hpp"
@@ -51,6 +52,7 @@ private:
     void handleInput(int event);
     void displayText(const IText &text);
     void displaySquare(const ISquare &square);
+    void displayLine(const ILine &line);
     void displayCircle(const ICircle &circle);
     void displayEntity(const IEntity &entity);
     void displayPrimitive(const IPrimitive &primitive);

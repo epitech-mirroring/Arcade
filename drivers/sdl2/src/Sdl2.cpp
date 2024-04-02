@@ -245,6 +245,8 @@ void SDL2::displayPrimitive(const IPrimitive &primitive)
         this->displaySquare(dynamic_cast<const ISquare &>(primitive));
     } else if (IS_INSTANCE_OF(const ICircle, primitive)) {
         this->displayCircle(dynamic_cast<const ICircle &>(primitive));
+    } else if (IS_INSTANCE_OF(const ILine, primitive)) {
+        this->displayLine(dynamic_cast<const ILine &>(primitive));
     }
 }
 
@@ -321,12 +323,54 @@ void SDL2::displaySquare(const ISquare &square)
     if (SDL_SetRenderDrawColor(this->_renderer.get(), color.r, color.g, color.b, color.a) != 0) {
         throw SDL2Exception("Error while setting color");
     }
-    std::pair<std::vector<SDL_Vertex>, std::vector<SDL_Vertex>> triangles = getSquareVertexes(posX, posY, sizeX, sizeY, angle, color);
-    if (SDL_RenderGeometry(this->_renderer.get(), nullptr, triangles.first.data(), triangles.first.size(), nullptr, 0) != 0) {
-        throw SDL2Exception("Error while rendering square");
+
+    if (square.isFilled()) {
+        std::pair<std::vector<SDL_Vertex>, std::vector<SDL_Vertex>> triangles = getSquareVertexes(
+                posX, posY, sizeX, sizeY, angle, color);
+        if (SDL_RenderGeometry(this->_renderer.get(), nullptr,
+                               triangles.first.data(), triangles.first.size(),
+                               nullptr, 0) != 0) {
+            throw SDL2Exception("Error while rendering square");
+        }
+        if (SDL_RenderGeometry(this->_renderer.get(), nullptr,
+                               triangles.second.data(), triangles.second.size(),
+                               nullptr, 0) != 0) {
+            throw SDL2Exception("Error while rendering square");
+        }
+    } else {
+        // Draw 4 lines
+        SDL_FPoint points[5] = {
+            {posX, posY},
+            {posX + sizeX, posY},
+            {posX + sizeX, posY + sizeY},
+            {posX, posY + sizeY},
+            {posX, posY},
+        };
+        for (int i = 0; i < 4; i++) {
+            SDL_FPoint point1 = points[i];
+            SDL_FPoint point2 = points[i + 1];
+            SDL_FPoint newPoint1 = {posX + cos(angle) * (point1.x - posX) - sin(angle) * (point1.y - posY), posY + sin(angle) * (point1.x - posX) + cos(angle) * (point1.y - posY)};
+            SDL_FPoint newPoint2 = {posX + cos(angle) * (point2.x - posX) - sin(angle) * (point2.y - posY), posY + sin(angle) * (point2.x - posX) + cos(angle) * (point2.y - posY)};
+            if (SDL_RenderDrawLine(this->_renderer.get(), (int) newPoint1.x, (int) newPoint1.y, (int) newPoint2.x, (int) newPoint2.y) != 0) {
+                throw SDL2Exception("Error while rendering square");
+            }
+        }
     }
-    if (SDL_RenderGeometry(this->_renderer.get(), nullptr, triangles.second.data(), triangles.second.size(), nullptr, 0) != 0) {
-        throw SDL2Exception("Error while rendering square");
+}
+
+void SDL2::displayLine(const ILine &line)
+{
+    SDL_Color color = convertColor(line.getColor());
+    int posX = line.getPosition().getX();
+    int posY = line.getPosition().getY();
+    int endX = line.getEnd().getX();
+    int endY = line.getEnd().getY();
+
+    if (SDL_SetRenderDrawColor(this->_renderer.get(), color.r, color.g, color.b, color.a) != 0) {
+        throw SDL2Exception("Error while setting color");
+    }
+    if (SDL_RenderDrawLine(this->_renderer.get(), posX, posY, endX, endY) != 0) {
+        throw SDL2Exception("Error while rendering line");
     }
 }
 

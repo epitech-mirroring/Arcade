@@ -171,6 +171,8 @@ void NCurses::displayPrimitive(const IPrimitive &primitive) {
         displayCircle(dynamic_cast<const ICircle &>(primitive));
     } else if (IS_INSTANCE_OF(const ISquare, primitive)) {
         displaySquare(dynamic_cast<const ISquare &>(primitive));
+    } else if (IS_INSTANCE_OF(const ILine, primitive)) {
+        displayLine(dynamic_cast<const ILine &>(primitive));
     }
 }
 
@@ -213,9 +215,37 @@ void NCurses::displaySquare(const ISquare &square) {
 
     for (std::size_t y = startY; y < endY; y++) {
         for (std::size_t x = startX; x < endX; x++) {
-            if (x == startX || y == startY || y == endY - 1 || x == endX - 1) {
+            if (x == startX || y == startY || y == endY - 1 || x == endX - 1 || square.isFilled()) {
                 this->_frameBuffer[x][y] = BufferedChar{square.getReplacingChar(), color};
             }
+        }
+    }
+}
+
+static bool isPointInLine(const ILine &line, std::size_t x, std::size_t y) {
+    std::size_t startX = line.getPosition().getX() / SCALE_WIDTH;
+    std::size_t startY = line.getPosition().getY() / SCALE_HEIGHT;
+    std::size_t endX = line.getEnd().getX() / SCALE_WIDTH;
+    std::size_t endY = line.getEnd().getY() / SCALE_HEIGHT;
+    double d = sqrt(pow(endX - startX, 2) + pow(endY - startY, 2));
+    double flexibility = 0.05;
+    double d_min = d - flexibility;
+    double d_max = d + flexibility;
+    double r = sqrt(pow(x - startX, 2) + pow(y - startY, 2)) + sqrt(pow(x - endX, 2) + pow(y - endY, 2));
+    return r >= d_min && r <= d_max;
+}
+
+void NCurses::displayLine(const ILine &line) {
+    int color = getNcursesColor(line.getColor());
+    std::size_t startX = line.getPosition().getX() / SCALE_WIDTH;
+    std::size_t startY = line.getPosition().getY() / SCALE_HEIGHT;
+    std::size_t endX = line.getEnd().getX() / SCALE_WIDTH;
+    std::size_t endY = line.getEnd().getY() / SCALE_HEIGHT;
+
+    for (std::size_t y = startY; y <= endY; y++) {
+        for (std::size_t x = startX; x <= endX; x++) {
+            if (isPointInLine(line, x, y))
+                this->_frameBuffer[x][y] = BufferedChar{line.getReplacingChar(), color};
         }
     }
 }
