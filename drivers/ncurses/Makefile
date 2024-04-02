@@ -9,6 +9,7 @@
 
 # All the source files
 CXX_SOURCES		= 	src/NCurses.cpp								\
+					src/NCursesException.cpp
 
 CXX_TESTS		=
 
