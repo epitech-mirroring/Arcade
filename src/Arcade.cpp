@@ -203,6 +203,10 @@ void Arcade::display(const IDisplayable &displayable) {
 }
 
 void Arcade::flipFrame() {
+    while (!this->_gizmos.empty()) {
+        this->_gizmos.front()();
+        this->_gizmos.pop();
+    }
     this->_driver.instance->flipFrame();
 }
 
@@ -333,6 +337,8 @@ void Arcade::setArcadePtr(std::shared_ptr<IArcade> arcade) {
 
 void Arcade::drawCircle(const ICoordinate &center, std::size_t radius,
                         const IColor &color) {
+    if (!isGizmosEnabled())
+        return;
     Circle circle(color, radius);
     circle.setPosition(center);
     this->_gizmos.emplace([this, circle]() {
@@ -342,6 +348,8 @@ void Arcade::drawCircle(const ICoordinate &center, std::size_t radius,
 
 void Arcade::drawLine(const ICoordinate &start, const ICoordinate &end,
                       const IColor &color) {
+    if (!isGizmosEnabled())
+        return;
     Line line(end, color);
     line.setPosition(start);
     this->_gizmos.emplace([this, line]() {
@@ -351,6 +359,8 @@ void Arcade::drawLine(const ICoordinate &start, const ICoordinate &end,
 
 void Arcade::drawRect(const ICoordinate &topLeft, const ICoordinate &bottomRight,
                       bool filled, const IColor &color) {
+    if (!isGizmosEnabled())
+        return;
     Square square(color, bottomRight.getX() - topLeft.getX(), bottomRight.getY() - topLeft.getY());
     square.setPosition(topLeft);
     square.setIsFilled(filled);
