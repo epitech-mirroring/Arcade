@@ -22,7 +22,7 @@ Line::Line(const ICoordinate &end, const IColor &color, char replacingChar)
 }
 
 Line::Line(const ICoordinate &end, const RGBAColor &color, char replacingChar)
-    : APrimitive(std::make_unique<RGBAColor>(color), replacingChar)
+    : APrimitive((IColor &)color, replacingChar)
 {
     this->_end = std::make_unique<Coord2D>(end.getX(), end.getY());
 }
