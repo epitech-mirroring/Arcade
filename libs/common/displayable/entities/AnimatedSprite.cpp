@@ -16,6 +16,7 @@ AnimatedSprite::AnimatedSprite(std::unique_ptr<IPicture> picture, std::size_t nb
     this->_frameDuration = frameDuration;
     this->_currentFrame = 0;
     this->_currentDuration = 0;
+    this->_drawRect = {0, 0, this->_picture->getWidth() / this->_nbFrames, this->_picture->getHeight()};
 }
 
 AnimatedSprite::AnimatedSprite(const IPicture &picture, std::size_t nbFrames, std::size_t frameDuration)
@@ -25,6 +26,7 @@ AnimatedSprite::AnimatedSprite(const IPicture &picture, std::size_t nbFrames, st
     this->_frameDuration = frameDuration;
     this->_currentFrame = 0;
     this->_currentDuration = 0;
+    this->_drawRect = {0, 0, this->_picture->getWidth() / this->_nbFrames, this->_picture->getHeight()};
 }
 
 const IPicture &AnimatedSprite::getPicture() const
@@ -51,6 +53,7 @@ void AnimatedSprite::update()
         if (this->_currentFrame >= this->_nbFrames)
             this->_currentFrame = 0;
     }
+    this->_drawRect.x = this->_currentFrame * this->_drawRect.width;
 }
 
 std::size_t AnimatedSprite::getCurrentFrame() const
@@ -66,4 +69,14 @@ std::size_t AnimatedSprite::getNbFrames() const
 std::size_t AnimatedSprite::getFrameDuration() const
 {
     return this->_frameDuration;
+}
+
+const DrawRect &AnimatedSprite::getDrawRect() const
+{
+    return this->_drawRect;
+}
+
+void AnimatedSprite::setDrawRect(const DrawRect &drawRect)
+{
+    this->_drawRect = drawRect;
 }

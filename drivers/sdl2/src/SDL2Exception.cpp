@@ -7,10 +7,9 @@
 
 #include "SDL2Exception.hpp"
 
-SDL2Exception::SDL2Exception(std::string const &message, IDriver &driver)
+SDL2Exception::SDL2Exception(std::string const &message)
 {
     this->_message = message;
-    this->_driver = std::shared_ptr<IDriver>(&driver);
 }
 
 const char *SDL2Exception::what() const noexcept
@@ -21,9 +20,4 @@ const char *SDL2Exception::what() const noexcept
 int SDL2Exception::getCode() const
 {
     return 906;
-}
-
-const IDriver &SDL2Exception::getDriver() const
-{
-    return *this->_driver;
 }
