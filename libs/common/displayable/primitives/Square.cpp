@@ -8,16 +8,18 @@
 
 #include "common/displayable/primitives/Square.hpp"
 
-Square::Square(std::unique_ptr<IColor> &color, size_t width, size_t height, char replacingChar) : APrimitive(color, replacingChar)
+Square::Square(std::unique_ptr<IColor> &color, size_t width, size_t height, bool isFilled, char replacingChar) : APrimitive(color, replacingChar)
 {
     this->_width = width;
     this->_height = height;
+    this->_isFilled = isFilled;
 }
 
-Square::Square(const IColor &color, size_t width, size_t height, char replacingChar) : APrimitive(color, replacingChar)
+Square::Square(const IColor &color, size_t width, size_t height, bool isFilled, char replacingChar) : APrimitive(color, replacingChar)
 {
     this->_width = width;
     this->_height = height;
+    this->_isFilled = isFilled;
 }
 
 size_t Square::getWidth() const
@@ -38,4 +40,14 @@ void Square::setWidth(size_t width)
 void Square::setHeight(size_t height)
 {
     this->_height = height;
+}
+
+bool Square::isFilled() const
+{
+    return this->_isFilled;
+}
+
+void Square::setIsFilled(bool isFilled)
+{
+    this->_isFilled = isFilled;
 }

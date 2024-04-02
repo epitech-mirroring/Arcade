@@ -35,7 +35,8 @@ JSON_OBJS 		= 	$(JSON_LIB)/JsonObject.o	\
 					$(JSON_LIB)/JsonArray.o		\
 					$(JSON_LIB)/JsonString.o	\
 					$(JSON_LIB)/JsonInt.o		\
-					$(JSON_LIB)/JsonBoolean.o
+					$(JSON_LIB)/JsonBoolean.o	\
+
 COMMON_OBJS 	= 	$(COMMON_LIB)/AGame.o									\
 					$(COMMON_LIB)/utils/RGBAColor.o							\
 					$(COMMON_LIB)/utils/Coord2D.o							\
@@ -49,7 +50,9 @@ COMMON_OBJS 	= 	$(COMMON_LIB)/AGame.o									\
 					$(COMMON_LIB)/displayable/primitives/APrimitive.o		\
 					$(COMMON_LIB)/displayable/primitives/Circle.o			\
 					$(COMMON_LIB)/displayable/primitives/Square.o			\
-					$(COMMON_LIB)/displayable/primitives/Text.o
+					$(COMMON_LIB)/displayable/primitives/Text.o				\
+					$(COMMON_LIB)/displayable/primitives/Line.o				\
+
 LOG				= ./build.log
 
 .PHONY: $(NAME) all clean fclean re tests_run clean_test \

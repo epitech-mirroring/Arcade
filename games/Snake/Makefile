@@ -31,7 +31,9 @@ COMMON_OBJS 	= 	$(COMMON_LIB)/AGame.o									\
 					$(COMMON_LIB)/displayable/primitives/APrimitive.o		\
 					$(COMMON_LIB)/displayable/primitives/Circle.o			\
 					$(COMMON_LIB)/displayable/primitives/Square.o			\
-					$(COMMON_LIB)/displayable/primitives/Text.o
+					$(COMMON_LIB)/displayable/primitives/Text.o				\
+					$(COMMON_LIB)/displayable/primitives/Line.o				\
+
 CXX_OBJS		= 	$(CXX_SOURCES:.cpp=.o)
 CXX_TESTS_OBJS	= 	$(CXX_TESTS:.cpp=.o)
 LOG				= 	./build.log
