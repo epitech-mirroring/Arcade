@@ -232,11 +232,11 @@ void Arcade::run() {
 }
 
 void Arcade::rebindGlobalKeys() {
-    this->_driver.instance->bindEvent(IEvent::KEY_DOWN, KEY_ESCAPE, [this](const IEvent &event) {(void) event; this->exit();}); // Exit
-    this->_driver.instance->bindEvent(IEvent::KEY_DOWN, KEY_F1, [this](const IEvent &event) {(void) event; this->restart();}); // Restart
-    this->_driver.instance->bindEvent(IEvent::KEY_DOWN, KEY_F2, [this](const IEvent &event) {(void) event; this->menu();}); // Menu
-    this->_driver.instance->bindEvent(IEvent::KEY_DOWN, KEY_F4, [this](const IEvent &event) {(void) event; this->nextGame();}); // Next game
-    this->_driver.instance->bindEvent(IEvent::KEY_DOWN, KEY_F5, [this](const IEvent &event) {(void) event; this->nextDriver();}); // Next driver
+    this->_driver.instance->bindEvent(IEvent::_KEY_DOWN, _KEY_ESCAPE, [this](const IEvent &event) {(void) event; this->exit();}); // Exit
+    this->_driver.instance->bindEvent(IEvent::_KEY_DOWN, _KEY_F1, [this](const IEvent &event) {(void) event; this->restart();}); // Restart
+    this->_driver.instance->bindEvent(IEvent::_KEY_DOWN, _KEY_F2, [this](const IEvent &event) {(void) event; this->menu();}); // Menu
+    this->_driver.instance->bindEvent(IEvent::_KEY_DOWN, _KEY_F4, [this](const IEvent &event) {(void) event; this->nextGame();}); // Next game
+    this->_driver.instance->bindEvent(IEvent::_KEY_DOWN, _KEY_F5, [this](const IEvent &event) {(void) event; this->nextDriver();}); // Next driver
     this->rebindCustomKeys();
     this->reApplyPreferences();
 }

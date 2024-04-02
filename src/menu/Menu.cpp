@@ -110,14 +110,14 @@ void Menu::run() {
 
 void Menu::typeUsername(const IEvent &event) const {
     static const std::unordered_map<EventKey, char> keyMap = {
-        {KEY_A, 'a'}, {KEY_B, 'b'}, {KEY_C, 'c'}, {KEY_D, 'd'}, {KEY_E, 'e'}, {KEY_F, 'f'}, {KEY_G, 'g'}, {KEY_H, 'h'},
-        {KEY_I, 'i'}, {KEY_J, 'j'}, {KEY_K, 'k'}, {KEY_L, 'l'}, {KEY_M, 'm'}, {KEY_N, 'n'}, {KEY_O, 'o'}, {KEY_P, 'p'},
-        {KEY_Q, 'q'}, {KEY_R, 'r'}, {KEY_S, 's'}, {KEY_T, 't'}, {KEY_U, 'u'}, {KEY_V, 'v'}, {KEY_W, 'w'}, {KEY_X, 'x'},
-        {KEY_Y, 'y'}, {KEY_Z, 'z'}, {KEY_DIGIT_0, '0'}, {KEY_DIGIT_1, '1'}, {KEY_DIGIT_2, '2'}, {KEY_DIGIT_3, '3'},
-        {KEY_DIGIT_4, '4'}, {KEY_DIGIT_5, '5'}, {KEY_DIGIT_6, '6'}, {KEY_DIGIT_7, '7'}, {KEY_DIGIT_8, '8'}, {KEY_DIGIT_9, '9'}
+        {_KEY_A, 'a'}, {_KEY_B, 'b'}, {_KEY_C, 'c'}, {_KEY_D, 'd'}, {_KEY_E, 'e'}, {_KEY_F, 'f'}, {_KEY_G, 'g'}, {_KEY_H, 'h'},
+        {_KEY_I, 'i'}, {_KEY_J, 'j'}, {_KEY_K, 'k'}, {_KEY_L, 'l'}, {_KEY_M, 'm'}, {_KEY_N, 'n'}, {_KEY_O, 'o'}, {_KEY_P, 'p'},
+        {_KEY_Q, 'q'}, {_KEY_R, 'r'}, {_KEY_S, 's'}, {_KEY_T, 't'}, {_KEY_U, 'u'}, {_KEY_V, 'v'}, {_KEY_W, 'w'}, {_KEY_X, 'x'},
+        {_KEY_Y, 'y'}, {_KEY_Z, 'z'}, {_KEY_DIGIT_0, '0'}, {_KEY_DIGIT_1, '1'}, {_KEY_DIGIT_2, '2'}, {_KEY_DIGIT_3, '3'},
+        {_KEY_DIGIT_4, '4'}, {_KEY_DIGIT_5, '5'}, {_KEY_DIGIT_6, '6'}, {_KEY_DIGIT_7, '7'}, {_KEY_DIGIT_8, '8'}, {_KEY_DIGIT_9, '9'}
     };
 
-    if (event.getKey() == KEY_BACKSPACE) {
+    if (event.getKey() == _KEY_BACKSPACE) {
         std::string user = TRANSFORM_TO(Arcade, *this->_arcade)->getCurrentPlayer().getName();
         if (!user.empty())
             user.pop_back();
@@ -132,8 +132,8 @@ void Menu::typeUsername(const IEvent &event) const {
 
 void Menu::start() {
     this->_arcade->setPreferredSize(979, 551);
-    for (EventKey key = KEY_A; key <= KEY_DIGIT_0; key++) {
-        this->_arcade->bindEvent(IEvent::KEY_DOWN, key, [this](const IEvent &event) { this->typeUsername(event); });
+    for (EventKey key = _KEY_A; key <= _KEY_DIGIT_0; key++) {
+        this->_arcade->bindEvent(IEvent::_KEY_DOWN, key, [this](const IEvent &event) { this->typeUsername(event); });
     }
-    this->_arcade->bindEvent(IEvent::KEY_DOWN, KEY_BACKSPACE, [this](const IEvent &event) { this->typeUsername(event); });
+    this->_arcade->bindEvent(IEvent::_KEY_DOWN, _KEY_BACKSPACE, [this](const IEvent &event) { this->typeUsername(event); });
 }
