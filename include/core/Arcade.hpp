@@ -11,25 +11,41 @@
 #include "shared/IDriver.hpp"
 #include "shared/IGame.hpp"
 #include "core/Player.hpp"
+#include "DLLoader.hpp"
 #include <list>
 #include <memory>
+#include <queue>
+#include <functional>
+#include <map>
 
 struct SharedLibrary {
     std::string name;
     std::string path;
 };
 
+template<typename T>
+struct LoadedLibrary {
+    std::unique_ptr<T> instance;
+    std::unique_ptr<DLLoader<T>> loader;
+};
+
 class Arcade: public IArcade {
 private:
-    std::unique_ptr<IDriver> _driver;
-    std::unique_ptr<IGame> _game;
-    std::list<Player> _players;
+    LoadedLibrary<IDriver> _driver;
+    LoadedLibrary<IGame> _game;
+    std::vector<Player> _players;
     std::unique_ptr<Player> _currentPlayer;
-    std::list<SharedLibrary> _games;
-    std::list<SharedLibrary> _drivers;
+    std::vector<SharedLibrary> _games;
+    std::vector<SharedLibrary> _drivers;
     std::size_t _currentGameIndex;
     std::size_t _currentDriverIndex;
+    std::shared_ptr<IArcade> _arcade;
+    std::queue<std::function<void()>> _endFrameCallbacks;
     bool _running;
+    std::size_t _preferredWidth;
+    std::size_t _preferredHeight;
+    std::map<IEvent::EventType, std::map<EventKey, EventCallback>> _events;
+
 
     void bareLoadDriver(const std::string &driverPath);
 public:
@@ -42,17 +58,22 @@ public:
     void loadScore();
     void saveScore();
     void rebindGlobalKeys();
+    void rebindCustomKeys();
+    void reApplyPreferences() const;
+    [[nodiscard]] Player &getCurrentPlayer() const;
+    [[nodiscard]] const std::vector<Player> &getPlayers() const;
+    void setArcadePtr(std::shared_ptr<IArcade> arcade);
 
-    void exit(const IEvent &event);
-    void restart(const IEvent &event);
-    void nextGame(const IEvent &event);
-    void nextDriver(const IEvent &event);
-    void menu(const IEvent &event);
+    void exit();
+    void restart();
+    void nextGame();
+    void nextDriver();
+    void menu();
 
     void run();
 
-    [[nodiscard]] std::list<SharedLibrary> getGames() const;
-    [[nodiscard]] std::list<SharedLibrary> getDrivers() const;
+    [[nodiscard]] std::vector<SharedLibrary> getGames() const;
+    [[nodiscard]] std::vector<SharedLibrary> getDrivers() const;
 
     // Driver functions for games
     void display(const IDisplayable &displayable) override;

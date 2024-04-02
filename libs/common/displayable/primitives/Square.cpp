@@ -8,13 +8,13 @@
 
 #include "common/displayable/primitives/Square.hpp"
 
-Square::Square(std::unique_ptr<IColor> &color, size_t width, size_t height) : APrimitive(color)
+Square::Square(std::unique_ptr<IColor> &color, size_t width, size_t height, char replacingChar) : APrimitive(color, replacingChar)
 {
     this->_width = width;
     this->_height = height;
 }
 
-Square::Square(const IColor &color, size_t width, size_t height) : APrimitive(color)
+Square::Square(const IColor &color, size_t width, size_t height, char replacingChar) : APrimitive(color, replacingChar)
 {
     this->_width = width;
     this->_height = height;

@@ -12,6 +12,7 @@
 #include "json/JsonBoolean.hpp"
 #include "json/JsonObject.hpp"
 #include <fstream>
+#include <iostream>
 
 JsonArray::JsonArray(const std::string &name) {
     this->_name = name;
@@ -103,6 +104,8 @@ void JsonArray::parse(const std::string &string) {
         if (end == len)
             end--;
         std::string obj = cleaned.substr(start, end - start);
+        if (obj.empty())
+            break;
         _values.push_back(getParser(obj, std::to_string(this->size()))(obj));
         start = end + 1;
     }

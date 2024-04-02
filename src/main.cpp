@@ -8,7 +8,6 @@
 
 #include <iostream>
 #include "core/Arcade.hpp"
-#include "shared/errors/IError.hpp"
 #include <memory>
 
 static void print_usage() {
@@ -24,8 +23,9 @@ int main(int argc, char **argv) {
         return 84;
     }
     try {
-        Arcade arcade = Arcade(argv[1]);
-        arcade.run();
+        std::shared_ptr<Arcade> arcade = std::make_shared<Arcade>(argv[1]);
+        arcade->setArcadePtr(arcade);
+        arcade->run();
     } catch (IError &e) {
         std::cerr << e.what() << std::endl;
         return e.getCode();

@@ -18,7 +18,7 @@ public:
     AGame();
     ~AGame() override = default;
 
-    virtual void init(IArcade &arcade) override;
+    virtual void init(std::shared_ptr<IArcade> arcade) override;
     virtual void start() override = 0;
     virtual void run() override = 0;
     virtual int getScore() override;

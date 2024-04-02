@@ -15,7 +15,7 @@ protected:
     std::unique_ptr<ISprite> _sprite;
     AEntity(std::unique_ptr<ISprite> sprite);
     AEntity(const ISprite &sprite);
-    AEntity(const std::string &path);
+    AEntity(const std::string &path, const std::size_t &width, const std::size_t &height);
 public:
     ~AEntity() override = default;
     [[nodiscard]] const ISprite &getSprite() const override;

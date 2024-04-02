@@ -29,17 +29,17 @@ Event::Event(EventType type, EventKey key, const Coord2D &position)
     this->_position = std::make_unique<Coord2D>(position);
 }
 
-Event::EventType Event::getType()
+Event::EventType Event::getType() const
 {
     return this->_type;
 }
 
-EventKey Event::getKey()
+EventKey Event::getKey() const
 {
     return this->_key;
 }
 
-const ICoordinate &Event::getPosition()
+const ICoordinate &Event::getPosition() const
 {
     return *this->_position;
 }
