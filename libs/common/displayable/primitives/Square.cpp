@@ -22,6 +22,20 @@ Square::Square(const IColor &color, size_t width, size_t height, bool isFilled, 
     this->_isFilled = isFilled;
 }
 
+Square::Square(const ISquare &square) : APrimitive(square.getColor(), square.getReplacingChar())
+{
+    this->_width = square.getWidth();
+    this->_height = square.getHeight();
+    this->_isFilled = square.isFilled();
+}
+
+Square::Square(const Square &square) : APrimitive(square.getColor(), square.getReplacingChar())
+{
+    this->_width = square.getWidth();
+    this->_height = square.getHeight();
+    this->_isFilled = square.isFilled();
+}
+
 size_t Square::getWidth() const
 {
     return this->_width;

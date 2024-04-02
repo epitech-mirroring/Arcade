@@ -27,6 +27,18 @@ Line::Line(const ICoordinate &end, const RGBAColor &color, char replacingChar)
     this->_end = std::make_unique<Coord2D>(end.getX(), end.getY());
 }
 
+Line::Line(const ILine &line)
+    : APrimitive(line.getColor(), line.getReplacingChar())
+{
+    this->_end = std::make_unique<Coord2D>(line.getEnd().getX(), line.getEnd().getY());
+}
+
+Line::Line(const Line &line)
+    : APrimitive(line.getColor(), line.getReplacingChar())
+{
+    this->_end = std::make_unique<Coord2D>(line.getEnd().getX(), line.getEnd().getY());
+}
+
 const ICoordinate &Line::getEnd() const
 {
     return *this->_end;

@@ -18,6 +18,8 @@ public:
     Line(std::unique_ptr<ICoordinate> &end, std::unique_ptr<IColor> &color, char replacingChar = '*');
     Line(const ICoordinate &end, const IColor &color, char replacingChar = '*');
     explicit Line(const ICoordinate &end, const RGBAColor &color = RGBAColor::WHITE, char replacingChar = '*');
+    Line(const ILine &line);
+    Line(const Line &line);
     ~Line() override = default;
     [[nodiscard]] const ICoordinate &getEnd() const override;
     void setEnd(const ICoordinate &end) override;
