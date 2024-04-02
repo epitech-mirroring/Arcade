@@ -25,6 +25,9 @@
 #include <cstddef>
 #include <memory>
 #include <iostream>
+#ifdef _KEY_T
+#undef _KEY_T
+#endif
 
 class SDL2: public IDriver {
 public:

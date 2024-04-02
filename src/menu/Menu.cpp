@@ -13,6 +13,9 @@
 #include "common/utils/RGBAColor.hpp"
 #include "core/Arcade.hpp"
 #include <unordered_map>
+#ifdef _KEY_T
+#undef _KEY_T
+#endif
 
 Menu::Menu() = default;
 

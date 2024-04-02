@@ -23,6 +23,9 @@
 #include <map>
 #include <deque>
 #include <cstddef>
+#ifdef _KEY_T
+#undef _KEY_T
+#endif
 
 class SFML: public IDriver {
 public:
