@@ -19,6 +19,7 @@
 class Pac : public APacManEntity {
 protected:
     bool _eaten;
+    std::size_t _animation;
 public:
     Pac();
     ~Pac() override = default;

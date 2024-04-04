@@ -42,35 +42,35 @@ bool isThereWall(const Wall (&map)[37][28], const Coord2D& pos) {
 
 void Pac::update(IArcade &arcade, const Wall (&map)[37][28]) {
     Move move(this->getPosition(), (APacManEntity &) *this, this->_newDirection);
+    Coord2D fromGrid = Coord2D(SCREEN_TO_COORD(this->getPosition().getX()), SCREEN_TO_COORD(this->getPosition().getY()));
+    Coord2D toGrid;
 
     move.computeLanding();
-    if (GIZMOS(arcade)) {
-        GIZMOS(arcade)->drawLine(this->getPosition(), move.getTo(), RGBAColor::RED);
-    }
+    toGrid = Coord2D(SCREEN_TO_COORD(move.getTo().getX()), SCREEN_TO_COORD(move.getTo().getY()));
     if(move.isLegal(map)){
         // Change square
-        // TODO if changed cell update animState
+        if (toGrid != fromGrid) {
+            this->_animation ++;
+            this->_animation %= 2;
+        }
         this->_direction = this->_newDirection;
         this->setPosition(move.getTo());
     } else {
         move = Move(this->getPosition(), (APacManEntity &) *this, this->_direction);
         move.computeLanding();
+        toGrid = Coord2D(SCREEN_TO_COORD(move.getTo().getX()), SCREEN_TO_COORD(move.getTo().getY()));
         if(move.isLegal(map)){
             // Change square
-            // TODO if changed cell update animState
+            if (toGrid != fromGrid) {
+                this->_animation ++;
+                this->_animation %= 2;
+            }
             this->setPosition(move.getTo());
             this->_newDirection = this->_direction;
         }
     }
 
-    if (IS_GIZMOS(arcade) && false) {
-        for (const auto & y : map) {
-            for (const auto & x : y) {
-                Coord2D pos = x.getPosition();
-                GIZMOS(arcade)->drawRect(pos, pos + Coord2D(8 * SCALE, 8 * SCALE), false, RGBAColor::WHITE);
-            }
-        }
-    }
+    this->_sprite->setDrawRect({26 * (this->_animation + this->_direction * 2), 0, 26, 26});
 }
 
 bool Pac::hasEaten() const {
