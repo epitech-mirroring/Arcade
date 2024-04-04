@@ -13,6 +13,7 @@ CXX_SOURCES		= 	src/Pacman.cpp								\
 					src/entities/APacManEntity.cpp				\
 					src/entities/Pac.cpp						\
 					src/entities/AGhost.cpp						\
+					src/entities/PacDot.cpp						\
 					src/utils/Move.cpp							\
 
 CXX_TESTS		=

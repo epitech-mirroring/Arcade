@@ -8,7 +8,6 @@
 
 #include "Pac.hpp"
 #include "common/utils/Coord2D.hpp"
-#include "common/utils/RGBAColor.hpp"
 #include "../utils/Move.hpp"
 
 Pac::Pac(): APacManEntity("assets/games/pacman/pacman/pacman.png", 208, 26) {
@@ -19,6 +18,7 @@ Pac::Pac(): APacManEntity("assets/games/pacman/pacman/pacman.png", 208, 26) {
     this->_direction = Direction::LEFT;
     this->_newDirection = Direction::LEFT;
     this->_eaten = false;
+    this->_animation = 0;
 }
 
 void Pac::handleEvent(const IEvent &event) {
@@ -40,7 +40,7 @@ bool isThereWall(const Wall (&map)[37][28], const Coord2D& pos) {
     return map[SCREEN_TO_COORD(pos.getY())][SCREEN_TO_COORD(pos.getX())].getType() != Wall::WallType::EMPTY;
 }
 
-void Pac::update(IArcade &arcade, const Wall (&map)[37][28]) {
+void Pac::update(std::vector<PacDot *> &dots, const Wall (&map)[37][28]) {
     Move move(this->getPosition(), (APacManEntity &) *this, this->_newDirection);
     Coord2D fromGrid = Coord2D(SCREEN_TO_COORD(this->getPosition().getX()), SCREEN_TO_COORD(this->getPosition().getY()));
     Coord2D toGrid;
@@ -67,6 +67,18 @@ void Pac::update(IArcade &arcade, const Wall (&map)[37][28]) {
             }
             this->setPosition(move.getTo());
             this->_newDirection = this->_direction;
+        }
+    }
+
+    for (std::size_t i = 0; i < dots.size(); i++) {
+        PacDot *dot = dots[i];
+        Coord2D dotGrid = Coord2D(SCREEN_TO_COORD(dot->getPosition().getX()), SCREEN_TO_COORD(dot->getPosition().getY()));
+        Coord2D pacGrid = Coord2D(SCREEN_TO_COORD(this->getPosition().getX()), SCREEN_TO_COORD(this->getPosition().getY()));
+        if (dotGrid == pacGrid) {
+            this->_eaten = true;
+            dots.erase(dots.begin() + i);
+            delete dot;
+            break;
         }
     }
 

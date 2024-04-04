@@ -50,7 +50,9 @@ public:
         T_CORNER_UP_DOWN_RIGHT = 42,
         T_CORNER_UP_DOWN_LEFT = 43,
         EMPTY = 44,
+        DOT = 45,
         GATE = 46,
+        ENERGIZER = 47,
     };
 
     explicit Wall(WallType type, bool isWhite = false);

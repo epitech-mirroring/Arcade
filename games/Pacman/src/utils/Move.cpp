@@ -9,6 +9,7 @@
 #include "Move.hpp"
 #include "../entities/Pac.hpp"
 #include "../entities/AGhost.hpp"
+#include "common/utils/RGBAColor.hpp"
 
 Move::Move(const Coord2D &from, APacManEntity &actor, Direction direction)
     : _from(from), _to(from), _direction(direction), _direction_(NONE), _actor(&actor) {}
@@ -21,7 +22,7 @@ void checkTeleport(Coord2D &grid) {
     Coord2D rightPortal = Coord2D(COORD_TO_SCREEN(27), COORD_TO_SCREEN(17));
     if (grid.getX() < 0) {
         grid.setX(rightPortal.getX());
-    } else if (grid.getX() > COORD_TO_SCREEN(MAP_WIDTH)) {
+    } else if (grid.getX() >= COORD_TO_SCREEN(MAP_WIDTH)) {
         grid.setX(0);
     }
 }
@@ -128,7 +129,7 @@ bool Move::isLegal(const Wall (&map)[37][28]) const {
     bool isPac = dynamic_cast<const Pac *>(_actor) != nullptr;
     bool isDead = false;
 
-    std::vector<Wall::WallType> walkable = {Wall::WallType::EMPTY};
+    std::vector<Wall::WallType> walkable = {Wall::WallType::EMPTY, Wall::WallType::DOT, Wall::WallType::ENERGIZER};
     if (!isPac) {
         if (this->_actor != nullptr && dynamic_cast<const AGhost *>(this->_actor)->isDead()) {
             isDead = true;

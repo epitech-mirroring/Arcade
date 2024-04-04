@@ -45,9 +45,7 @@ void Pacman::start() {
     arcade = this->_arcade;
     for (std::size_t y = 0; y < MAP_HEIGHT; y++) {
         for (std::size_t x = 0; x < MAP_WIDTH; x++) {
-            Coord2D pos = Coord2D((int) COORD_TO_SCREEN(x), (int) COORD_TO_SCREEN(y));
-            this->_map[y][x].setPosition(pos);
-            this->_map[y][x].setSize(SCALE);
+            this->_map[y][x].setPosition(Coord2D(COORD_TO_SCREEN(x), COORD_TO_SCREEN(y)));
         }
     }
     this->_arcade->setPreferredSize(COORD_TO_SCREEN(MAP_WIDTH), COORD_TO_SCREEN(MAP_HEIGHT));
@@ -81,6 +79,24 @@ void Pacman::start() {
     currentLevel = 0;
     isFrightened = false;
     this->_score = 0;
+    this->replaceDots();
+}
+
+void Pacman::replaceDots() {
+    for (auto & dot : this->dots) {
+        delete &dot;
+    }
+    this->dots.clear();
+
+    for (auto & line : this->_map) {
+        for (auto & cell : line) {
+            if (cell.getType() == Wall::WallType::DOT || cell.getType() == Wall::WallType::ENERGIZER) {
+                auto *dot = new PacDot(cell.getType() == Wall::WallType::ENERGIZER);
+                dot->setPosition(cell.getPosition());
+                this->dots.push_back(dot);
+            }
+        }
+    }
 }
 
 void Pacman::run() {
@@ -90,9 +106,13 @@ void Pacman::run() {
             this->_arcade->display(piece);
         }
     }
+    // Draw dots
+    for (auto & dot : this->dots) {
+        this->_arcade->display(*dot);
+    }
     // Update ghosts
     // Update pacman
-    this->pac.update(*this->_arcade, this->_map);
+    this->pac.update(this->dots, this->_map);
     // Display pacman
     this->_arcade->display(this->pac);
     // Display ghosts

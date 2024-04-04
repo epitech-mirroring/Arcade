@@ -13,6 +13,8 @@
 #include "../PacmanGlobals.hpp"
 #include "Wall.hpp"
 #include "APacManEntity.hpp"
+#include "PacDot.hpp"
+#include <vector>
 
 #define SCALE_PACKMAN (SCALE * 8. / 26.)
 
@@ -26,7 +28,7 @@ public:
     Direction _newDirection;
 
     void handleEvent(const IEvent &event);
-    void update(IArcade &arcade, const Wall (&map)[37][28]);
+    void update(std::vector<PacDot *> &dots, const Wall (&map)[37][28]);
     [[nodiscard]] bool hasEaten() const;
     void setEaten(bool eaten);
 };
