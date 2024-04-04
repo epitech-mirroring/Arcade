@@ -54,8 +54,8 @@ private:
     std::map<std::pair<IEvent::EventType, EventKey>, EventCallback> _events;
     std::map<sf::Keyboard::Key, EventKey> _keyMap;
     std::deque<sf::Keyboard::Key> _pressedKeys;
-    std::map<std::string, sf::Texture> _loadedTextures;
-    std::map<std::string, sf::Font> _loadedFonts;
+    std::map<std::string, sf::Texture *> _loadedTextures;
+    std::map<std::string, sf::Font *> _loadedFonts;
     std::size_t _width;
     std::size_t _height;
 };

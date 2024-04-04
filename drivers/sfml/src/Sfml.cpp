@@ -122,6 +122,12 @@ SFML::SFML()
 SFML::~SFML()
 {
     this->_window.close();
+    for (auto &texture : this->_loadedTextures) {
+        delete texture.second;
+    }
+    for (auto &font : this->_loadedFonts) {
+        delete font.second;
+    }
 }
 
 void SFML::flipFrame()
@@ -215,17 +221,18 @@ void SFML::displayPrimitive(const IPrimitive &primitive)
 
 void SFML::displayText(const IText &text)
 {
-    static sf::Font font;
+    static sf::Font *font;
     static sf::Text sfText;
     sf::Color color = sf::Color(text.getColor().getR(), text.getColor().getG(), text.getColor().getB(), text.getColor().getA());
 
     if (this->_loadedFonts.find(text.getFontPath()) == this->_loadedFonts.end()) {
-        font.loadFromFile(text.getFontPath());
+        font = new sf::Font();
+        font->loadFromFile(text.getFontPath());
         this->_loadedFonts[text.getFontPath()] = font;
     } else {
         font = this->_loadedFonts[text.getFontPath()];
     }
-    sfText.setFont(font);
+    sfText.setFont(*font);
     sfText.setString(text.getText());
     sfText.setFillColor(color);
     sfText.setOutlineColor(color);
@@ -286,17 +293,18 @@ void SFML::displayCircle(const ICircle &circle)
 void SFML::displayEntity(const IEntity &entity)
 {
     static sf::Sprite sprite;
-    static sf::Texture texture;
+    static sf::Texture *texture = nullptr;
     DrawRect drawRect = entity.getSprite().getDrawRect();
     std::string path = entity.getSprite().getPicture().getPath();
 
     if (this->_loadedTextures.find(path) == this->_loadedTextures.end()) {
-        texture.loadFromFile(path);
+        texture = new sf::Texture();
+        texture->loadFromFile(path);
         this->_loadedTextures[path] = texture;
     } else {
         texture = this->_loadedTextures[path];
     }
-    sprite.setTexture(texture, true);
+    sprite.setTexture(*texture, true);
     sprite.setTextureRect(sf::IntRect(drawRect.x, drawRect.y, drawRect.width, drawRect.height));
     sprite.setPosition(entity.getPosition().getX(), entity.getPosition().getY());
     sprite.setScale(entity.getSize(), entity.getSize());
