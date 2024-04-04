@@ -216,7 +216,7 @@ void SFML::displayPrimitive(const IPrimitive &primitive)
 void SFML::displayText(const IText &text)
 {
     static sf::Font font;
-    sf::Text sfText;
+    static sf::Text sfText;
     sf::Color color = sf::Color(text.getColor().getR(), text.getColor().getG(), text.getColor().getB(), text.getColor().getA());
 
     if (this->_loadedFonts.find(text.getFontPath()) == this->_loadedFonts.end()) {
@@ -248,6 +248,7 @@ void SFML::displaySquare(const ISquare &square)
     } else {
         sfSquare.setOutlineColor(color);
         sfSquare.setOutlineThickness(1);
+        sfSquare.setFillColor(sf::Color::Transparent);
     }
     sfSquare.setPosition(square.getPosition().getX(), square.getPosition().getY());
     if (IS_INSTANCE_OF(const ICanRotate, square)) {
@@ -284,8 +285,8 @@ void SFML::displayCircle(const ICircle &circle)
 
 void SFML::displayEntity(const IEntity &entity)
 {
-    sf::Sprite sprite;
-    sf::Texture texture;
+    static sf::Sprite sprite;
+    static sf::Texture texture;
     DrawRect drawRect = entity.getSprite().getDrawRect();
     std::string path = entity.getSprite().getPicture().getPath();
 
