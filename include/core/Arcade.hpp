@@ -30,7 +30,7 @@ struct LoadedLibrary {
     std::unique_ptr<DLLoader<T>> loader;
 };
 
-class Arcade: public IArcade, public ICanDrawGizmos {
+class Arcade: public ICanDrawGizmos {
 private:
     LoadedLibrary<IDriver> _driver;
     LoadedLibrary<IGame> _game;
@@ -48,11 +48,12 @@ private:
     std::size_t _preferredWidth;
     std::size_t _preferredHeight;
     std::map<IEvent::EventType, std::map<EventKey, EventCallback>> _events;
+    float _deltaTime;
 
 
     void bareLoadDriver(const std::string &driverPath);
 public:
-    explicit Arcade(const std::string& firstDriverName, bool gizmosEnabled = false);
+    explicit Arcade(const std::string& firstDriverName, bool gizmosEnabled = true);
     ~Arcade() override;
 
     void loadDriver(const std::string &driverName);
@@ -66,6 +67,7 @@ public:
     [[nodiscard]] Player &getCurrentPlayer() const;
     [[nodiscard]] const std::vector<Player> &getPlayers() const;
     void setArcadePtr(std::shared_ptr<IArcade> arcade);
+    [[nodiscard]] float getDeltaTime() const override;
 
     void exit();
     void restart();
@@ -79,7 +81,7 @@ public:
     [[nodiscard]] std::vector<SharedLibrary> getDrivers() const;
 
     // Gizmos
-    bool isGizmosEnabled() const override;
+    [[nodiscard]] bool isGizmosEnabled() const override;
     void drawLine(const ICoordinate &start, const ICoordinate &end, const IColor &color) override;
     void drawCircle(const ICoordinate &center, std::size_t radius, const IColor &color) override;
     void drawRect(const ICoordinate &topLeft, const ICoordinate &bottomRight, bool filled, const IColor &color) override;

@@ -227,7 +227,16 @@ void Arcade::run() {
     if (this->_game.instance == nullptr) {
         this->menu();
     }
+    long long frameStart = 0; // in milliseconds
+    long long frameEnd = 0; // in milliseconds
+    float targetFrameTime = 1.f / 60.f; // in seconds
+    float targetFrameTimeMs = targetFrameTime * 1000.f; // in milliseconds
+    long long frameTime = 0; // in milliseconds
+    float toWait = 0; // in milliseconds
+    long long lastFrameTime = 0; // in milliseconds
     while (this->_running) {
+        frameStart = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+        this->_deltaTime = std::max((float) (frameStart - lastFrameTime), 0.f) / 1000.f;
         if (this->_game.instance != nullptr) {
             this->_game.instance->run();
         }
@@ -235,7 +244,12 @@ void Arcade::run() {
             this->_endFrameCallbacks.front()();
             this->_endFrameCallbacks.pop();
         }
-        usleep((int) (1.f/60.f * 1000000.f));
+        frameEnd = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+        frameTime = frameEnd - frameStart;
+        toWait = std::max(targetFrameTimeMs - (float) frameTime, 0.f);
+        std::cout << "Frame time: " << frameTime << "ms, waiting " << toWait << "ms" << std::endl;
+        lastFrameTime = frameStart;
+        usleep((int) (toWait * 1000.f));
     }
 }
 
@@ -371,4 +385,8 @@ void Arcade::drawRect(const ICoordinate &topLeft, const ICoordinate &bottomRight
 
 bool Arcade::isGizmosEnabled() const {
     return this->_gizmosEnabled;
+}
+
+float Arcade::getDeltaTime() const {
+    return this->_deltaTime;
 }
