@@ -87,7 +87,7 @@ void Pacman::run() {
     // Draw map
     for (auto & line : this->_map) {
         for (const auto & piece : line) {
-            // this->_arcade->display(piece);
+            this->_arcade->display(piece);
         }
     }
     // Update ghosts
@@ -96,13 +96,6 @@ void Pacman::run() {
     // Display pacman
     this->_arcade->display(this->pac);
     // Display ghosts
-
-    float deltaTime = this->_arcade->getDeltaTime(); // in s;
-    float fps = 1 / deltaTime;
-    Text fpsText((IColor &) RGBAColor::RED, std::to_string((int) fps), "assets/PressStart2P.ttf");
-    fpsText.setPosition(Coord2D(0, 0));
-    fpsText.setSize(20);
-    this->_arcade->display(fpsText);
 
     this->_arcade->flipFrame();
 }
