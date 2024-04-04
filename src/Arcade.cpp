@@ -364,9 +364,12 @@ void Arcade::drawLine(const ICoordinate &start, const ICoordinate &end,
                       const IColor &color) {
     if (!isGizmosEnabled())
         return;
-    Line line(end, color);
-    line.setPosition(start);
-    this->_gizmos.emplace([this, line]() {
+    Coord2D startCoord = Coord2D(start);
+    Coord2D endCoord = Coord2D(end);
+    RGBAColor colorRGBA = RGBAColor(color);
+    this->_gizmos.emplace([this, startCoord, endCoord, colorRGBA]() {
+        Line line(endCoord, colorRGBA);
+        line.setPosition(startCoord);
         this->display(line);
     });
 }
@@ -375,10 +378,13 @@ void Arcade::drawRect(const ICoordinate &topLeft, const ICoordinate &bottomRight
                       bool filled, const IColor &color) {
     if (!isGizmosEnabled())
         return;
-    Square square(color, bottomRight.getX() - topLeft.getX(), bottomRight.getY() - topLeft.getY());
-    square.setPosition(topLeft);
-    square.setIsFilled(filled);
-    this->_gizmos.emplace([this, square]() {
+    Coord2D topLeftCoord = Coord2D(topLeft);
+    std::size_t width = bottomRight.getX() - topLeft.getX();
+    std::size_t height = bottomRight.getY() - topLeft.getY();
+    RGBAColor colorRGBA = RGBAColor(color);
+    this->_gizmos.emplace([this, topLeftCoord, width, height, filled, colorRGBA]() {
+        Square square(colorRGBA, width, height, filled);
+        square.setPosition(topLeftCoord);
         this->display(square);
     });
 }
