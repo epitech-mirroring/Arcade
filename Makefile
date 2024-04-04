@@ -56,7 +56,7 @@ COMMON_OBJS 	= 	$(COMMON_LIB)/AGame.o									\
 LOG				= ./build.log
 
 .PHONY: $(NAME) all clean fclean re tests_run clean_test \
-	$(CXX_OBJS) $(CXX_TESTS_OBJS) games $(GAMES) graphicals $(DRIVERS) \
+	games $(GAMES) graphicals $(DRIVERS) \
 	tests_games tests_drivers tests_libs shared $(JSON_LIB) clean_json \
 	fclean_json $(COMMON_LIB) clean_common fclean_common
 

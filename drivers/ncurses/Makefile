@@ -40,8 +40,7 @@ CXX_TESTS_OBJS	= 	$(CXX_TESTS:.cpp=.o)
 LOG				= 	./build.log
 
 .PHONY: $(NAME) all clean fclean re tests_run clean_test \
-	$(CXX_OBJS) $(CXX_TESTS_OBJS) common $(COMMON_LIB) \
-	clean_common fclean_common
+	common $(COMMON_LIB) clean_common fclean_common
 
 # Colors and formatting
 GREEN =		\033[1;32m
