@@ -9,12 +9,12 @@
 #pragma once
 #include "common/AGame.hpp"
 #include "entities/Wall.hpp"
+#include "PacmanGlobals.hpp"
+#include "entities/Pac.hpp"
 
 class Pacman: public AGame {
 public:
     // 37x28
-#define MAP_WIDTH 28
-#define MAP_HEIGHT 37
     Wall _map[MAP_HEIGHT][MAP_WIDTH] = {
             {Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY)},
             {Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY)},
@@ -54,6 +54,7 @@ public:
             {Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY)},
             {Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY)},
     };
+    Pac pac;
 
     Pacman();
     ~Pacman() override = default;

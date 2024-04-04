@@ -8,6 +8,8 @@
 
 #include "Pacman.hpp"
 #include "common/utils/Coord2D.hpp"
+#include "common/utils/RGBAColor.hpp"
+#include "common/displayable/primitives/Text.hpp"
 #include <string>
 #include <iostream>
 
@@ -34,28 +36,73 @@ extern "C" {
     }
 }
 
-Pacman::Pacman() {
-}
+Pacman::Pacman() = default;
+bool isFrightened = false;
+int currentLevel = 0;
+std::shared_ptr<IArcade> arcade;
 
 void Pacman::start() {
-    std::size_t scale = 2;
+    arcade = this->_arcade;
     for (std::size_t y = 0; y < MAP_HEIGHT; y++) {
         for (std::size_t x = 0; x < MAP_WIDTH; x++) {
-            Coord2D pos = Coord2D((int) (x*8*scale), (int) (y*8*scale));
+            Coord2D pos = Coord2D((int) COORD_TO_SCREEN(x), (int) COORD_TO_SCREEN(y));
             this->_map[y][x].setPosition(pos);
-            this->_map[y][x].setSize((float) scale);
+            this->_map[y][x].setSize(SCALE);
         }
     }
-    this->_arcade->setPreferredSize(MAP_WIDTH*8*scale, MAP_HEIGHT*8*scale);
+    this->_arcade->setPreferredSize(COORD_TO_SCREEN(MAP_WIDTH), COORD_TO_SCREEN(MAP_HEIGHT));
+
+    // Bind keys
+    this->_arcade->bindEvent(IEvent::EventType::_KEY_PRESS, _KEY_Z, [this](const IEvent &event) {
+        this->pac.handleEvent(event);
+    });
+    this->_arcade->bindEvent(IEvent::EventType::_KEY_PRESS, _KEY_Q, [this](const IEvent &event) {
+        this->pac.handleEvent(event);
+    });
+    this->_arcade->bindEvent(IEvent::EventType::_KEY_PRESS, _KEY_S, [this](const IEvent &event) {
+        this->pac.handleEvent(event);
+    });
+    this->_arcade->bindEvent(IEvent::EventType::_KEY_PRESS, _KEY_D, [this](const IEvent &event) {
+        this->pac.handleEvent(event);
+    });
+    this->_arcade->bindEvent(IEvent::EventType::_KEY_PRESS, _KEY_UP, [this](const IEvent &event) {
+        this->pac.handleEvent(event);
+    });
+    this->_arcade->bindEvent(IEvent::EventType::_KEY_PRESS, _KEY_DOWN, [this](const IEvent &event) {
+        this->pac.handleEvent(event);
+    });
+    this->_arcade->bindEvent(IEvent::EventType::_KEY_PRESS, _KEY_RIGHT, [this](const IEvent &event) {
+        this->pac.handleEvent(event);
+    });
+    this->_arcade->bindEvent(IEvent::EventType::_KEY_PRESS, _KEY_LEFT, [this](const IEvent &event) {
+        this->pac.handleEvent(event);
+    });
+
+    currentLevel = 0;
+    isFrightened = false;
+    this->_score = 0;
 }
 
 void Pacman::run() {
     // Draw map
     for (auto & line : this->_map) {
         for (const auto & piece : line) {
-            this->_arcade->display(piece);
+            // this->_arcade->display(piece);
         }
     }
+    // Update ghosts
+    // Update pacman
+    this->pac.update(*this->_arcade, this->_map);
+    // Display pacman
+    this->_arcade->display(this->pac);
+    // Display ghosts
+
+    float deltaTime = this->_arcade->getDeltaTime(); // in s;
+    float fps = 1 / deltaTime;
+    Text fpsText((IColor &) RGBAColor::RED, std::to_string((int) fps), "assets/PressStart2P.ttf");
+    fpsText.setPosition(Coord2D(0, 0));
+    fpsText.setSize(20);
+    this->_arcade->display(fpsText);
 
     this->_arcade->flipFrame();
 }

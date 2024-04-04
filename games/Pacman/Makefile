@@ -10,6 +10,10 @@
 # All the source files
 CXX_SOURCES		= 	src/Pacman.cpp								\
 					src/entities/Wall.cpp						\
+					src/entities/APacManEntity.cpp				\
+					src/entities/Pac.cpp						\
+					src/entities/AGhost.cpp						\
+					src/utils/Move.cpp							\
 
 CXX_TESTS		=
 
