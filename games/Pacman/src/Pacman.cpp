@@ -9,6 +9,7 @@
 #include "Pacman.hpp"
 #include "utils/GridCoordinate.hpp"
 #include "entities/PacManText.hpp"
+#include "entities/LevelCounter.hpp"
 #include <string>
 #include <iostream>
 
@@ -82,7 +83,7 @@ void Pacman::start() {
     }
     this->_arcade->setPreferredSize(MAP_WIDTH * 8 * SCALE, MAP_HEIGHT * 8 * SCALE);
 
-    currentLevel = 0;
+    currentLevel = 1;
     isFrightened = false;
     this->_score = 0;
     this->replaceDots();
@@ -148,6 +149,10 @@ void Pacman::run() {
     for (auto &c : highScore.getChars()) {
         this->_arcade->display(*c);
     }
+    static LevelCounter levelCounter;
+    levelCounter.setPosition(GridCoordinate(MAP_WIDTH - 8, MAP_HEIGHT - 3).toScreen());
+    levelCounter.setLevel(currentLevel);
+    this->_arcade->display(levelCounter);
 
     // Draw dots
     const int energizerBlinkTimeInMs = 250; // Time in ms (time between two blinks)
