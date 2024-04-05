@@ -397,3 +397,7 @@ bool Arcade::isGizmosEnabled() const {
 float Arcade::getDeltaTime() const {
     return this->_deltaTime;
 }
+
+std::size_t Arcade::getTime() const { // in ms
+    return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+}

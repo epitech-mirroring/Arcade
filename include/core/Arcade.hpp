@@ -68,6 +68,7 @@ public:
     [[nodiscard]] const std::vector<Player> &getPlayers() const;
     void setArcadePtr(std::shared_ptr<IArcade> arcade);
     [[nodiscard]] float getDeltaTime() const override;
+    [[nodiscard]] std::size_t getTime() const override;
 
     void exit();
     void restart();
