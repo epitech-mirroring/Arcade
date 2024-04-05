@@ -82,6 +82,7 @@ void Pac::update(std::vector<PacDot *> &dots, const Wall (&map)[37][28]) {
                 if (score != nullptr)
                     *score += 40;
                 isFrightened = true;
+                frightenedMsLeft = levels[currentLevel].frightenedDuration * 1000;
             } else if (score != nullptr) {
                 *score += 10;
             }

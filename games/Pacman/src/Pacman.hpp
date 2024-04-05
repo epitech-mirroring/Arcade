@@ -12,6 +12,7 @@
 #include "PacmanGlobals.hpp"
 #include "entities/Pac.hpp"
 #include "entities/PacDot.hpp"
+#include "entities/AGhost.hpp"
 
 class Pacman: public AGame {
 public:
@@ -57,6 +58,7 @@ public:
     };
     std::vector<PacDot *> dots;
     Pac pac;
+    std::vector<AGhost *> ghosts;
 
     Pacman();
     ~Pacman() override = default;

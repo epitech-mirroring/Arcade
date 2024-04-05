@@ -22,6 +22,11 @@ enum Direction {
     NONE = -1
 };
 
+enum GhostStrategy {
+    CHASE = 0,
+    SCATTER = 1
+};
+
 enum BonusType {
     CHERRY = 0,
     STRAWBERRY = 1,
@@ -60,8 +65,8 @@ struct Level {
 };
 
 const Level levels[] = {
-{CHERRY     ,   _100,   0.8, 0.75, 0.9  , 0.5   ,   6, 0.4  , 0.71, 0.79,   20  ,   0.8},  // Level 1
-{STRAWBERRY ,   _300,   0.9, 0.85, 0.95 , 0.55  ,   5, 0.45 , 0.79, 0.83,   30  ,   0.9},// Level 2
+{CHERRY     ,   _100,   0.8, 0.75, 0.9  , 0.5   ,   6, 0.4  , 0.71, 0.79,   20  ,   0.8}, // Level 1
+{STRAWBERRY ,   _300,   0.9, 0.85, 0.95 , 0.55  ,   5, 0.45 , 0.79, 0.83,   30  ,   0.9}, // Level 2
 {PEACH      ,   _500,   0.9, 0.85, 0.95 , 0.55  ,   4, 0.45 , 0.79, 0.83,   40  ,   0.9}, // Level 3
 {PEACH      ,   _500,   0.9, 0.85, 0.95 , 0.55  ,   3, 0.45 , 0.79, 0.83,   40  ,   0.9}, // Level 4
 {APPLE      ,   _700,   1  , 0.95, 1    , 0.6   ,   2, 0.5  , 0.87, 0.87,   40  ,   1  }, // Level 5
@@ -83,6 +88,7 @@ const Level levels[] = {
 {KEY        ,   _5000,  0.9, 0.95, 1    , 0.6   ,   0, 0.5  , 0.79, 0   ,   120 ,   1  }};// Level 21+
 
 extern bool isFrightened;
+extern int frightenedMsLeft;
 extern int currentLevel;
 extern int currentLives;
 extern std::shared_ptr<IArcade> arcade;

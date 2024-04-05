@@ -27,4 +27,5 @@ public:
     void computeLanding();
     [[nodiscard]] bool isLegal(const Wall (&map)[37][28]) const;
     [[nodiscard]] const GridCoordinate &getTo() const;
+    [[nodiscard]] Direction getDirection() const;
 };

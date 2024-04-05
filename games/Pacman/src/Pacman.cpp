@@ -11,6 +11,10 @@
 #include "entities/PacManText.hpp"
 #include "entities/LevelCounter.hpp"
 #include "entities/LiveCounter.hpp"
+#include "entities/ghosts/Pinky.hpp"
+#include "entities/ghosts/Blinky.hpp"
+#include "entities/ghosts/Clyde.hpp"
+#include "entities/ghosts/Inky.hpp"
 #include <string>
 #include <iostream>
 
@@ -43,6 +47,7 @@ int currentLevel = 0;
 int currentLives = 4;
 std::shared_ptr<IArcade> arcade;
 int *score = nullptr;
+int frightenedMsLeft;
 
 void Pacman::init(std::shared_ptr<IArcade> _arcade) {
     this->_arcade = _arcade;
@@ -84,13 +89,35 @@ void Pacman::start() {
     }
     this->_arcade->setPreferredSize(MAP_WIDTH * 8 * SCALE, MAP_HEIGHT * 8 * SCALE);
 
-    currentLevel = 1;
+    currentLevel = 0;
     currentLives = 4;
     isFrightened = false;
+    frightenedMsLeft = 0;
     this->_score = 0;
     this->replaceDots();
     *score = this->_score;
     this->pac.setPosition(GridCoordinate(13, 26).toScreen());
+
+    for (auto &ghost : this->ghosts) {
+        delete ghost;
+    }
+    this->ghosts.clear();
+
+    auto *blinky = new Blinky();
+    blinky->setPosition(GridCoordinate(13, 17).toScreen());
+    this->ghosts.push_back(blinky);
+
+    auto *pinky = new Pinky();
+    pinky->setPosition(GridCoordinate(11, 17).toScreen());
+    this->ghosts.push_back(pinky);
+
+    auto *inky = new Inky();
+    inky->setPosition(GridCoordinate(14, 17).toScreen());
+    this->ghosts.push_back(inky);
+
+    auto *clyde = new Clyde();
+    clyde->setPosition(GridCoordinate(16, 17).toScreen());
+    this->ghosts.push_back(clyde);
 }
 
 void Pacman::replaceDots() {
@@ -152,7 +179,7 @@ void Pacman::run() {
         this->_arcade->display(*c);
     }
     static LevelCounter levelCounter;
-    levelCounter.setLevel(currentLevel);
+    levelCounter.setLevel(currentLevel + 1);
     this->_arcade->display(levelCounter);
     static LiveCounter livesCounter;
     livesCounter.setLives(currentLives);
@@ -172,11 +199,32 @@ void Pacman::run() {
         }
     }
     // Update ghosts
+    for (auto &ghost : this->ghosts) {
+        ghost->update(this->pac, this->_map, this->ghosts);
+    }
     // Update pacman
     this->pac.update(this->dots, this->_map);
+    if (frightenedMsLeft > 0) {
+        frightenedMsLeft -= (int) (this->_arcade->getDeltaTime() * 1000.f);
+        if (frightenedMsLeft <= 0) {
+            isFrightened = false;
+            frightenedMsLeft = 0;
+            for (auto &ghost : this->ghosts) {
+                ghost->setStrategy(CHASE);
+            }
+        }
+        if (isFrightened) {
+            for (auto &ghost : this->ghosts) {
+                ghost->setStrategy(SCATTER);
+            }
+        }
+    }
     // Display pacman
     this->_arcade->display(this->pac);
     // Display ghosts
+    for (auto &ghost : this->ghosts) {
+        this->_arcade->display(*ghost);
+    }
 
     this->_arcade->flipFrame();
     frame++;

@@ -189,6 +189,10 @@ bool Move::isLegal(const Wall (&map)[37][28]) const {
     return isLegal;
 }
 
+Direction Move::getDirection() const {
+    return _direction;
+}
+
 const GridCoordinate &Move::getTo() const {
     return _to;
 }
