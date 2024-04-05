@@ -35,7 +35,7 @@ private:
     LoadedLibrary<IDriver> _driver;
     LoadedLibrary<IGame> _game;
     std::vector<Player> _players;
-    std::unique_ptr<Player> _currentPlayer;
+    Player _currentPlayer;
     std::vector<SharedLibrary> _games;
     std::vector<SharedLibrary> _drivers;
     std::size_t _currentGameIndex;
@@ -64,11 +64,12 @@ public:
     void rebindGlobalKeys();
     void rebindCustomKeys();
     void reApplyPreferences() const;
-    [[nodiscard]] Player &getCurrentPlayer() const;
+    [[nodiscard]] Player &getCurrentPlayer();
     [[nodiscard]] const std::vector<Player> &getPlayers() const;
     void setArcadePtr(std::shared_ptr<IArcade> arcade);
     [[nodiscard]] float getDeltaTime() const override;
     [[nodiscard]] std::size_t getTime() const override;
+    void sortPlayers();
 
     void exit();
     void restart();

@@ -26,6 +26,8 @@ int main(int argc, char **argv) {
         std::shared_ptr<Arcade> arcade = std::make_shared<Arcade>(argv[1]);
         arcade->setArcadePtr(arcade);
         arcade->run();
+        arcade->saveScore();
+        arcade.reset();
     } catch (IError &e) {
         std::cerr << e.what() << std::endl;
         return e.getCode();
