@@ -83,10 +83,10 @@ const std::deque<Coord2D> &Snake::getSnakePos() const
     return snakePos;
 }
 
-std::deque<const Snake *> Snake::getSnake() const
+std::deque<Snake *> Snake::getSnake()
 {
-    std::deque<const Snake *> snake;
-    const Snake *tmp = this->next;
+    std::deque<Snake *> snake;
+    Snake *tmp = this->next;
 
     snake.push_back(this);
     while (tmp) {

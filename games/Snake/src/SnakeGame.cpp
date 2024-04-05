@@ -49,8 +49,8 @@ SnakeGame::SnakeGame()
     this->_gameOverText = std::make_shared<Text>(RGBAColor(255, 0, 0, 255), "Game Over", "assets/PressStart2P.ttf");
     this->_gameOverText->setPosition(Coord2D(200, GRID_HEIGHT * GRID_SIZE / 2));
     this->_gameOverText->setSize(50);
-    this->_background_even = std::make_shared<Square>(RGBAColor(162, 209, 73, 255), GRID_WIDTH, GRID_HEIGHT, '#');
-    this->_background_odd = std::make_shared<Square>(RGBAColor(170, 215, 81, 255), GRID_WIDTH, GRID_HEIGHT, '#');
+    this->_background_even = std::make_shared<Square>(RGBAColor(162, 209, 73, 255), GRID_WIDTH, GRID_HEIGHT, ' ');
+    this->_background_odd = std::make_shared<Square>(RGBAColor(170, 215, 81, 255), GRID_WIDTH, GRID_HEIGHT, ' ');
 }
 
 SnakeGame::~SnakeGame()
@@ -101,12 +101,12 @@ void SnakeGame::run()
     std::deque<Snake *> snakes = this->_snake->getSnake();
 
     for (auto &elem : snakes) {
-        Coord2D pos = elem->getPos();
+        Coord2D pos = elem->getGridPos();
         pos *= GRID_WIDTH;
         elem->setPosition(pos);
         this->_arcade->display(*elem);
     }
-    Coord2D foodPos = this->_food->getPos();
+    Coord2D foodPos = this->_food->getGridPos();
     foodPos *= GRID_WIDTH;
     this->_food->setPosition(foodPos);
     this->_arcade->display(*(this->_food));
@@ -130,7 +130,6 @@ void SnakeGame::bindEvents()
 
 void SnakeGame::moveSnake()
 {
-    Coord2D pos = this->_snake->getPos();
     int x = 0;
     int y = 0;
 
@@ -153,8 +152,8 @@ void SnakeGame::moveSnake()
 
 void SnakeGame::inputMoveSnake(Direction direction)
 {
-    Coord2D pos = this->_snake->getPos();
-    Coord2D precPos = this->_snake->getPrevSnakePos();
+    Coord2D pos = this->_snake->getGridPos();
+    Coord2D precPos = this->_snake->getPrevSnakeGridPos();
     int x = pos.getX() - precPos.getX();
     int y = pos.getY() - precPos.getY();
 
@@ -189,10 +188,7 @@ void SnakeGame::makeAnAppleSpawn()
 
 void SnakeGame::eatingApple()
 {
-    Coord2D snakePos = this->_snake->getPos();
-    Coord2D foodPos = this->_food->getPos();
-
-    if (snakePos == foodPos) {
+    if (this->_snake->getGridPos() == this->_food->getGridPos()) {
         this->_score += 100;
         this->_food.reset();
         this->makeAnAppleSpawn();
@@ -203,7 +199,7 @@ void SnakeGame::eatingApple()
 bool SnakeGame::isGameOver()
 {
     std::deque<Coord2D> snakePos = this->_snake->getSnakePos();
-    Coord2D pos = this->_snake->getPos();
+    Coord2D pos = this->_snake->getGridPos();
 
     if (pos.getX() < 0 || pos.getX() >= GRID_SIZE || pos.getY() < 0 || pos.getY() >= GRID_SIZE)
         return true;

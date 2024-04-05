@@ -44,7 +44,7 @@ public:
     [[nodiscard]] const Coord2D &getPrevSnakeGridPos() const;
     void setGridPos(const Coord2D &pos);
     const std::deque<Coord2D> &getSnakePos() const;
-    std::deque<const Snake *> getSnake() const;
+    std::deque<Snake *> getSnake();
     void initSnake(int x, int y);
     void moveSnake(int x, int y);
     void growSnake();
