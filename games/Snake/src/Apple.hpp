@@ -15,7 +15,7 @@ public:
     Apple(int x, int y);
     Apple(const Coord2D &pos);
     ~Apple() override = default;
-    [[nodiscard]] Coord2D &getGridPos() const;
+    [[nodiscard]] const Coord2D &getGridPos() const;
 
 private:
     Coord2D gridPos;

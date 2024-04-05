@@ -17,7 +17,7 @@ Apple::Apple(const Coord2D &pos) : AEntity("./assets/games/Snake/apple.png", 40,
     this->gridPos = pos;
 }
 
-Coord2D Apple::getGridPos() const
+const Coord2D &Apple::getGridPos() const
 {
     return this->gridPos;
 }
