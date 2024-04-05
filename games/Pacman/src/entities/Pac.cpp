@@ -36,11 +36,6 @@ void Pac::handleEvent(const IEvent &event) {
     }
 }
 
-bool isThereWall(const Wall (&map)[37][28], const GridCoordinate& pos) {
-    GridCoordinate fromGrid = GridCoordinate(pos).toScreen();
-    return map[pos.getY()][pos.getX()].getType() != Wall::WallType::EMPTY;
-}
-
 void Pac::update(std::vector<PacDot *> &dots, const Wall (&map)[37][28]) {
     GridCoordinate pos = GridCoordinate(this->getPosition(), GridCoordinate::SCREEN);
     Move move(pos, (APacManEntity &) *this, this->_newDirection);
