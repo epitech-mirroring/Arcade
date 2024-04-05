@@ -67,7 +67,7 @@ void Menu::run() {
     }
 
     // Show scores
-    Coord2D scoreTextPos = Coord2D(770, 150);
+    Coord2D scoreTextPos = Coord2D(700, 150);
     Text scoreTitle = Text((IColor &) RGBAColor::WHITE, "Scores", "assets/PressStart2P.ttf");
     scoreTitle.setSize(30);
     scoreTitle.setPosition(scoreTextPos);
