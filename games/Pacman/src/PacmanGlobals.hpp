@@ -85,3 +85,4 @@ const Level levels[] = {
 extern bool isFrightened;
 extern int currentLevel;
 extern std::shared_ptr<IArcade> arcade;
+extern int *score;

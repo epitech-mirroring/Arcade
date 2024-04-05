@@ -38,17 +38,15 @@ Pacman::Pacman() = default;
 bool isFrightened = false;
 int currentLevel = 0;
 std::shared_ptr<IArcade> arcade;
+int *score = nullptr;
 
-void Pacman::start() {
+void Pacman::init(std::shared_ptr<IArcade> _arcade) {
+    this->_arcade = _arcade;
     arcade = this->_arcade;
-    for (std::size_t y = 0; y < MAP_HEIGHT; y++) {
-        for (std::size_t x = 0; x < MAP_WIDTH; x++) {
-            this->_map[y][x].setPosition(GridCoordinate(x, y).toScreen());
-        }
-    }
-    this->_arcade->setPreferredSize(MAP_WIDTH * 8 * SCALE, MAP_HEIGHT * 8 * SCALE);
+    this->_score = 0;
+    score = &this->_score;
 
-    // Bind keys
+
     this->_arcade->bindEvent(IEvent::EventType::_KEY_PRESS, _KEY_Z, [this](const IEvent &event) {
         this->pac.handleEvent(event);
     });
@@ -73,16 +71,27 @@ void Pacman::start() {
     this->_arcade->bindEvent(IEvent::EventType::_KEY_PRESS, _KEY_LEFT, [this](const IEvent &event) {
         this->pac.handleEvent(event);
     });
+}
+
+void Pacman::start() {
+    for (std::size_t y = 0; y < MAP_HEIGHT; y++) {
+        for (std::size_t x = 0; x < MAP_WIDTH; x++) {
+            this->_map[y][x].setPosition(GridCoordinate(x, y).toScreen());
+        }
+    }
+    this->_arcade->setPreferredSize(MAP_WIDTH * 8 * SCALE, MAP_HEIGHT * 8 * SCALE);
 
     currentLevel = 0;
     isFrightened = false;
     this->_score = 0;
     this->replaceDots();
+    *score = this->_score;
+    this->pac.setPosition(GridCoordinate(13, 26).toScreen());
 }
 
 void Pacman::replaceDots() {
-    for (auto & dot : this->dots) {
-        delete &dot;
+    for (auto &dot : this->dots) {
+        delete dot;
     }
     this->dots.clear();
 
@@ -98,6 +107,8 @@ void Pacman::replaceDots() {
 }
 
 void Pacman::run() {
+    static int frame = 0;
+    int fps = (int) (1.f / this->_arcade->getDeltaTime());
     // Draw map
     for (auto & line : this->_map) {
         for (const auto & piece : line) {
@@ -105,8 +116,17 @@ void Pacman::run() {
         }
     }
     // Draw dots
+    const int energizerBlinkTimeInMs = 250; // Time in ms (time between two blinks)
+    static std::size_t lastBlink = 0;
+    static bool displayEnergizer = true;
+    if (this->_arcade->getTime() - lastBlink > energizerBlinkTimeInMs) {
+        displayEnergizer = !displayEnergizer;
+        lastBlink = this->_arcade->getTime();
+    }
     for (auto & dot : this->dots) {
-        this->_arcade->display(*dot);
+        if (!dot->isEnergizer() || displayEnergizer) {
+            this->_arcade->display(*dot);
+        }
     }
     // Update ghosts
     // Update pacman
@@ -116,4 +136,6 @@ void Pacman::run() {
     // Display ghosts
 
     this->_arcade->flipFrame();
+    frame++;
+    frame = frame % fps;
 }

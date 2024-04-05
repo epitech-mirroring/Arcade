@@ -61,6 +61,7 @@ public:
     Pacman();
     ~Pacman() override = default;
 
+    void init(std::shared_ptr<IArcade> arcade) override;
     void start() override;
     void run() override;
     void replaceDots();

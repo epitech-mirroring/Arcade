@@ -84,7 +84,11 @@ void Pac::update(std::vector<PacDot *> &dots, const Wall (&map)[37][28]) {
         if (dotGrid == pacGrid) {
             this->_eaten = true;
             if (dot->isEnergizer()) {
+                if (score != nullptr)
+                    *score += 40;
                 isFrightened = true;
+            } else if (score != nullptr) {
+                *score += 10;
             }
             dots.erase(dots.begin() + i);
             delete dot;
