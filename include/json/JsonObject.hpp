@@ -26,7 +26,7 @@ private:
     static std::function<IJsonObject *(const std::string &)> getParser(const std::string &obj, const std::string &key);
 public:
     JsonObject(const std::string &name = "root");
-    ~JsonObject() override = default;
+    ~JsonObject() override;
     void remove(const std::string &name);
     std::string getName() const override;
     bool isNull(const std::string &name) const;
@@ -35,11 +35,11 @@ public:
     void parse(const std::string &string) override;
     std::string getType() const override;
     template<typename T>
-    T &getValue(const std::string &key) const {
+    T *getValue(const std::string &key) const {
         static_assert(std::is_base_of<IJsonObject, T>::value, "T must inherit from IJsonObject");
-        return *dynamic_cast<T *>(_objects.at(key));
+        return dynamic_cast<T *>(_objects.at(key));
     }
-    void addValue(IJsonObject &value);
+    void addValue(IJsonObject *value);
     void setNull(const std::string &name, bool is_null);
     void setNull(bool is_null);
 

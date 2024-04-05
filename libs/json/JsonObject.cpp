@@ -17,6 +17,11 @@ std::string JsonObject::getType() const {
     return "object";
 }
 
+JsonObject::~JsonObject() {
+    for (auto &obj : this->_objects)
+        delete obj.second;
+}
+
 JsonObject::JsonObject(const std::string &name) {
     this->_name = name;
     this->_is_null = false;
@@ -47,8 +52,8 @@ void JsonObject::setNull(bool is_null) {
     this->_is_null = is_null;
 }
 
-void JsonObject::addValue(IJsonObject &value) {
-    this->_objects[value.getName()] = &value;
+void JsonObject::addValue(IJsonObject *value) {
+    this->_objects[value->getName()] = value;
 }
 
 std::string JsonObject::stringify() const {
@@ -163,7 +168,7 @@ void JsonObject::parse(const std::string &string) {
         if (end == len)
             end--;
         std::string obj = cleaned.substr(start, end - start);
-        this->addValue(*getParser(obj, key)(obj));
+        this->addValue(getParser(obj, key)(obj));
         i = end;
     }
 }
