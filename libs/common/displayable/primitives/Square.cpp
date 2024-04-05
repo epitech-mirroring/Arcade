@@ -39,3 +39,13 @@ void Square::setHeight(size_t height)
 {
     this->_height = height;
 }
+
+bool Square::isFilled() const
+{
+    return this->_isFilled;
+}
+
+void Square::setIsFilled(bool isFilled)
+{
+    this->_isFilled = isFilled;
+}

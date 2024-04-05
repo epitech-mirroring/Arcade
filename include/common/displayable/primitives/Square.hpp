@@ -15,6 +15,7 @@ class Square : public APrimitive, public ISquare {
 protected:
     std::size_t _width;
     std::size_t _height;
+    bool _isFilled;
 public:
     Square(std::unique_ptr<IColor> &color, size_t width, std::size_t height, char replacingChar = '*');
     Square(const IColor &color, size_t width, std::size_t height, char replacingChar = '*');
@@ -23,5 +24,7 @@ public:
     [[nodiscard]] std::size_t getHeight() const override;
     void setWidth(std::size_t width) override;
     void setHeight(std::size_t height) override;
+    bool isFilled() const override;
+    void setIsFilled(bool isFilled) override;
 };
 
