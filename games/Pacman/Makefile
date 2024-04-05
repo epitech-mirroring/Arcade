@@ -15,6 +15,7 @@ CXX_SOURCES		= 	src/Pacman.cpp								\
 					src/entities/AGhost.cpp						\
 					src/entities/PacDot.cpp						\
 					src/utils/Move.cpp							\
+				src/utils/GridCoordinate.cpp					\
 
 CXX_TESTS		=
 

@@ -9,8 +9,6 @@
 #pragma once
 #include "shared/IArcade.hpp"
 #define SCALE 2
-#define COORD_TO_SCREEN(x) (x * 8 * SCALE)
-#define SCREEN_TO_COORD(x) (x / 8 / SCALE)
 #define MAP_WIDTH 28
 #define MAP_HEIGHT 37
 #define GIZMOS(x) (dynamic_cast<ICanDrawGizmos *>(&x))

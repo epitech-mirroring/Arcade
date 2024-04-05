@@ -7,9 +7,7 @@
 */
 
 #include "Pacman.hpp"
-#include "common/utils/Coord2D.hpp"
-#include "common/utils/RGBAColor.hpp"
-#include "common/displayable/primitives/Text.hpp"
+#include "utils/GridCoordinate.hpp"
 #include <string>
 #include <iostream>
 
@@ -45,10 +43,10 @@ void Pacman::start() {
     arcade = this->_arcade;
     for (std::size_t y = 0; y < MAP_HEIGHT; y++) {
         for (std::size_t x = 0; x < MAP_WIDTH; x++) {
-            this->_map[y][x].setPosition(Coord2D(COORD_TO_SCREEN(x), COORD_TO_SCREEN(y)));
+            this->_map[y][x].setPosition(GridCoordinate(x, y).toScreen());
         }
     }
-    this->_arcade->setPreferredSize(COORD_TO_SCREEN(MAP_WIDTH), COORD_TO_SCREEN(MAP_HEIGHT));
+    this->_arcade->setPreferredSize(MAP_WIDTH * 8 * SCALE, MAP_HEIGHT * 8 * SCALE);
 
     // Bind keys
     this->_arcade->bindEvent(IEvent::EventType::_KEY_PRESS, _KEY_Z, [this](const IEvent &event) {

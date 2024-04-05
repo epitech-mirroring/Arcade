@@ -7,11 +7,11 @@
 */
 
 #include "Pac.hpp"
-#include "common/utils/Coord2D.hpp"
 #include "../utils/Move.hpp"
+#include "common/utils/RGBAColor.hpp"
 
 Pac::Pac(): APacManEntity("assets/games/pacman/pacman/pacman.png", 208, 26) {
-    Coord2D spawn(COORD_TO_SCREEN(13), COORD_TO_SCREEN(26));
+    GridCoordinate spawn = GridCoordinate(13, 26).toScreen();
     this->_sprite->setDrawRect({0, 0, 26, 26});
     this->setPosition(spawn);
     this->setSize(SCALE_PACKMAN);
@@ -36,17 +36,18 @@ void Pac::handleEvent(const IEvent &event) {
     }
 }
 
-bool isThereWall(const Wall (&map)[37][28], const Coord2D& pos) {
-    return map[SCREEN_TO_COORD(pos.getY())][SCREEN_TO_COORD(pos.getX())].getType() != Wall::WallType::EMPTY;
+bool isThereWall(const Wall (&map)[37][28], const GridCoordinate& pos) {
+    GridCoordinate fromGrid = GridCoordinate(pos).toScreen();
+    return map[pos.getY()][pos.getX()].getType() != Wall::WallType::EMPTY;
 }
 
 void Pac::update(std::vector<PacDot *> &dots, const Wall (&map)[37][28]) {
-    Move move(this->getPosition(), (APacManEntity &) *this, this->_newDirection);
-    Coord2D fromGrid = Coord2D(SCREEN_TO_COORD(this->getPosition().getX()), SCREEN_TO_COORD(this->getPosition().getY()));
-    Coord2D toGrid;
+    GridCoordinate pos = GridCoordinate(this->getPosition(), GridCoordinate::SCREEN);
+    Move move(pos, (APacManEntity &) *this, this->_newDirection);
+    GridCoordinate fromGrid = GridCoordinate(pos).toGrid();
 
     move.computeLanding();
-    toGrid = Coord2D(SCREEN_TO_COORD(move.getTo().getX()), SCREEN_TO_COORD(move.getTo().getY()));
+    GridCoordinate toGrid = GridCoordinate(move.getTo()).toGrid();
     if(move.isLegal(map)){
         // Change square
         if (toGrid != fromGrid) {
@@ -54,16 +55,22 @@ void Pac::update(std::vector<PacDot *> &dots, const Wall (&map)[37][28]) {
             this->_animation %= 2;
         }
         this->_direction = this->_newDirection;
+        if (IS_GIZMOS(*arcade)) {
+            GIZMOS(*arcade)->drawLine(this->getPosition(), move.getTo(), RGBAColor::RED);
+        }
         this->setPosition(move.getTo());
     } else {
-        move = Move(this->getPosition(), (APacManEntity &) *this, this->_direction);
+        move = Move(pos, (APacManEntity &) *this, this->_direction);
         move.computeLanding();
-        toGrid = Coord2D(SCREEN_TO_COORD(move.getTo().getX()), SCREEN_TO_COORD(move.getTo().getY()));
+        toGrid = GridCoordinate(move.getTo()).toGrid();
         if(move.isLegal(map)){
             // Change square
             if (toGrid != fromGrid) {
                 this->_animation ++;
                 this->_animation %= 2;
+            }
+            if (IS_GIZMOS(*arcade)) {
+                GIZMOS(*arcade)->drawLine(this->getPosition(), move.getTo(), RGBAColor::RED);
             }
             this->setPosition(move.getTo());
             this->_newDirection = this->_direction;
@@ -72,14 +79,27 @@ void Pac::update(std::vector<PacDot *> &dots, const Wall (&map)[37][28]) {
 
     for (std::size_t i = 0; i < dots.size(); i++) {
         PacDot *dot = dots[i];
-        Coord2D dotGrid = Coord2D(SCREEN_TO_COORD(dot->getPosition().getX()), SCREEN_TO_COORD(dot->getPosition().getY()));
-        Coord2D pacGrid = Coord2D(SCREEN_TO_COORD(this->getPosition().getX()), SCREEN_TO_COORD(this->getPosition().getY()));
+        GridCoordinate dotGrid = GridCoordinate(dot->getPosition(), GridCoordinate::SCREEN).toGrid();
+        GridCoordinate pacGrid = GridCoordinate(this->getPosition(), GridCoordinate::SCREEN).toGrid();
         if (dotGrid == pacGrid) {
             this->_eaten = true;
+            if (dot->isEnergizer()) {
+                isFrightened = true;
+            }
             dots.erase(dots.begin() + i);
             delete dot;
             break;
         }
+    }
+
+    if (IS_GIZMOS(*arcade)) {
+        GridCoordinate center = GridCoordinate(this->getPosition(), GridCoordinate::SCREEN);
+        center.setX((int) ((float) center.getX() + 13.f * SCALE_PACKMAN));
+        center.setY((int) ((float) center.getY() + 13.f * SCALE_PACKMAN));
+        GridCoordinate gridCenter = GridCoordinate(this->getPosition(), GridCoordinate::SCREEN).round();
+        gridCenter.setX((int) ((float) gridCenter.getX() + 4.f * SCALE));
+        gridCenter.setY((int) ((float) gridCenter.getY() + 4.f * SCALE));
+        GIZMOS(*arcade)->drawLine(center, gridCenter, RGBAColor::RED);
     }
 
     this->_sprite->setDrawRect({26 * (this->_animation + this->_direction * 2), 0, 26, 26});

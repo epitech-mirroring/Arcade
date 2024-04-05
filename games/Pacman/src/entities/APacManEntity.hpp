@@ -15,7 +15,6 @@
 
 class APacManEntity: public AEntity {
 protected:
-
     Direction _direction;
     APacManEntity(const std::string &texturePath, const std::size_t &sizeX, const std::size_t &sizeY);
 public:
