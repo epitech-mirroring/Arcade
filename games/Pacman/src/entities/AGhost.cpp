@@ -11,6 +11,7 @@
 AGhost::AGhost(const std::string &texturePath): APacManEntity(texturePath, 16, 16)
 {
     _isDead = false;
+    _hasToReverse = false;
 }
 
 bool AGhost::isDead() const

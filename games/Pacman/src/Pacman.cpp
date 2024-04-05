@@ -10,6 +10,7 @@
 #include "utils/GridCoordinate.hpp"
 #include "entities/PacManText.hpp"
 #include "entities/LevelCounter.hpp"
+#include "entities/LiveCounter.hpp"
 #include <string>
 #include <iostream>
 
@@ -39,6 +40,7 @@ extern "C" {
 Pacman::Pacman() = default;
 bool isFrightened = false;
 int currentLevel = 0;
+int currentLives = 4;
 std::shared_ptr<IArcade> arcade;
 int *score = nullptr;
 
@@ -47,7 +49,6 @@ void Pacman::init(std::shared_ptr<IArcade> _arcade) {
     arcade = this->_arcade;
     this->_score = 0;
     score = &this->_score;
-
 
     this->_arcade->bindEvent(IEvent::EventType::_KEY_PRESS, _KEY_Z, [this](const IEvent &event) {
         this->pac.handleEvent(event);
@@ -84,6 +85,7 @@ void Pacman::start() {
     this->_arcade->setPreferredSize(MAP_WIDTH * 8 * SCALE, MAP_HEIGHT * 8 * SCALE);
 
     currentLevel = 1;
+    currentLives = 4;
     isFrightened = false;
     this->_score = 0;
     this->replaceDots();
@@ -150,9 +152,11 @@ void Pacman::run() {
         this->_arcade->display(*c);
     }
     static LevelCounter levelCounter;
-    levelCounter.setPosition(GridCoordinate(MAP_WIDTH - 8, MAP_HEIGHT - 3).toScreen());
     levelCounter.setLevel(currentLevel);
     this->_arcade->display(levelCounter);
+    static LiveCounter livesCounter;
+    livesCounter.setLives(currentLives);
+    this->_arcade->display(livesCounter);
 
     // Draw dots
     const int energizerBlinkTimeInMs = 250; // Time in ms (time between two blinks)

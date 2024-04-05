@@ -16,6 +16,7 @@ CXX_SOURCES		= 	src/Pacman.cpp								\
 					src/entities/PacDot.cpp						\
 					src/entities/PacManText.cpp					\
 					src/entities/LevelCounter.cpp				\
+					src/entities/LiveCounter.cpp				\
 					src/utils/Move.cpp							\
 					src/utils/GridCoordinate.cpp				\
 

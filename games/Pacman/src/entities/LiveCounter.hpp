@@ -10,14 +10,14 @@
 
 #include "common/displayable/entities/AEntity.hpp"
 
-#define LEVELS_SCALE (SCALE * 8. / 16.)
+#define LIVES_SCALE (SCALE * 8. / 16.)
 
-class LevelCounter: public AEntity {
+class LiveCounter: public AEntity {
 protected:
-    std::size_t _level;
+    std::size_t _lives;
 public:
-    LevelCounter();
-    ~LevelCounter() override = default;
+    LiveCounter();
+    ~LiveCounter() override = default;
 
-    void setLevel(std::size_t level);
+    void setLives(std::size_t lives);
 };

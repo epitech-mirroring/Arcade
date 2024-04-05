@@ -7,12 +7,16 @@
 */
 
 #include "LevelCounter.hpp"
+#include "../PacmanGlobals.hpp"
+#include "../utils/GridCoordinate.hpp"
 
 LevelCounter::LevelCounter()
     : AEntity("assets/games/pacman/level_counter.png", 112, 304)
 {
     this->_level = 1;
     this->_sprite->setDrawRect({0, 0, 112, 16});
+    this->setSize(LEVELS_SCALE);
+    this->setPosition(GridCoordinate(MAP_WIDTH - 8, MAP_HEIGHT - 3).toScreen());
 }
 
 void LevelCounter::setLevel(std::size_t level)
