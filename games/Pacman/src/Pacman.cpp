@@ -8,6 +8,7 @@
 
 #include "Pacman.hpp"
 #include "utils/GridCoordinate.hpp"
+#include "entities/PacManText.hpp"
 #include <string>
 #include <iostream>
 
@@ -115,6 +116,39 @@ void Pacman::run() {
             this->_arcade->display(piece);
         }
     }
+    // Draw ui
+    static PacManText highScoreText("HIGH SCORE", PacManTextColor::WHITE);
+    highScoreText.setPosition(GridCoordinate(9, 0).toScreen());
+    static PacManText oneUP("1UP", PacManTextColor::WHITE);
+    oneUP.setPosition(GridCoordinate(3, 0).toScreen());
+    static PacManText scoreText(std::to_string(this->_score), PacManTextColor::WHITE);
+    scoreText.setText(std::to_string(this->_score));
+    scoreText.setPosition(GridCoordinate((int) (7 - scoreText.getChars().size()), 1).toScreen());
+    static PacManText highScore(std::to_string(this->_score), PacManTextColor::WHITE);
+    highScore.setText(std::to_string(this->_score)); // TODO Change to highscore
+    highScore.setPosition(GridCoordinate((int) (17 - highScore.getChars().size()), 1).toScreen());
+    for (auto &c : highScoreText.getChars()) {
+        this->_arcade->display(*c);
+    }
+    const int oneUpBlinkTimeInMs = 500; // Time in ms (time between two blinks)
+    static std::size_t lastBlinkOneUp = 0;
+    static bool displayOneUp = true;
+    if (this->_arcade->getTime() - lastBlinkOneUp > oneUpBlinkTimeInMs) {
+        displayOneUp = !displayOneUp;
+        lastBlinkOneUp = this->_arcade->getTime();
+    }
+    if (displayOneUp) {
+        for (auto &c: oneUP.getChars()) {
+            this->_arcade->display(*c);
+        }
+    }
+    for (auto &c : scoreText.getChars()) {
+        this->_arcade->display(*c);
+    }
+    for (auto &c : highScore.getChars()) {
+        this->_arcade->display(*c);
+    }
+
     // Draw dots
     const int energizerBlinkTimeInMs = 250; // Time in ms (time between two blinks)
     static std::size_t lastBlink = 0;
