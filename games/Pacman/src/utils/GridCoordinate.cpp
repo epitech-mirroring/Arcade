@@ -8,6 +8,7 @@
 
 #include "GridCoordinate.hpp"
 #include "../PacmanGlobals.hpp"
+#include <cmath>
 
 GridCoordinate::GridCoordinate(int x, int y, state state)
     : Coord2D(x, y), _state(state)
