@@ -17,6 +17,7 @@
 #include <queue>
 #include <functional>
 #include <map>
+#include <chrono>
 
 struct SharedLibrary {
     std::string name;
@@ -45,6 +46,7 @@ private:
     std::size_t _preferredWidth;
     std::size_t _preferredHeight;
     std::map<IEvent::EventType, std::map<EventKey, EventCallback>> _events;
+    float _deltaTime;
 
 
     void bareLoadDriver(const std::string &driverPath);
@@ -80,4 +82,5 @@ public:
     void flipFrame() override;
     void bindEvent(IEvent::EventType type, EventKey key, EventCallback callback) override;
     void setPreferredSize(std::size_t width, std::size_t height) override;
+    [[nodiscard]] float getDeltaTime() const override;
 };
