@@ -56,6 +56,12 @@ SnakeGame::SnakeGame()
 SnakeGame::~SnakeGame()
 {
     this->_snake.reset();
+    this->_food.reset();
+    this->_scoreText.reset();
+    this->_highScoreText.reset();
+    this->_gameOverText.reset();
+    this->_background_even.reset();
+    this->_background_odd.reset();
 }
 
 void SnakeGame::start()
