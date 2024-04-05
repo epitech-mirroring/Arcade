@@ -9,6 +9,7 @@
 #include "common/displayable/entities/AEntity.hpp"
 #include "common/utils/Coord2D.hpp"
 #include "common/utils/Picture.hpp"
+#include "SnakeException.hpp"
 #include <deque>
 #include <vector>
 #include <iostream>
@@ -18,6 +19,7 @@
 #define GRID_SIZE 20
 
 class Snake : public AEntity {
+protected:
     enum ImageEnum {
         HEAD_UP,
         HEAD_DOWN,
@@ -37,12 +39,12 @@ class Snake : public AEntity {
 
 public:
     Snake();
-    ~Snake();
-    Coord2D getPos() const;
-    Coord2D getPrevSnakePos() const;
-    void setPos(const Coord2D &pos);
-    std::deque<Coord2D> getSnakePos() const;
-    std::deque<Snake *> getSnake();
+    ~Snake() override;
+    [[nodiscard]] const Coord2D &getGridPos() const;
+    [[nodiscard]] const Coord2D &getPrevSnakeGridPos() const;
+    void setGridPos(const Coord2D &pos);
+    const std::deque<Coord2D> &getSnakePos() const;
+    std::deque<const Snake *> getSnake() const;
     void initSnake(int x, int y);
     void moveSnake(int x, int y);
     void growSnake();
@@ -53,8 +55,8 @@ public:
 private:
     Snake *prev;
     Snake *next;
-    Coord2D pos;
-    Coord2D _precSnakePos;
+    Coord2D gridPos;
+    Coord2D _prevSnakeGridPos;
     std::size_t _size;
     std::vector<Picture> _snakeImages;
 };

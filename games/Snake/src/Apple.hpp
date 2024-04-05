@@ -14,9 +14,9 @@ class Apple : public AEntity {
 public:
     Apple(int x, int y);
     Apple(const Coord2D &pos);
-    ~Apple();
-    Coord2D getPos() const;
+    ~Apple() override = default;
+    Coord2D getGridPos() const;
 
 private:
-    Coord2D pos;
+    Coord2D gridPos;
 };

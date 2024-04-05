@@ -11,8 +11,8 @@ Snake::Snake() : AEntity("./assets/games/Snake/empty.png", 40, 40)
 {
     this->prev = nullptr;
     this->next = nullptr;
-    this->pos = Coord2D(0, 0);
-    this->_precSnakePos = Coord2D(0, 0);
+    this->gridPos = Coord2D(0, 0);
+    this->_prevSnakeGridPos = Coord2D(0, 0);
     this->_size = 1;
     this->_snakeImages = {
         Picture("./assets/games/Snake/head_up.png", 40, 40),
@@ -42,51 +42,51 @@ void Snake::initSnake(int x, int y)
 {
     Snake *tmp = this;
 
-    this->pos = Coord2D(x, y);
-    this->_precSnakePos = Coord2D(x, y + 1);
+    this->gridPos = Coord2D(x, y);
+    this->_prevSnakeGridPos = Coord2D(x, y + 1);
     while (this->_size < 4) {
         tmp->next = new Snake();
         if (!tmp->next)
-            return;
+            throw SnakeException("Error: Snake init failed");
         tmp->next->prev = tmp;
-        tmp->next->pos = Coord2D(x, y + this->_size);
+        tmp->next->gridPos = Coord2D(x, y + this->_size);
         this->_size++;
         tmp = tmp->next;
     }
 }
 
-Coord2D Snake::getPos() const
+const Coord2D &Snake::getGridPos() const
 {
-    return this->pos;
+    return this->gridPos;
 }
 
-Coord2D Snake::getPrevSnakePos() const
+const Coord2D &Snake::getPrevSnakeGridPos() const
 {
-    return this->_precSnakePos;
+    return this->_prevSnakeGridPos;
 }
 
-void Snake::setPos(const Coord2D &pos)
+void Snake::setGridPos(const Coord2D &gridPos)
 {
-    this->pos = pos;
+    this->gridPos = gridPos;
 }
 
-std::deque<Coord2D> Snake::getSnakePos() const
+const std::deque<Coord2D> &Snake::getSnakePos() const
 {
     std::deque<Coord2D> snakePos;
     Snake *tmp = this->next;
 
-    snakePos.push_back(this->pos);
+    snakePos.push_back(this->gridPos);
     while (tmp) {
-        snakePos.push_back(tmp->getPos());
+        snakePos.push_back(tmp->getGridPos());
         tmp = tmp->next;
     }
     return snakePos;
 }
 
-std::deque<Snake *> Snake::getSnake()
+std::deque<const Snake *> Snake::getSnake() const
 {
-    std::deque<Snake *> snake;
-    Snake *tmp = this->next;
+    std::deque<const Snake *> snake;
+    const Snake *tmp = this->next;
 
     snake.push_back(this);
     while (tmp) {
@@ -100,12 +100,12 @@ void Snake::setSnakeImage()
 {
     if (!this->prev || !this->next)
         return;
-    int prevPosX = this->prev->pos.getX();
-    int prevPosY = this->prev->pos.getY();
-    int currentPosX = this->pos.getX();
-    int currentPosY = this->pos.getY();
-    int nextPosX = this->next->pos.getX();
-    int nextPosY = this->next->pos.getY();
+    int prevPosX = this->prev->gridPos.getX();
+    int prevPosY = this->prev->gridPos.getY();
+    int currentPosX = this->gridPos.getX();
+    int currentPosY = this->gridPos.getY();
+    int nextPosX = this->next->gridPos.getX();
+    int nextPosY = this->next->gridPos.getY();
 
     if (prevPosX == currentPosX && currentPosX == nextPosX) {
         this->_sprite->setPicture(this->_snakeImages[BODY_VERTICAL]);
@@ -133,10 +133,10 @@ void Snake::setSnakeImage()
 void Snake::updateSnakeImage()
 {
     Snake *tmp = this;
-    int prevPosX = this->_precSnakePos.getX();
-    int prevPosY = this->_precSnakePos.getY();
-    int currentPosX = this->pos.getX();
-    int currentPosY = this->pos.getY();
+    int prevPosX = this->_prevSnakeGridPos.getX();
+    int prevPosY = this->_prevSnakeGridPos.getY();
+    int currentPosX = this->gridPos.getX();
+    int currentPosY = this->gridPos.getY();
 
     if (currentPosX == prevPosX && currentPosY < prevPosY) {
         this->_sprite->setPicture(this->_snakeImages[HEAD_UP]);
@@ -153,10 +153,10 @@ void Snake::updateSnakeImage()
     }
     if (!tmp)
         return;
-    prevPosX = tmp->prev->pos.getX();
-    prevPosY = tmp->prev->pos.getY();
-    currentPosX = tmp->pos.getX();
-    currentPosY = tmp->pos.getY();
+    prevPosX = tmp->prev->gridPos.getX();
+    prevPosY = tmp->prev->gridPos.getY();
+    currentPosX = tmp->gridPos.getX();
+    currentPosY = tmp->gridPos.getY();
     if (currentPosX == prevPosX && currentPosY <= prevPosY) {
         tmp->_sprite->setPicture(this->_snakeImages[TAIL_UP]);
     } else if (currentPosX == prevPosX && currentPosY >= prevPosY) {
@@ -171,14 +171,14 @@ void Snake::updateSnakeImage()
 void Snake::moveSnake(int x, int y)
 {
     Snake *tmp = this;
-    Coord2D tmpPos = this->pos;
+    Coord2D tmpPos = this->gridPos;
     Coord2D tmpPos2;
 
-    this->_precSnakePos = this->pos;
-    this->pos.move(x, y);
+    this->_prevSnakeGridPos = this->gridPos;
+    this->gridPos.move(x, y);
     while (tmp->next) {
-        tmpPos2 = tmp->next->pos;
-        tmp->next->pos = tmpPos;
+        tmpPos2 = tmp->next->gridPos;
+        tmp->next->gridPos = tmpPos;
         tmpPos = tmpPos2;
         tmp = tmp->next;
     }
@@ -195,6 +195,6 @@ void Snake::growSnake()
     if (!tmp->next)
         return;
     tmp->next->prev = tmp;
-    tmp->next->pos = tmp->pos;
+    tmp->next->gridPos = tmp->gridPos;
     this->_size++;
 }
