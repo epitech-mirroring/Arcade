@@ -189,7 +189,7 @@ void SnakeGame::makeAnAppleSpawn()
 void SnakeGame::eatingApple()
 {
     if (this->_snake->getGridPos() == this->_food->getGridPos()) {
-        this->_score += 100;
+        this->_score += 40;
         this->_food.reset();
         this->makeAnAppleSpawn();
         this->_snake->growSnake();
