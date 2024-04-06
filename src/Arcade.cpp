@@ -19,10 +19,12 @@
 #include "common/displayable/primitives/Line.hpp"
 #include "common/displayable/primitives/Circle.hpp"
 
-Arcade::Arcade(const std::string &firstDriverName, bool isGizmosEnabled): _currentPlayer("Player", 0) {
-    this->_game = {nullptr, nullptr};
-    this->_driver = {nullptr, nullptr};
-    this->_players = std::vector<Player>();
+Arcade::Arcade(const std::string &firstDriverName, bool isGizmosEnabled) {
+    this->_currentPlayer = new Player("player");
+    this->_game = {nullptr, nullptr, ""};
+    this->_driver = {nullptr, nullptr, ""};
+    this->_players = std::vector<Player *>();
+    this->_players.push_back(this->_currentPlayer);
     this->_games = std::vector<SharedLibrary>();
     this->_drivers = std::vector<SharedLibrary>();
     this->_preferredHeight = 800;
@@ -50,6 +52,10 @@ Arcade::~Arcade() {
             this->_driver.loader.reset();
     }
     this->saveScore();
+    for (auto player : this->_players) {
+        delete player;
+    }
+    this->_players.clear();
 }
 
 void Arcade::destroy() {
@@ -66,6 +72,10 @@ void Arcade::destroy() {
             this->_driver.loader.reset();
     }
     this->saveScore();
+    for (auto player : this->_players) {
+        delete player;
+    }
+    this->_players.clear();
 }
 
 void Arcade::bareLoadDriver(const std::string &driverPath) {
@@ -94,6 +104,7 @@ void Arcade::loadDriver(const std::string &driverName) {
     // Replace driver
     this->_driver.instance = dl->getInstance().release();
     this->_driver.loader = std::move(dl);
+    this->_driver.name = driverName;
     this->rebindGlobalKeys();
 }
 
@@ -109,8 +120,8 @@ void Arcade::loadGame(const std::string &gameName) {
     std::unique_ptr<DLLoader<IGame>> dl = std::make_unique<DLLoader<IGame>>("./lib/" + game.path, "create_game");
     // If game already loaded, unload it
     if (this->_game.instance != nullptr) {
-        if (this->_game.instance->getScore() > this->_currentPlayer.getScore()) {
-            this->_currentPlayer.setScore(this->_game.instance->getScore());
+        if (this->_game.instance->getScore() > this->_currentPlayer->getScore(this->_game.name)) {
+            this->_currentPlayer->setScore(this->_game.name, this->_game.instance->getScore());
         }
         this->saveScore();
         delete this->_game.instance;
@@ -123,6 +134,7 @@ void Arcade::loadGame(const std::string &gameName) {
     // Replace game
     this->_game.instance = dl->getInstance().release();
     this->_game.loader = std::move(dl);
+    this->_game.name = gameName;
     this->_game.instance->init(this->_arcade);
     this->_game.instance->start();
 }
@@ -187,34 +199,43 @@ void Arcade::loadScore() {
     for (std::size_t i = 0; i < scores.size(); i++) {
         auto *score = scores.getValue<JsonObject>(i);
         std::string name = score->getValue<JsonString>("name")->getValue();
-        int scoreValue = score->getValue<JsonInt>("score")->getValue();
-        this->_players.emplace_back(name, scoreValue);
+        auto *player = new Player(name);
+        auto *scoresArray = score->getValue<JsonArray>("scores");
+        for (std::size_t j = 0; j < scoresArray->size(); j++) {
+            auto *gameScore = scoresArray->getValue<JsonObject>(j);
+            std::string gameName = gameScore->getValue<JsonString>("name")->getValue();
+            int gameScoreValue = gameScore->getValue<JsonInt>("score")->getValue();
+            player->setScore(gameName, gameScoreValue);
+        }
+        if (player->getName() == this->_currentPlayer->getName()) {
+            if (this->_currentPlayer->getTotalScore() < player->getTotalScore()) {
+                this->_currentPlayer = player;
+            } else {
+                delete player;
+                player = this->_currentPlayer;
+            }
+        }
+        this->_players.emplace_back(player);
     }
 }
 
 void Arcade::saveScore() {
     JsonArray scores = JsonArray("scores");
-    bool isCurrentPlayerInScores = false;
-    for (const Player &player : this->_players) {
+    for (auto player : this->_players) {
         auto *scoreObj = new JsonObject();
-        std::string nameString = player.getName();
-        int scoreValue = player.getScore();
-        if (nameString == this->_currentPlayer.getName()) {
-            isCurrentPlayerInScores = true;
-            scoreValue = std::max(scoreValue, this->_currentPlayer.getScore());
-        }
+        std::string nameString = player->getName();
         auto *name = new JsonString("name", nameString);
-        auto *score = new JsonInt("score", scoreValue);
+        auto *scoresArray = new JsonArray("scores");
+        for (const auto &[gameName, gameScore] : player->getScores()) {
+            auto *gameScoreObj = new JsonObject();
+            auto *gameNameStr = new JsonString("name", gameName);
+            auto *score = new JsonInt("score", gameScore);
+            gameScoreObj->addValue(gameNameStr);
+            gameScoreObj->addValue(score);
+            scoresArray->addValue(gameScoreObj);
+        }
         scoreObj->addValue(name);
-        scoreObj->addValue(score);
-        scores.addValue(scoreObj);
-    }
-    if (!isCurrentPlayerInScores) {
-        auto *scoreObj = new JsonObject();
-        auto *name = new JsonString("name", this->_currentPlayer.getName());
-        auto *score = new JsonInt("score", this->_currentPlayer.getScore());
-        scoreObj->addValue(name);
-        scoreObj->addValue(score);
+        scoreObj->addValue(scoresArray);
         scores.addValue(scoreObj);
     }
     scores.writeToFile("scores.json");
@@ -246,8 +267,8 @@ std::vector<SharedLibrary> Arcade::getDrivers() const {
 }
 
 void Arcade::sortPlayers() {
-    std::sort(this->_players.begin(), this->_players.end(), [](const Player &a, const Player &b) {
-        return a.getScore() > b.getScore();
+    std::sort(this->_players.begin(), this->_players.end(), [](const Player *a, const Player *b) {
+        return a->getTotalScore() > b->getTotalScore();
     });
 }
 
@@ -267,8 +288,8 @@ void Arcade::run() {
         this->_deltaTime = std::max((float) (frameStart - lastFrameTime), 0.f) / 1000.f;
         if (this->_game.instance != nullptr) {
             this->_game.instance->run();
-            if (this->_game.instance->getScore() > this->_currentPlayer.getScore()) {
-                this->_currentPlayer.setScore(this->_game.instance->getScore());
+            if (this->_game.instance->getScore() > this->_currentPlayer->getScore(this->_game.name)) {
+                this->_currentPlayer->setScore(this->_game.name, this->_game.instance->getScore());
             }
         }
         while (!this->_endFrameCallbacks.empty()) {
@@ -323,8 +344,8 @@ void Arcade::menu() {
     this->_endFrameCallbacks.emplace([this]() {
         this->_currentGameIndex = 0;
         if (this->_game.instance != nullptr) {
-            if (this->_game.instance->getScore() > this->_currentPlayer.getScore()) {
-                this->_currentPlayer.setScore(this->_game.instance->getScore());
+            if (this->_game.instance->getScore() > this->_currentPlayer->getScore(this->_game.name)) {
+                this->_currentPlayer->setScore(this->_game.name, this->_game.instance->getScore());
             }
             this->saveScore();
             delete this->_game.instance;
@@ -368,10 +389,10 @@ void Arcade::setPreferredSize(std::size_t width, std::size_t height) {
 }
 
 Player &Arcade::getCurrentPlayer() {
-    return this->_currentPlayer;
+    return *this->_currentPlayer;
 }
 
-const std::vector<Player> &Arcade::getPlayers() const {
+const std::vector<Player *> &Arcade::getPlayers() const {
     return this->_players;
 }
 
@@ -429,4 +450,27 @@ float Arcade::getDeltaTime() const {
 
 std::size_t Arcade::getTime() const { // in ms
     return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+}
+
+std::size_t Arcade::getCurrentGameHighScore() const {
+    if (this->_game.instance != nullptr) {
+        return this->_currentPlayer->getScore(this->_game.name);
+    }
+    return 0;
+}
+
+void Arcade::updateCurrentPlayerName(const std::string &name) {
+    Player *player = nullptr;
+    // if there already is a player with the same name, keep its scores
+    for (const auto &oldPlayer : this->_players) {
+        if (oldPlayer->getName() == name) {
+            player = oldPlayer;
+            break;
+        }
+    }
+    if (player == nullptr) {
+        player = new Player(name);
+        this->_players.push_back(player);
+    }
+    this->_currentPlayer = player;
 }

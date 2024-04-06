@@ -29,14 +29,15 @@ template<typename T>
 struct LoadedLibrary {
     T *instance;
     std::unique_ptr<DLLoader<T>> loader;
+    std::string name;
 };
 
 class Arcade: public ICanDrawGizmos {
 private:
     LoadedLibrary<IDriver> _driver;
     LoadedLibrary<IGame> _game;
-    std::vector<Player> _players;
-    Player _currentPlayer;
+    std::vector<Player *> _players;
+    Player *_currentPlayer;
     std::vector<SharedLibrary> _games;
     std::vector<SharedLibrary> _drivers;
     std::size_t _currentGameIndex;
@@ -66,11 +67,13 @@ public:
     void rebindCustomKeys();
     void reApplyPreferences() const;
     [[nodiscard]] Player &getCurrentPlayer();
-    [[nodiscard]] const std::vector<Player> &getPlayers() const;
+    [[nodiscard]] const std::vector<Player *> &getPlayers() const;
     void setArcadePtr(std::shared_ptr<IArcade> arcade);
     [[nodiscard]] float getDeltaTime() const override;
     [[nodiscard]] std::size_t getTime() const override;
     void sortPlayers();
+    [[nodiscard]] std::size_t getCurrentGameHighScore() const override;
+    void updateCurrentPlayerName(const std::string &name);
 
     void exit();
     void restart();

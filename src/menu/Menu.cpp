@@ -19,6 +19,11 @@
 
 Menu::Menu() = default;
 
+void Menu::init(std::shared_ptr<IArcade> arcade) {
+    this->_arcade = arcade;
+    this->_tempUsername = TRANSFORM_TO(Arcade, *this->_arcade)->getCurrentPlayer().getName();
+}
+
 void Menu::run() {
     static SimpleEntity background = SimpleEntity("assets/menu_bg.png", 979, 551);
     static std::size_t frame = 0;
@@ -73,8 +78,8 @@ void Menu::run() {
     scoreTitle.setPosition(scoreTextPos);
     this->_arcade->display(scoreTitle);
     scoreTextPos.move(0, 50);
-    for (auto &players : TRANSFORM_TO(Arcade, *this->_arcade)->getPlayers()) {
-        Text scoreText = Text((IColor &) RGBAColor::WHITE, players.getName() + ": " + std::to_string(players.getScore()), "assets/PressStart2P.ttf");
+    for (auto players : TRANSFORM_TO(Arcade, *this->_arcade)->getPlayers()) {
+        Text scoreText = Text((IColor &) RGBAColor::WHITE, players->getName() + ": " + std::to_string(players->getTotalScore()), "assets/PressStart2P.ttf");
         scoreText.setSize(15);
         scoreText.setPosition(scoreTextPos);
         this->_arcade->display(scoreText);
@@ -82,7 +87,7 @@ void Menu::run() {
     }
 
     // Show username input
-    std::string username = TRANSFORM_TO(Arcade, *this->_arcade)->getCurrentPlayer().getName();
+    std::string username = _tempUsername;
     Coord2D usernameTextPos = Coord2D(50, 400);
     Text usernameTitle = Text((IColor &) RGBAColor::WHITE, "YOUR NAME", "assets/PressStart2P.ttf");
     usernameTitle.setSize(15);
@@ -111,7 +116,7 @@ void Menu::run() {
         frame = 0;
 }
 
-void Menu::typeUsername(const IEvent &event) const {
+void Menu::typeUsername(const IEvent &event) {
     static const std::unordered_map<EventKey, char> keyMap = {
         {_KEY_A, 'a'}, {_KEY_B, 'b'}, {_KEY_C, 'c'}, {_KEY_D, 'd'}, {_KEY_E, 'e'}, {_KEY_F, 'f'}, {_KEY_G, 'g'}, {_KEY_H, 'h'},
         {_KEY_I, 'i'}, {_KEY_J, 'j'}, {_KEY_K, 'k'}, {_KEY_L, 'l'}, {_KEY_M, 'm'}, {_KEY_N, 'n'}, {_KEY_O, 'o'}, {_KEY_P, 'p'},
@@ -121,15 +126,13 @@ void Menu::typeUsername(const IEvent &event) const {
     };
 
     if (event.getKey() == _KEY_BACKSPACE) {
-        std::string user = TRANSFORM_TO(Arcade, *this->_arcade)->getCurrentPlayer().getName();
-        if (!user.empty())
-            user.pop_back();
-        TRANSFORM_TO(Arcade, *this->_arcade)->getCurrentPlayer().setName(user);
+        if (!_tempUsername.empty())
+            _tempUsername.pop_back();
+    } else if (event.getKey() == _KEY_ENTER) {
+        TRANSFORM_TO(Arcade, *this->_arcade)->updateCurrentPlayerName(_tempUsername);
     } else {
-        std::string user = TRANSFORM_TO(Arcade, *this->_arcade)->getCurrentPlayer().getName();
-        if (user.size() < 10)
-            user += keyMap.at(event.getKey());
-        TRANSFORM_TO(Arcade, *this->_arcade)->getCurrentPlayer().setName(user);
+        if (_tempUsername.size() < 10)
+            _tempUsername += keyMap.at(event.getKey());
     }
 }
 
@@ -139,4 +142,5 @@ void Menu::start() {
         this->_arcade->bindEvent(IEvent::_KEY_DOWN, key, [this](const IEvent &event) { this->typeUsername(event); });
     }
     this->_arcade->bindEvent(IEvent::_KEY_DOWN, _KEY_BACKSPACE, [this](const IEvent &event) { this->typeUsername(event); });
+    this->_arcade->bindEvent(IEvent::_KEY_DOWN, _KEY_ENTER, [this](const IEvent &event) { this->typeUsername(event); });
 }
