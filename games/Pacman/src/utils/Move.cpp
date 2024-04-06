@@ -157,31 +157,9 @@ bool Move::isLegal(const Wall (&map)[37][28]) const {
 
     GridCoordinate center = GridCoordinate(_from).round();
     double distToCenter = center.distance(this->_from);
-    bool isACorner = false;
-    int count = 0;
     GridCoordinate tempA = GridCoordinate(_from).round();
     GridCoordinate tempB = GridCoordinate(_to).round();
-    GridCoordinate toGrid = GridCoordinate(_to).toGrid();
-    GridCoordinate up = GridCoordinate(toGrid.getX(), toGrid.getY() - 1);
-    GridCoordinate down = GridCoordinate(toGrid.getX(), toGrid.getY() + 1);
-    GridCoordinate left = GridCoordinate(toGrid.getX() - 1, toGrid.getY());
-    GridCoordinate right = GridCoordinate(toGrid.getX() + 1, toGrid.getY());
-    if (std::find(walkable.begin(), walkable.end(), map[up.getY()][up.getX()].getType()) != walkable.end()) {
-        count++;
-    }
-    if (std::find(walkable.begin(), walkable.end(), map[down.getY()][down.getX()].getType()) != walkable.end()) {
-        count++;
-    }
-    if (std::find(walkable.begin(), walkable.end(), map[left.getY()][left.getX()].getType()) != walkable.end()) {
-        count++;
-    }
-    if (std::find(walkable.begin(), walkable.end(), map[right.getY()][right.getX()].getType()) != walkable.end()) {
-        count++;
-    }
-    if (count > 2) {
-        isACorner = true;
-    }
-    bool canReverse = dynamic_cast<const AGhost *>(this->_actor) == nullptr || (dynamic_cast<const AGhost *>(this->_actor)->hasToReverse() && !isACorner);
+    bool canReverse = dynamic_cast<const AGhost *>(this->_actor) == nullptr || (dynamic_cast<const AGhost *>(this->_actor)->hasToReverse());
     bool isWalkable = std::find(walkable.begin(), walkable.end(), map[grid.getY()][grid.getX()].getType()) != walkable.end();
     bool isFrontWalkable = std::find(walkable.begin(), walkable.end(), map[front.getY()][front.getX()].getType()) != walkable.end();
     bool isGoingToFar = tempA.distance(this->_from) < tempB.distance(this->_to);

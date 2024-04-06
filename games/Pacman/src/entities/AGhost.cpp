@@ -96,11 +96,14 @@ void AGhost::update(const APacManEntity &pac, const Wall (&map)[37][28], const s
         this->_direction = move.getDirection();
         this->setPosition(move.getTo());
     } else if (move.isLegal(map)) {
-        if (fromGrid == _lastDirectionChangeCell && move.getDirection() != this->getDirection()) {
+        if (fromGrid == _lastDirectionChangeCell && move.getDirection() != this->getDirection() && !_hasToReverse) {
             // Can't change direction twice in a row (or at least not in the same cell)
-            move = Move(pos, *this, this->_direction);
-            move.computeLanding();
-            toGrid = GridCoordinate(move.getTo()).toGrid();
+            Move tempMove = Move(pos, *this, this->_direction);
+            tempMove.computeLanding();
+            if (tempMove.isLegal(map)) {
+                move = tempMove;
+                toGrid = GridCoordinate(move.getTo()).toGrid();
+            }
         }
         // Change square
         if (toGrid != fromGrid) {
