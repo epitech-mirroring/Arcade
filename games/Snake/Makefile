@@ -11,6 +11,7 @@
 CXX_SOURCES		= 	src/SnakeGame.cpp								\
 					src/Snake.cpp									\
 					src/Apple.cpp									\
+					src/SnakeException.cpp							\
 
 CXX_TESTS		=
 
