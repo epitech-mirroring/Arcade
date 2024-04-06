@@ -58,7 +58,11 @@ void Move::computeLanding() {
                 speedFactor = levels[currentLevel].pacmanSpeed;
             }
         } else {
-            speedFactor = levels[currentLevel].ghostSpeed;
+            if (dynamic_cast<const AGhost *>(_actor)->isCaged()) {
+                speedFactor = 0.5;
+            } else {
+                speedFactor = levels[currentLevel].ghostSpeed;
+            }
         }
     }
 

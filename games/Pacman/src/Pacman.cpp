@@ -100,6 +100,7 @@ void Pacman::start() {
 
     currentLevel = -1;
     currentLives = 4;
+    shouldDisplayActors = true;
     this->_score = 0;
     *score = this->_score;
     isInAnimation = false;
@@ -226,16 +227,27 @@ void Pacman::run() {
             }
         }
     }
-    // Display pacman
-    this->_arcade->display(this->pac);
-    for (auto &bonus: this->pac.getBonuses()) {
-        this->_arcade->display(*bonus);
-    }
-    // Display ghosts
-    for (auto &ghost : this->ghosts) {
-        this->_arcade->display(*ghost);
+    if (shouldDisplayActors) {
+        // Display pacman
+        this->_arcade->display(this->pac);
+        // Display score bonus
+        for (auto &bonus: this->pac.getBonuses()) {
+            this->_arcade->display(*bonus);
+        }
+        // Display ghosts
+        for (auto &ghost : this->ghosts) {
+            this->_arcade->display(*ghost);
+        }
     }
     this->handleAnimation();
+    if (this->dots.empty()) {
+        if (!isInAnimation) {
+            animation = BoardBlink;
+            isInAnimation = true;
+            animationStart = this->_arcade->getTime();
+            shouldDisplayActors = false;
+        }
+    }
 
     this->_arcade->flipFrame();
     frame++;
@@ -287,6 +299,7 @@ void Pacman::reset(bool isNewLevel) {
         }
         if(isNewLevel) ghost->setPersonalDotCount(0);
         ghost->setDead(false);
+        ghost->setFrightened(false);
         ghost->setStrategy(CHASE);
         ghost->recalculateDotLimit();
     }
@@ -314,6 +327,26 @@ void Pacman::handleAnimation() {
                 ready.setPosition(GridCoordinate(11, 20).toScreen());
                 ready.setSize(SCALE * 8. / 14.);
                 this->_arcade->display(ready);
+            }
+        } else if (animation == BoardBlink) {
+            if (this->_arcade->getTime() - animationStart > 3000) {
+                isInAnimation = false;
+                animation = None;
+                shouldDisplayActors = true;
+                reset(true);
+            } else {
+                static const std::size_t blinkTime = 250; // Time in ms (time between two blinks)
+                static std::size_t lastBlink = 0;
+                static bool boardIsWhite = false;
+                if (this->_arcade->getTime() - lastBlink > blinkTime) {
+                    boardIsWhite = !boardIsWhite;
+                    lastBlink = this->_arcade->getTime();
+                }
+                for (auto & line : this->_map) {
+                    for (auto & cell : line) {
+                        cell.setWhite(boardIsWhite);
+                    }
+                }
             }
         }
     }

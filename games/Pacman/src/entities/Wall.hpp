@@ -10,6 +10,8 @@
 #include "common/displayable/entities/AEntity.hpp"
 
 class Wall : public AEntity {
+protected:
+    void recomputeDrawRect();
 public:
     enum WallType {
         CORNER_DOWN_LEFT = 0,
@@ -59,6 +61,7 @@ public:
 
     [[nodiscard]] WallType getType() const;
     [[nodiscard]] bool isWhite() const;
+    void setWhite(bool isWhite);
 private:
     WallType _type;
     bool _isWhite;
