@@ -212,6 +212,7 @@ bool SnakeGame::isGameOver()
 void SnakeGame::updateScore()
 {
     this->_scoreText->setText("Score: " + std::to_string(this->_score));
+    this->_highScoreText->setText("High Score: " + std::to_string(this->_arcade->getCurrentGameHighScore()));
 }
 
 void SnakeGame::drawBackground()
