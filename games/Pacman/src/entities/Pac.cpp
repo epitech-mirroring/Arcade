@@ -130,14 +130,27 @@ void Pac::update(std::vector<PacDot *> &dots, const Wall (&map)[37][28], const s
         if (ghostGrid == pacGrid) {
             if (ghost->isFrightened()) {
                 ghost->kill();
-                if (arcade->getTime() - _lastKill < 1000) {
+                if (arcade->getTime() - _lastKill < levels[currentLevel].frightenedDuration * 1000ull) {
                     _killStreak++;
                     if (score != nullptr)
                         *score += (int) (200 * _killStreak);
-                    this->_bonuses.push_back(new Bonus(ghost->getPosition(),
-                                                       static_cast<BonusPoint>(
-                                                               _killStreak *
-                                                               200)));
+                    BonusPoint point;
+                    switch (_killStreak) {
+                        case 1:
+                        default:
+                            point = _200;
+                            break;
+                        case 2:
+                            point = _400;
+                            break;
+                        case 3:
+                            point = _800;
+                            break;
+                        case 4:
+                            point = _1600;
+                            break;
+                    }
+                    this->_bonuses.push_back(new Bonus(ghost->getPosition(), point));
                 } else {
                     _killStreak = 1;
                     if (score != nullptr)
@@ -145,6 +158,7 @@ void Pac::update(std::vector<PacDot *> &dots, const Wall (&map)[37][28], const s
                     this->_bonuses.push_back(new Bonus(ghost->getPosition(),
                                                        _200));
                 }
+                _lastKill = arcade->getTime();
             } else if (!ghost->isDead()) {
                 this->kill();
             }
