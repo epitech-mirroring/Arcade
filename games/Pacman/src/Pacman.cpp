@@ -313,6 +313,11 @@ void Pacman::reset(bool isNewLevel) {
         ghost->setFrightened(false);
         ghost->setStrategy(CHASE);
         ghost->recalculateDotLimit();
+        if (dynamic_cast<Pinky *>(ghost) != nullptr) {
+            ghost->setDirection(Direction::UP);
+        } else {
+            ghost->setDirection(Direction::DOWN);
+        }
     }
 
     this->pac.setPosition(GridCoordinate(Pac::getSpawnPosition()));
