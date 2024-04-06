@@ -166,7 +166,7 @@ void Pacman::run() {
     scoreText.setText(std::to_string(this->_score));
     scoreText.setPosition(GridCoordinate((int) (7 - scoreText.getChars().size()), 1).toScreen());
     static PacManText highScore(std::to_string(this->_score), PacManTextColor::WHITE);
-    highScore.setText(std::to_string(this->_score)); // TODO Change to highscore
+    highScore.setText(std::to_string(this->_arcade->getCurrentGameHighScore()));
     highScore.setPosition(GridCoordinate((int) (17 - highScore.getChars().size()), 1).toScreen());
     for (auto &c : highScoreText.getChars()) {
         if (shouldDisplayAnything)
