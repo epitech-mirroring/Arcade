@@ -8,7 +8,9 @@
 ##
 
 # All the source files
-CXX_SOURCES		= 	src/Snake.cpp								\
+CXX_SOURCES		= 	src/SnakeGame.cpp								\
+					src/Snake.cpp									\
+					src/Apple.cpp									\
 
 CXX_TESTS		=
 
