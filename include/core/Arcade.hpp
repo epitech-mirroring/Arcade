@@ -26,7 +26,7 @@ struct SharedLibrary {
 
 template<typename T>
 struct LoadedLibrary {
-    std::unique_ptr<T> instance;
+    T *instance;
     std::unique_ptr<DLLoader<T>> loader;
 };
 
@@ -73,6 +73,7 @@ public:
     void menu();
 
     void run();
+    void destroy();
 
     [[nodiscard]] std::vector<SharedLibrary> getGames() const;
     [[nodiscard]] std::vector<SharedLibrary> getDrivers() const;

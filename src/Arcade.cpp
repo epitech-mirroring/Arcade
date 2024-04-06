@@ -36,12 +36,28 @@ Arcade::Arcade(const std::string &firstDriverName) {
 
 Arcade::~Arcade() {
     if (this->_game.instance != nullptr) {
-        this->_game.instance.reset();
+        delete this->_game.instance;
         if (this->_game.loader != nullptr)
             this->_game.loader.reset();
     }
     if (this->_driver.instance != nullptr) {
-        this->_driver.instance.reset();
+        delete this->_driver.instance;
+        if (this->_driver.loader != nullptr)
+            this->_driver.loader.reset();
+    }
+    this->saveScore();
+}
+
+void Arcade::destroy() {
+    if (this->_running)
+        return;
+    if (this->_game.instance != nullptr) {
+        delete this->_game.instance;
+        if (this->_game.loader != nullptr)
+            this->_game.loader.reset();
+    }
+    if (this->_driver.instance != nullptr) {
+        delete this->_driver.instance;
         if (this->_driver.loader != nullptr)
             this->_driver.loader.reset();
     }
@@ -50,7 +66,7 @@ Arcade::~Arcade() {
 
 void Arcade::bareLoadDriver(const std::string &driverPath) {
     std::unique_ptr<DLLoader<IDriver>> dl = std::make_unique<DLLoader<IDriver>>(driverPath, "create_driver");
-    this->_driver.instance = dl->getInstance();
+    this->_driver.instance = dl->getInstance().release();
     this->_driver.loader = std::move(dl);
     this->rebindGlobalKeys();
 }
@@ -67,12 +83,12 @@ void Arcade::loadDriver(const std::string &driverName) {
     std::unique_ptr<DLLoader<IDriver>> dl = std::make_unique<DLLoader<IDriver>>("./lib/" + driver.path, "create_driver");
     // If driver already loaded, unload it
     if (this->_driver.instance != nullptr) {
-        this->_driver.instance.reset();
+        delete this->_driver.instance;
         if (this->_driver.loader != nullptr)
             this->_driver.loader.reset();
     }
     // Replace driver
-    this->_driver.instance = dl->getInstance();
+    this->_driver.instance = dl->getInstance().release();
     this->_driver.loader = std::move(dl);
     this->rebindGlobalKeys();
 }
@@ -93,7 +109,7 @@ void Arcade::loadGame(const std::string &gameName) {
             this->_currentPlayer->setScore(this->_game.instance->getScore());
         }
         this->saveScore();
-        this->_game.instance.reset();
+        delete this->_game.instance;
         if (this->_game.loader != nullptr)
             this->_game.loader.reset();
         this->_driver.instance->unbindAll();
@@ -101,7 +117,7 @@ void Arcade::loadGame(const std::string &gameName) {
         this->rebindGlobalKeys();
     }
     // Replace game
-    this->_game.instance = dl->getInstance();
+    this->_game.instance = dl->getInstance().release();
     this->_game.loader = std::move(dl);
     this->_game.instance->init(this->_arcade);
     this->_game.instance->start();
@@ -290,14 +306,14 @@ void Arcade::menu() {
                         this->_game.instance->getScore());
             }
             this->saveScore();
-            this->_game.instance.reset();
+            delete this->_game.instance;
             if (this->_game.loader != nullptr)
                 this->_game.loader.reset();
             this->_driver.instance->unbindAll();
             this->_events.clear();
             this->rebindGlobalKeys();
         }
-        this->_game.instance = std::make_unique<Menu>();
+        this->_game.instance = new Menu();
         this->_game.loader = nullptr;
         this->_game.instance->init(this->_arcade);
         this->_game.instance->start();
