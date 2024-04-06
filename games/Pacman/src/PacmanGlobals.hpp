@@ -57,6 +57,17 @@ const Level levels[] = {
 {KEY        ,   _5000,  1  , 0.95, 1    , 0.6   ,   0, 0.5  , 0.87, 0   ,   120 ,   1  }, // Level 20
 {KEY        ,   _5000,  0.9, 0.95, 1    , 0.6   ,   0, 0.5  , 0.79, 0   ,   120 ,   1  }};// Level 21+
 
+struct GhostStrategyTime {
+    GhostStrategy strategy;
+    std::size_t lasting; // in ms
+};
+
+const GhostStrategyTime strategyTimes[3][8]= {
+        {{GhostStrategy::SCATTER, 7000}, {CHASE, 20000}, {SCATTER, 7000}, {CHASE, 20000}, {SCATTER, 5000}, {CHASE, 20000}, {SCATTER, 5000}, {CHASE, 0}}, // Level 1
+        {{GhostStrategy::SCATTER, 7000}, {CHASE, 20000}, {SCATTER, 7000}, {CHASE, 20000}, {SCATTER, 5000}, {CHASE, 1033000}, {SCATTER, 16}, {CHASE, 0}}, // Level 2-4
+        {{GhostStrategy::SCATTER, 5000}, {CHASE, 20000}, {SCATTER, 5000}, {CHASE, 20000}, {SCATTER, 5000}, {CHASE, 1037000}, {SCATTER, 16}, {CHASE, 0}}, // Level 5+
+};
+
 extern bool isFrightened;
 extern int frightenedMsLeft;
 extern int currentLevel;
@@ -64,3 +75,8 @@ extern int currentLives;
 extern std::shared_ptr<IArcade> arcade;
 extern int *score;
 extern Pacman *game;
+extern bool isGlobalDotCounter;
+extern std::size_t globalDotCounter;
+extern bool isInAnimation;
+extern Animation animation;
+extern std::size_t animationStart;

@@ -7,17 +7,16 @@
 */
 
 #include "Blinky.hpp"
-#include "common/utils/RGBAColor.hpp"
 #include "../../PacmanGlobals.hpp"
 
-Blinky::Blinky(): AGhost("assets/games/pacman/ghosts/blinky.png") {
+Blinky::Blinky(): AGhost("assets/games/pacman/ghosts/blinky.png",
+                         GridCoordinate(13, 14).toScreen()) {
     this->setPosition(GridCoordinate(13, 17).toScreen());
     spawn(true);
 }
 
 void Blinky::updateTarget(const APacManEntity &pac, const std::vector<AGhost *> &ghost) {
     static const GridCoordinate home = GridCoordinate(MAP_WIDTH-3, 0).toScreen();
-    static const GridCoordinate cage = GridCoordinate(13, 17).toScreen();
     (void) ghost;
 
     if (IS_GIZMOS(*arcade)) {
@@ -25,7 +24,7 @@ void Blinky::updateTarget(const APacManEntity &pac, const std::vector<AGhost *> 
     }
 
     if(this->_isDead || this->_isCaged){
-        this->_target = cage;
+        this->_target = _cage;
     } else if(_strategy == SCATTER){
         this->_target = home;
     }

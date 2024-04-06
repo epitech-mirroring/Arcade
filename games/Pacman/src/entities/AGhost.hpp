@@ -20,7 +20,8 @@ private:
 protected:
     bool _isDead;
     bool _hasToReverse;
-    explicit AGhost(const std::string &texturePath);
+    explicit AGhost(const std::string &texturePath,
+                    const GridCoordinate &spawn);
     GridCoordinate _target;
     int _dotLimit;
     bool _isCaged;
@@ -28,6 +29,9 @@ protected:
     GhostStrategy _strategy;
     bool _isFrightened;
     GridCoordinate _lastDirectionChangeCell;
+    static const GridCoordinate _cage;
+    const GridCoordinate _spawn;
+    std::size_t _personalDotCount;
 public:
     ~AGhost() override = default;
 
@@ -35,6 +39,7 @@ public:
     [[nodiscard]] bool hasToReverse() const;
     virtual void updateTarget(const APacManEntity &pac, const std::vector<AGhost *> &ghost) = 0;
     virtual void recalculateDotLimit() = 0;
+    void updateStrategy();
     void update(const APacManEntity &pac, const Wall (&map)[37][28], const std::vector<AGhost *> &ghosts);
     [[nodiscard]] bool isCaged() const;
     [[nodiscard]] GhostStrategy getStrategy() const;
@@ -43,6 +48,12 @@ public:
     [[nodiscard]] bool isFrightened() const;
     void setFrightened(bool isFrightened);
     void kill() override;
+    [[nodiscard]] static const GridCoordinate &getCagePosition() ;
+    [[nodiscard]] const GridCoordinate &getSpawnPosition() ;
+    void setCaged(bool isCaged);
+    void setPersonalDotCount(std::size_t count);
+    [[nodiscard]] std::size_t getPersonalDotCount() const;
+    void setDead(bool isDead);
 
     [[nodiscard]] Move getBestMove(const GridCoordinate& coord, Direction direction, const Wall (&map)[37][28]);
     [[nodiscard]] std::vector<Move> getPossibleMoves(const GridCoordinate& coord, Direction direction, const Wall (&map)[37][28]);

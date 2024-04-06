@@ -22,4 +22,5 @@ public:
 
     [[nodiscard]] Direction getDirection() const;
     virtual void kill() = 0;
+    void setDirection(Direction direction);
 };

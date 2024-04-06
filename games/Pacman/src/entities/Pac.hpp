@@ -25,6 +25,7 @@ protected:
     std::vector<Bonus *> _bonuses;
     std::size_t _lastKill;
     std::size_t _killStreak;
+    static const GridCoordinate _spawn;
 public:
     Pac();
     ~Pac() override;
@@ -36,4 +37,5 @@ public:
     void setEaten(bool eaten);
     void kill() override;
     [[nodiscard]] const std::vector<Bonus *> &getBonuses() const;
+    [[nodiscard]] static const GridCoordinate &getSpawnPosition();
 };

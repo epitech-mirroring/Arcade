@@ -10,13 +10,13 @@
 #include "common/utils/RGBAColor.hpp"
 #include "../../PacmanGlobals.hpp"
 
-Pinky::Pinky(): AGhost("assets/games/pacman/ghosts/pinky.png") {
+Pinky::Pinky(): AGhost("assets/games/pacman/ghosts/pinky.png",
+                       GridCoordinate(13, 17).toScreen()) {
     this->setPosition(GridCoordinate(13, 17).toScreen());
 }
 
 void Pinky::updateTarget(const APacManEntity &pac, const std::vector<AGhost *> &ghost) {
     static const GridCoordinate home = GridCoordinate(2, 0).toScreen();
-    static const GridCoordinate cage = GridCoordinate(13, 17).toScreen();
     (void) ghost;
 
     if (IS_GIZMOS(*arcade)) {
@@ -24,7 +24,7 @@ void Pinky::updateTarget(const APacManEntity &pac, const std::vector<AGhost *> &
     }
 
     if(this->_isDead || this->_isCaged){
-        this->_target = cage;
+        this->_target = _cage;
     } else if(_strategy == SCATTER){
         this->_target = home;
     } else if(_strategy == CHASE){

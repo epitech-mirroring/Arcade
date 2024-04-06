@@ -18,3 +18,8 @@ Direction APacManEntity::getDirection() const
 {
     return _direction;
 }
+
+void APacManEntity::setDirection(Direction direction)
+{
+    _direction = direction;
+}

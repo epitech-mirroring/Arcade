@@ -46,3 +46,9 @@ enum Direction {
     RIGHT = 0,
     NONE = -1
 };
+
+enum Animation {
+    BoardBlink = 0,
+    Ready = 1,
+    None = 100
+};

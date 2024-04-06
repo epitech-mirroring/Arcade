@@ -7,15 +7,15 @@
 */
 
 #include "AGhost.hpp"
-#include "common/utils/RGBAColor.hpp"
 #include "common/utils/Picture.hpp"
 #include "../PacmanGlobals.hpp"
 #define SCALE_GHOST (SCALE * 8. / 28.)
 
-AGhost::AGhost(const std::string &texturePath): APacManEntity(texturePath, 252, 28),
-                                                _target(0, 0),
-                                                _lastDirectionChangeCell(0, 0)
-{
+AGhost::AGhost(const std::string &texturePath,
+               const GridCoordinate &spawn) : APacManEntity(texturePath, 252, 28),
+                                            _target(0, 0),
+                                            _lastDirectionChangeCell(0, 0),
+                                            _spawn(spawn) {
     _isDead = false;
     _hasToReverse = false;
     _dotLimit = 0;
@@ -26,6 +26,13 @@ AGhost::AGhost(const std::string &texturePath): APacManEntity(texturePath, 252, 
     this->_sprite->setDrawRect({0, 0, 28, 28});
     this->_baseSpritePath = texturePath;
     _isFrightened = false;
+    _personalDotCount = 0;
+}
+
+const GridCoordinate AGhost::_cage = GridCoordinate(13, 17).toScreen();
+
+const GridCoordinate &AGhost::getCagePosition() {
+    return _cage;
 }
 
 bool AGhost::isDead() const
@@ -38,8 +45,24 @@ bool AGhost::hasToReverse() const
     return _hasToReverse;
 }
 
+void AGhost::updateStrategy()
+{
+    GhostStrategy old = _strategy;
+
+    if (_isFrightened) {
+        _strategy = SCATTER;
+    } else {
+        _strategy = game->getGlobalStrategy();
+    }
+
+    if (old != _strategy) {
+        this->_hasToReverse = true;
+    }
+}
+
 void AGhost::update(const APacManEntity &pac, const Wall (&map)[37][28], const std::vector<AGhost *> &ghosts)
 {
+    this->updateStrategy();
     this->updateTarget(pac, ghosts);
     this->recalculateDotLimit();
     if (IS_GIZMOS(*arcade)) {
@@ -217,9 +240,6 @@ bool AGhost::isFrightened() const
 
 void AGhost::setFrightened(bool isFrightened)
 {
-    if (isFrightened && !_isFrightened) {
-        _hasToReverse = true;
-    }
     _isFrightened = isFrightened;
 }
 
@@ -228,4 +248,28 @@ void AGhost::kill()
     this->_isDead = true;
     this->_isFrightened = false;
     this->_hasToReverse = false;
+}
+
+void AGhost::setCaged(bool isCaged)
+{
+    _isCaged = isCaged;
+}
+
+void AGhost::setPersonalDotCount(std::size_t count)
+{
+    _personalDotCount = count;
+}
+
+std::size_t AGhost::getPersonalDotCount() const
+{
+    return _personalDotCount;
+}
+
+void AGhost::setDead(bool isDead)
+{
+    _isDead = isDead;
+}
+
+const GridCoordinate &AGhost::getSpawnPosition() {
+    return _spawn;
 }

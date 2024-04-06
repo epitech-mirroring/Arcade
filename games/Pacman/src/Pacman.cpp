@@ -15,6 +15,7 @@
 #include "entities/ghosts/Blinky.hpp"
 #include "entities/ghosts/Clyde.hpp"
 #include "entities/ghosts/Inky.hpp"
+#include "common/displayable/entities/SimpleEntity.hpp"
 #include "PacmanGlobals.hpp"
 #include <string>
 #include <iostream>
@@ -50,6 +51,11 @@ std::shared_ptr<IArcade> arcade;
 int *score = nullptr;
 int frightenedMsLeft;
 Pacman *game;
+bool isGlobalDotCounter;
+std::size_t globalDotCounter;
+bool isInAnimation;
+Animation animation;
+std::size_t animationStart;
 
 void Pacman::init(std::shared_ptr<IArcade> _arcade) {
     this->_arcade = _arcade;
@@ -92,15 +98,13 @@ void Pacman::start() {
     }
     this->_arcade->setPreferredSize(MAP_WIDTH * 8 * SCALE, MAP_HEIGHT * 8 * SCALE);
 
-    currentLevel = 0;
+    currentLevel = -1;
     currentLives = 4;
-    isFrightened = false;
-    frightenedMsLeft = 0;
     this->_score = 0;
-    this->replaceDots();
     *score = this->_score;
-    this->pac.setPosition(GridCoordinate(13, 26).toScreen());
-
+    isInAnimation = false;
+    animation = None;
+    animationStart = 0;
     for (auto &ghost : this->ghosts) {
         delete ghost;
     }
@@ -117,6 +121,8 @@ void Pacman::start() {
 
     auto *clyde = new Clyde();
     this->ghosts.push_back(clyde);
+
+    this->reset(true);
 }
 
 void Pacman::replaceDots() {
@@ -166,7 +172,7 @@ void Pacman::run() {
         displayOneUp = !displayOneUp;
         lastBlinkOneUp = this->_arcade->getTime();
     }
-    if (displayOneUp) {
+    if (displayOneUp || isInAnimation) {
         for (auto &c: oneUP.getChars()) {
             this->_arcade->display(*c);
         }
@@ -193,30 +199,30 @@ void Pacman::run() {
         lastBlink = this->_arcade->getTime();
     }
     for (auto & dot : this->dots) {
-        if (!dot->isEnergizer() || displayEnergizer) {
+        if (!dot->isEnergizer() || displayEnergizer || isInAnimation) {
             this->_arcade->display(*dot);
         }
     }
-    // Update ghosts
-    for (auto &ghost : this->ghosts) {
-        ghost->update(this->pac, this->_map, this->ghosts);
-    }
-    // Update pacman
-    this->pac.update(this->dots, this->_map, this->ghosts);
-    if (frightenedMsLeft > 0) {
-        if (frightenedMsLeft == levels[currentLevel].frightenedDuration * 1000) {
-            for (auto &ghost : this->ghosts) {
-                ghost->setFrightened(true);
-                ghost->setStrategy(SCATTER);
-            }
+    if (!isInAnimation) {
+        // Update ghosts
+        for (auto &ghost: this->ghosts) {
+            ghost->update(this->pac, this->_map, this->ghosts);
         }
-        frightenedMsLeft -= (int) (this->_arcade->getDeltaTime() * 1000.f);
-        if (frightenedMsLeft <= 0) {
-            isFrightened = false;
-            frightenedMsLeft = 0;
-            for (auto &ghost : this->ghosts) {
-                ghost->setStrategy(CHASE);
-                ghost->setFrightened(false);
+        // Update pacman
+        this->pac.update(this->dots, this->_map, this->ghosts);
+        if (frightenedMsLeft > 0) {
+            if (frightenedMsLeft == levels[currentLevel].frightenedDuration * 1000) {
+                for (auto &ghost : this->ghosts) {
+                    ghost->setFrightened(true);
+                }
+            }
+            frightenedMsLeft -= (int) (this->_arcade->getDeltaTime() * 1000.f);
+            if (frightenedMsLeft <= 0) {
+                isFrightened = false;
+                frightenedMsLeft = 0;
+                for (auto &ghost : this->ghosts) {
+                    ghost->setFrightened(false);
+                }
             }
         }
     }
@@ -229,6 +235,7 @@ void Pacman::run() {
     for (auto &ghost : this->ghosts) {
         this->_arcade->display(*ghost);
     }
+    this->handleAnimation();
 
     this->_arcade->flipFrame();
     frame++;
@@ -249,4 +256,88 @@ Direction operator!(Direction direction) {
             return NONE;
     }
     return NONE;
+}
+
+AGhost *Pacman::getFirstCagedGhost() {
+    for (auto &ghost : this->ghosts) {
+        if (ghost->isCaged()) {
+            return ghost;
+        }
+    }
+    return nullptr;
+}
+
+void Pacman::reset(bool isNewLevel) {
+    if(isNewLevel) {
+        currentLevel++;
+        this->replaceDots();
+        isGlobalDotCounter = false;
+    } else {
+        isGlobalDotCounter = true;
+    }
+    globalDotCounter = 0;
+
+    for(auto &ghost : ghosts) {
+        ghost->setPosition(GridCoordinate(ghost->getSpawnPosition()));
+        if(dynamic_cast<Blinky *>(ghost) != nullptr) {
+            ghost->setCaged(false);
+        }
+        else {
+            ghost->setCaged(true);
+        }
+        if(isNewLevel) ghost->setPersonalDotCount(0);
+        ghost->setDead(false);
+        ghost->setStrategy(CHASE);
+        ghost->recalculateDotLimit();
+    }
+
+    this->pac.setPosition(GridCoordinate(Pac::getSpawnPosition()));
+    this->pac.setDirection(Direction::RIGHT);
+    this->pac.setEaten(false);
+
+    frightenedMsLeft = 0;
+    isFrightened = false;
+
+    animation = Ready;
+    isInAnimation = true;
+    animationStart = this->_arcade->getTime();
+}
+
+void Pacman::handleAnimation() {
+    if (isInAnimation) {
+        if (animation == Ready) {
+            if (this->_arcade->getTime() - animationStart > 2000) {
+                isInAnimation = false;
+                animation = None;
+            } else {
+                static auto ready = SimpleEntity("assets/games/pacman/ready.png", 92, 14);
+                ready.setPosition(GridCoordinate(11, 20).toScreen());
+                ready.setSize(SCALE * 8. / 14.);
+                this->_arcade->display(ready);
+            }
+        }
+    }
+}
+
+GhostStrategy Pacman::getGlobalStrategy() {
+    static std::size_t lastStrategyChange = 0;
+    static int changeCount = -1;
+    static std::size_t index = currentLevel == 1 ? 0 : (currentLevel >= 5 ? 2 : 1);
+
+    if (changeCount == -1) {
+        changeCount = 0;
+        lastStrategyChange = this->_arcade->getTime();
+    }
+
+    static const GhostStrategyTime currentStrategy = strategyTimes[index][changeCount];
+
+    if (currentStrategy.lasting == 0) {
+        return currentStrategy.strategy;
+    }
+
+    if (this->_arcade->getTime() - lastStrategyChange > currentStrategy.lasting) {
+        lastStrategyChange = this->_arcade->getTime();
+        changeCount++;
+    }
+    return strategyTimes[index][changeCount].strategy;
 }

@@ -66,4 +66,8 @@ public:
     void start() override;
     void run() override;
     void replaceDots();
+    AGhost *getFirstCagedGhost();
+    void reset(bool isNewLevel);
+    void handleAnimation();
+    GhostStrategy getGlobalStrategy();
 };

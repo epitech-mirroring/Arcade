@@ -7,14 +7,14 @@
 */
 
 #include "Pac.hpp"
-#include "common/utils/RGBAColor.hpp"
 #include "../PacmanGlobals.hpp"
 #define SCALE_PACKMAN (SCALE * 8. / 28.)
 
+const GridCoordinate Pac::_spawn = GridCoordinate(13, 26).toScreen();
+
 Pac::Pac(): APacManEntity("assets/games/pacman/pacman/pacman.png", 208, 26) {
-    GridCoordinate spawn = GridCoordinate(13, 26).toScreen();
     this->_sprite->setDrawRect({0, 0, 26, 26});
-    this->setPosition(spawn);
+    this->setPosition(this->_spawn);
     this->setSize(SCALE_PACKMAN);
     this->_direction = Direction::LEFT;
     this->_newDirection = Direction::LEFT;
@@ -163,4 +163,8 @@ void Pac::kill() {
 
 const std::vector<Bonus *> &Pac::getBonuses() const {
     return this->_bonuses;
+}
+
+const GridCoordinate &Pac::getSpawnPosition() {
+    return _spawn;
 }
