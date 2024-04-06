@@ -253,7 +253,7 @@ void NCurses::displayLine(const ILine &line) {
 void NCurses::displayEntity(const IEntity &entity) {
     if (entity.getReplacingChar() == ' ' || entity.getSize() == 0)
         return;
-    int color = getNcursesColor((IColor &)RGBAColor::BLACK);
+    int color = getNcursesColor(entity.getColor());
     std::size_t posX = entity.getPosition().getX() / SCALE_WIDTH;
     std::size_t posY = entity.getPosition().getY() / SCALE_HEIGHT;
     std::size_t width = (entity.getSprite().getPicture().getWidth() * entity.getSize()) / SCALE_WIDTH;
@@ -272,12 +272,12 @@ void NCurses::flipFrame() {
     std::size_t width = getmaxx(stdscr);
     std::size_t height = getmaxy(stdscr);
 
-    if (width < this->_width || height < this->_height) {
-        for (std::size_t x = 0; x < width; x++) {
-            for (std::size_t y = 0; y < height; y++) {
-                mvaddch(y, x, ' ');
-            }
+    for (std::size_t x = 0; x < width; x++) {
+        for (std::size_t y = 0; y < height; y++) {
+            mvaddch(y, x, ' ');
         }
+    }
+    if (width < this->_width || height < this->_height) {
         mvwprintw(stdscr, 0, 0, "Window is too small");
         wrefresh(stdscr);
         this->_frameBuffer.clear();
