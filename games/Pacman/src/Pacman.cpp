@@ -392,6 +392,19 @@ void Pacman::handleAnimation() {
                 death.setSprite(sprite);
                 this->_arcade->display(death);
             }
+        } else if (animation == GameOver) {
+            static PacManText gameover("GAME OVER", PacManTextColor::RED);
+            gameover.setPosition(GridCoordinate(MAP_WIDTH / 2 - 5, MAP_HEIGHT / 2).toScreen());
+            for (auto &c : gameover.getChars()) {
+                this->_arcade->display(*c);
+            }
+            if (this->_arcade->getTime() - animationStart > 3000) {
+                isInAnimation = false;
+                animation = None;
+                shouldDisplayAnything = true;
+                shouldDisplayActors = true;
+                start();
+            }
         }
     }
 }
