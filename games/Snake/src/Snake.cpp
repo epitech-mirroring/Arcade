@@ -7,8 +7,9 @@
 
 #include "Snake.hpp"
 
-Snake::Snake() : AEntity("./assets/games/Snake/empty.png", 40, 40)
+Snake::Snake() : AEntity("./assets/games/Snake/empty.png", 40, 40, '#')
 {
+    this->_color = std::make_unique<RGBAColor>(0, 255, 0, 255);
     this->prev = nullptr;
     this->next = nullptr;
     this->gridPos = Coord2D(0, 0);
@@ -70,7 +71,7 @@ void Snake::setGridPos(const Coord2D &gridPos)
     this->gridPos = gridPos;
 }
 
-const std::deque<Coord2D> &Snake::getSnakePos() const
+std::deque<Coord2D> Snake::getSnakePos() const
 {
     std::deque<Coord2D> snakePos;
     Snake *tmp = this->next;
