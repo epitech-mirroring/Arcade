@@ -13,9 +13,9 @@
 class AEntity : public virtual ADisplayable, public virtual IEntity {
 protected:
     std::unique_ptr<ISprite> _sprite;
-    AEntity(std::unique_ptr<ISprite> sprite);
-    AEntity(const ISprite &sprite);
-    AEntity(const std::string &path, const std::size_t &width, const std::size_t &height);
+    AEntity(std::unique_ptr<ISprite> sprite, char replacingChar = ' ');
+    AEntity(const ISprite &sprite, char replacingChar = ' ');
+    AEntity(const std::string &path, const std::size_t &width, const std::size_t &height, char replacingChar = ' ');
 public:
     ~AEntity() override = default;
     [[nodiscard]] const ISprite &getSprite() const override;

@@ -9,6 +9,7 @@
 #pragma once
 #include "../../shared/displayable/IDisplayable.hpp"
 #include "../../shared/utils/ICanRotate.hpp"
+#include "common/utils/RGBAColor.hpp"
 #include <cstddef>
 #include <memory>
 #include <cmath>
@@ -19,6 +20,7 @@
 class ADisplayable : public virtual IDisplayable, public virtual ICanRotate {
 protected:
     std::unique_ptr<ICoordinate> _position;
+    std::unique_ptr<IColor> _color;
     float _size;
     float _rotation;
     char _replacingChar;
@@ -33,4 +35,7 @@ public:
     [[nodiscard]] float getRotation() const override;
     void setRotation(float angle) override;
     [[nodiscard]] char getReplacingChar() const override;
+    [[nodiscard]] const IColor &getColor() const override;
+    void setColor(const IColor &color) override;
+    void setColor(std::unique_ptr<IColor> color) override;
 };

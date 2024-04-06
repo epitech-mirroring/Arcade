@@ -54,3 +54,18 @@ void ADisplayable::setRotation(float angle)
 char ADisplayable::getReplacingChar() const {
     return this->_replacingChar;
 }
+
+const IColor &ADisplayable::getColor() const
+{
+    return *this->_color;
+}
+
+void ADisplayable::setColor(const IColor &color)
+{
+    this->_color = std::make_unique<RGBAColor>(color);
+}
+
+void ADisplayable::setColor(std::unique_ptr<IColor> color)
+{
+    this->_color = std::move(color);
+}
