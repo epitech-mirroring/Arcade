@@ -13,7 +13,6 @@
 #include <algorithm>
 #include <memory>
 #include <utility>
-#include <chrono>
 #include "json/Json.hpp"
 #include "core/menu/Menu.hpp"
 #include "common/displayable/primitives/Square.hpp"
