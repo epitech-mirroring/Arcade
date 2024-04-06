@@ -60,7 +60,7 @@ public:
     std::vector<AGhost *> ghosts;
 
     Pacman();
-    ~Pacman() override = default;
+    ~Pacman() override;
 
     void init(std::shared_ptr<IArcade> arcade) override;
     void start() override;

@@ -59,6 +59,19 @@ Animation animation;
 std::size_t animationStart;
 bool shouldDisplayActors;
 bool shouldDisplayAnything;
+Fruit *fruit1 = nullptr;
+Fruit *fruit2 = nullptr;
+
+Pacman::~Pacman() {
+    for (auto &ghost : this->ghosts) {
+        delete ghost;
+    }
+    for (auto &dot : this->dots) {
+        delete dot;
+    }
+    delete fruit1;
+    delete fruit2;
+}
 
 void Pacman::init(std::shared_ptr<IArcade> _arcade) {
     this->_arcade = _arcade;
@@ -249,6 +262,12 @@ void Pacman::run() {
         for (auto &ghost : this->ghosts) {
             this->_arcade->display(*ghost);
         }
+        if (fruit1->shouldBeDisplayed()) {
+            this->_arcade->display(*fruit1);
+        }
+        if (fruit2->shouldBeDisplayed()) {
+            this->_arcade->display(*fruit2);
+        }
     }
     this->handleAnimation();
     if (this->dots.empty()) {
@@ -257,6 +276,18 @@ void Pacman::run() {
             isInAnimation = true;
             animationStart = this->_arcade->getTime();
             shouldDisplayActors = false;
+        }
+    } else {
+        std::size_t count = this->dots.size();
+        if (count == 240-70 && !fruit1->hasSpawned() && !fruit1->hasBeenEaten()) {
+            fruit1->setApparitionTime(this->_arcade->getTime());
+            fruit1->setSpawned(true);
+            fruit1->setEaten(false);
+        }
+        if (count == 240-170 && !fruit2->hasSpawned() && !fruit2->hasBeenEaten()) {
+            fruit2->setApparitionTime(this->_arcade->getTime());
+            fruit2->setSpawned(true);
+            fruit2->setEaten(false);
         }
     }
 
@@ -295,6 +326,19 @@ void Pacman::reset(bool isNewLevel) {
         currentLevel++;
         this->replaceDots();
         isGlobalDotCounter = false;
+
+        if (fruit1) {
+            delete fruit1;
+            fruit1 = nullptr;
+        }
+        if (fruit2) {
+            delete fruit2;
+            fruit2 = nullptr;
+        }
+        fruit1 = new Fruit(levels[currentLevel].bonus);
+        fruit1->setPosition(GridCoordinate(13, 20).toScreen());
+        fruit2 = new Fruit(levels[currentLevel].bonus);
+        fruit2->setPosition(GridCoordinate(13, 20).toScreen());
     } else {
         isGlobalDotCounter = true;
     }
@@ -326,6 +370,13 @@ void Pacman::reset(bool isNewLevel) {
 
     frightenedMsLeft = 0;
     isFrightened = false;
+
+    if (fruit1->hasSpawned() && !fruit1->hasBeenEaten()) {
+        fruit1->setEaten(true);
+    }
+    if (fruit2->hasSpawned() && !fruit2->hasBeenEaten()) {
+        fruit2->setEaten(true);
+    }
 
     animation = Ready;
     isInAnimation = true;

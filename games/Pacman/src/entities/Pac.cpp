@@ -83,10 +83,10 @@ void Pac::update(std::vector<PacDot *> &dots, const Wall (&map)[37][28], const s
     }
 
     static std::size_t lastEat = 0;
+    GridCoordinate pacGrid = GridCoordinate(this->getPosition(), GridCoordinate::SCREEN).toGrid();
     for (std::size_t i = 0; i < dots.size(); i++) {
         PacDot *dot = dots[i];
         GridCoordinate dotGrid = GridCoordinate(dot->getPosition(), GridCoordinate::SCREEN).toGrid();
-        GridCoordinate pacGrid = GridCoordinate(this->getPosition(), GridCoordinate::SCREEN).toGrid();
         if (dotGrid == pacGrid) {
             this->_eaten = true;
             if (dot->isEnergizer()) {
@@ -123,10 +123,8 @@ void Pac::update(std::vector<PacDot *> &dots, const Wall (&map)[37][28], const s
             g->spawn(false);
         }
     }
-
     for (AGhost *ghost : ghosts) {
         GridCoordinate ghostGrid = GridCoordinate(ghost->getPosition(), GridCoordinate::SCREEN).toGrid();
-        GridCoordinate pacGrid = GridCoordinate(this->getPosition(), GridCoordinate::SCREEN).toGrid();
         if (ghostGrid == pacGrid) {
             if (ghost->isFrightened()) {
                 ghost->kill();
@@ -162,6 +160,20 @@ void Pac::update(std::vector<PacDot *> &dots, const Wall (&map)[37][28], const s
             } else if (!ghost->isDead()) {
                 this->kill();
             }
+        }
+    }
+    if (pacGrid.getX() == 13 && pacGrid.getY() == 20) {
+        if (fruit1->shouldBeDisplayed()) {
+            fruit1->setEaten(true);
+            if (score != nullptr)
+                *score += levels[currentLevel].point;
+            this->_bonuses.push_back(new Bonus(fruit1->getPosition(), levels[currentLevel].point));
+        }
+        if (fruit2->shouldBeDisplayed()) {
+            fruit2->setEaten(true);
+            if (score != nullptr)
+                *score += levels[currentLevel].point;
+            this->_bonuses.push_back(new Bonus(fruit2->getPosition(), levels[currentLevel].point));
         }
     }
 

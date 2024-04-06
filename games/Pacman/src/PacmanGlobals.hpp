@@ -10,6 +10,7 @@
 #include "shared/IArcade.hpp"
 #include "PacManEnums.hpp"
 #include "Pacman.hpp"
+#include "entities/Fruit.hpp"
 
 #define SCALE 2
 #define MAP_WIDTH 28
@@ -82,3 +83,5 @@ extern Animation animation;
 extern std::size_t animationStart;
 extern bool shouldDisplayActors;
 extern bool shouldDisplayAnything;
+extern Fruit *fruit1;
+extern Fruit *fruit2;
