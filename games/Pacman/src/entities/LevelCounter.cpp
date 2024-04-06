@@ -8,7 +8,7 @@
 
 #include "LevelCounter.hpp"
 #include "../PacmanGlobals.hpp"
-#include "../utils/GridCoordinate.hpp"
+#define LEVELS_SCALE (SCALE * 8. / 16.)
 
 LevelCounter::LevelCounter()
     : AEntity("assets/games/pacman/level_counter.png", 112, 304)

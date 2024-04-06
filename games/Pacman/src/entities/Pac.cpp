@@ -7,8 +7,9 @@
 */
 
 #include "Pac.hpp"
-#include "../utils/Move.hpp"
 #include "common/utils/RGBAColor.hpp"
+#include "../PacmanGlobals.hpp"
+#define SCALE_PACKMAN (SCALE * 8. / 28.)
 
 Pac::Pac(): APacManEntity("assets/games/pacman/pacman/pacman.png", 208, 26) {
     GridCoordinate spawn = GridCoordinate(13, 26).toScreen();
@@ -19,6 +20,15 @@ Pac::Pac(): APacManEntity("assets/games/pacman/pacman/pacman.png", 208, 26) {
     this->_newDirection = Direction::LEFT;
     this->_eaten = false;
     this->_animation = 0;
+    this->_lastKill = 0;
+    this->_killStreak = 0;
+}
+
+Pac::~Pac() {
+    for (auto &bonus: _bonuses) {
+        delete bonus;
+    }
+    _bonuses.clear();
 }
 
 void Pac::handleEvent(const IEvent &event) {
@@ -36,7 +46,7 @@ void Pac::handleEvent(const IEvent &event) {
     }
 }
 
-void Pac::update(std::vector<PacDot *> &dots, const Wall (&map)[37][28]) {
+void Pac::update(std::vector<PacDot *> &dots, const Wall (&map)[37][28], const std::vector<AGhost *> &ghosts) {
     GridCoordinate pos = GridCoordinate(this->getPosition(), GridCoordinate::SCREEN);
     Move move(pos, (APacManEntity &) *this, this->_newDirection);
     GridCoordinate fromGrid = GridCoordinate(pos).toGrid();
@@ -91,6 +101,32 @@ void Pac::update(std::vector<PacDot *> &dots, const Wall (&map)[37][28]) {
             break;
         }
     }
+    for (AGhost *ghost : ghosts) {
+        GridCoordinate ghostGrid = GridCoordinate(ghost->getPosition(), GridCoordinate::SCREEN).toGrid();
+        GridCoordinate pacGrid = GridCoordinate(this->getPosition(), GridCoordinate::SCREEN).toGrid();
+        if (ghostGrid == pacGrid) {
+            if (ghost->isFrightened()) {
+                ghost->kill();
+                if (arcade->getTime() - _lastKill < 1000) {
+                    _killStreak++;
+                    if (score != nullptr)
+                        *score += (int) (200 * _killStreak);
+                    this->_bonuses.push_back(new Bonus(ghost->getPosition(),
+                                                       static_cast<BonusPoint>(
+                                                               _killStreak *
+                                                               200)));
+                } else {
+                    _killStreak = 1;
+                    if (score != nullptr)
+                        *score += 200;
+                    this->_bonuses.push_back(new Bonus(ghost->getPosition(),
+                                                       _200));
+                }
+            } else if (!ghost->isDead()) {
+                this->kill();
+            }
+        }
+    }
 
     if (IS_GIZMOS(*arcade)) {
         GridCoordinate center = GridCoordinate(this->getPosition(), GridCoordinate::SCREEN);
@@ -103,6 +139,14 @@ void Pac::update(std::vector<PacDot *> &dots, const Wall (&map)[37][28]) {
     }
 
     this->_sprite->setDrawRect({26 * (this->_animation + this->_direction * 2), 0, 26, 26});
+
+    this->_bonuses = std::vector<Bonus *>(this->_bonuses.begin(), std::remove_if(this->_bonuses.begin(), this->_bonuses.end(), [](Bonus *bonus) {
+        if (bonus->canBeDeleted()) {
+            delete bonus;
+            return true;
+        }
+        return false;
+    }));
 }
 
 bool Pac::hasEaten() const {
@@ -111,4 +155,12 @@ bool Pac::hasEaten() const {
 
 void Pac::setEaten(bool eaten) {
     this->_eaten = eaten;
+}
+
+void Pac::kill() {
+
+}
+
+const std::vector<Bonus *> &Pac::getBonuses() const {
+    return this->_bonuses;
 }

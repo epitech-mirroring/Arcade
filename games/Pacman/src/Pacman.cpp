@@ -15,6 +15,7 @@
 #include "entities/ghosts/Blinky.hpp"
 #include "entities/ghosts/Clyde.hpp"
 #include "entities/ghosts/Inky.hpp"
+#include "PacmanGlobals.hpp"
 #include <string>
 #include <iostream>
 
@@ -48,9 +49,11 @@ int currentLives = 4;
 std::shared_ptr<IArcade> arcade;
 int *score = nullptr;
 int frightenedMsLeft;
+Pacman *game;
 
 void Pacman::init(std::shared_ptr<IArcade> _arcade) {
     this->_arcade = _arcade;
+    game = this;
     arcade = this->_arcade;
     this->_score = 0;
     score = &this->_score;
@@ -104,19 +107,15 @@ void Pacman::start() {
     this->ghosts.clear();
 
     auto *blinky = new Blinky();
-    blinky->setPosition(GridCoordinate(13, 17).toScreen());
     this->ghosts.push_back(blinky);
 
     auto *pinky = new Pinky();
-    pinky->setPosition(GridCoordinate(11, 17).toScreen());
     this->ghosts.push_back(pinky);
 
     auto *inky = new Inky();
-    inky->setPosition(GridCoordinate(14, 17).toScreen());
     this->ghosts.push_back(inky);
 
     auto *clyde = new Clyde();
-    clyde->setPosition(GridCoordinate(16, 17).toScreen());
     this->ghosts.push_back(clyde);
 }
 
@@ -203,24 +202,29 @@ void Pacman::run() {
         ghost->update(this->pac, this->_map, this->ghosts);
     }
     // Update pacman
-    this->pac.update(this->dots, this->_map);
+    this->pac.update(this->dots, this->_map, this->ghosts);
     if (frightenedMsLeft > 0) {
+        if (frightenedMsLeft == levels[currentLevel].frightenedDuration * 1000) {
+            for (auto &ghost : this->ghosts) {
+                ghost->setFrightened(true);
+                ghost->setStrategy(SCATTER);
+            }
+        }
         frightenedMsLeft -= (int) (this->_arcade->getDeltaTime() * 1000.f);
         if (frightenedMsLeft <= 0) {
             isFrightened = false;
             frightenedMsLeft = 0;
             for (auto &ghost : this->ghosts) {
                 ghost->setStrategy(CHASE);
-            }
-        }
-        if (isFrightened) {
-            for (auto &ghost : this->ghosts) {
-                ghost->setStrategy(SCATTER);
+                ghost->setFrightened(false);
             }
         }
     }
     // Display pacman
     this->_arcade->display(this->pac);
+    for (auto &bonus: this->pac.getBonuses()) {
+        this->_arcade->display(*bonus);
+    }
     // Display ghosts
     for (auto &ghost : this->ghosts) {
         this->_arcade->display(*ghost);
@@ -229,4 +233,20 @@ void Pacman::run() {
     this->_arcade->flipFrame();
     frame++;
     frame = frame % fps;
+}
+
+Direction operator!(Direction direction) {
+    switch (direction) {
+        case UP:
+            return DOWN;
+        case DOWN:
+            return UP;
+        case LEFT:
+            return RIGHT;
+        case RIGHT:
+            return LEFT;
+        case NONE:
+            return NONE;
+    }
+    return NONE;
 }

@@ -7,15 +7,21 @@
 */
 
 #include "Clyde.hpp"
+#include "common/utils/RGBAColor.hpp"
+#include "../../PacmanGlobals.hpp"
 
 Clyde::Clyde(): AGhost("assets/games/pacman/ghosts/clyde.png") {
-
+    this->setPosition(GridCoordinate(15, 17).toScreen());
 }
 
-void Clyde::updateTarget(const Pac &pac, const std::vector<AGhost *> &ghost) {
-    static const GridCoordinate home = GridCoordinate(0, MAP_HEIGHT-1).toScreen();
+void Clyde::updateTarget(const APacManEntity &pac, const std::vector<AGhost *> &ghost) {
+    static const GridCoordinate home = GridCoordinate(0, MAP_HEIGHT-3).toScreen();
     static const GridCoordinate cage = GridCoordinate(13, 17).toScreen();
     (void) ghost;
+
+    if (IS_GIZMOS(*arcade)) {
+        GIZMOS(*arcade)->drawRect(home, home + Coord2D(SCALE * 8, SCALE * 8), false, RGBAColor::YELLOW);
+    }
 
     if(this->_isDead || this->_isCaged){
         this->_target = cage;

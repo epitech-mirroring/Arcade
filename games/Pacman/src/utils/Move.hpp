@@ -8,7 +8,6 @@
 
 #pragma once
 #include "../entities/APacManEntity.hpp"
-#include "../PacmanGlobals.hpp"
 #include "../entities/Wall.hpp"
 #include "GridCoordinate.hpp"
 

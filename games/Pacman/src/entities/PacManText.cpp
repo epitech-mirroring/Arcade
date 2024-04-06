@@ -8,7 +8,6 @@
 
 #include "PacManText.hpp"
 #include "../PacmanGlobals.hpp"
-#include "../utils/GridCoordinate.hpp"
 #include <map>
 
 PacManTextChar::PacManTextChar(char c, PacManTextColor color)

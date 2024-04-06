@@ -7,7 +7,6 @@
 */
 
 #pragma once
-
 #include "../AGhost.hpp"
 
 class Blinky: public AGhost {
@@ -15,6 +14,6 @@ public:
     Blinky();
     ~Blinky() override = default;
 
-    void updateTarget(const Pac &pac, const std::vector<AGhost *> &ghost) override;
+    void updateTarget(const APacManEntity &pac, const std::vector<AGhost *> &ghost) override;
     void recalculateDotLimit() override;
 };

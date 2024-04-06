@@ -8,7 +8,6 @@
 
 #pragma once
 #include "common/displayable/entities/AEntity.hpp"
-#include "../PacmanGlobals.hpp"
 
 class Wall : public AEntity {
 public:

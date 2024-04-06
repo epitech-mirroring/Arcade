@@ -9,7 +9,6 @@
 #pragma once
 #include "common/AGame.hpp"
 #include "entities/Wall.hpp"
-#include "PacmanGlobals.hpp"
 #include "entities/Pac.hpp"
 #include "entities/PacDot.hpp"
 #include "entities/AGhost.hpp"
@@ -17,7 +16,7 @@
 class Pacman: public AGame {
 public:
     // 37x28
-    Wall _map[MAP_HEIGHT][MAP_WIDTH] = {
+    Wall _map[37][28] = {
             {Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY)},
             {Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY)},
             {Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY),Wall(Wall::EMPTY)},

@@ -7,10 +7,7 @@
 */
 
 #pragma once
-
 #include "common/displayable/entities/AEntity.hpp"
-
-#define LEVELS_SCALE (SCALE * 8. / 16.)
 
 class LevelCounter: public AEntity {
 protected:

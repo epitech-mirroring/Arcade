@@ -9,7 +9,7 @@
 #include "LiveCounter.hpp"
 #include "../PacmanGlobals.hpp"
 #include "../utils/GridCoordinate.hpp"
-
+#define LIVES_SCALE (SCALE * 8. / 16.)
 
 LiveCounter::LiveCounter()
         : AEntity("assets/games/pacman/pacman/lives_counter.png", 80, 80)

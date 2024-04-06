@@ -11,7 +11,7 @@
 #include "shared/events/IEvent.hpp"
 #include "shared/ICanDrawGizmos.hpp"
 #include "shared/IArcade.hpp"
-#include "../PacmanGlobals.hpp"
+#include "../PacManEnums.hpp"
 
 class APacManEntity: public AEntity {
 protected:
@@ -21,4 +21,5 @@ public:
     ~APacManEntity() override = default;
 
     [[nodiscard]] Direction getDirection() const;
+    virtual void kill() = 0;
 };

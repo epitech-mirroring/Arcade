@@ -14,6 +14,6 @@ public:
     Inky();
     ~Inky() override = default;
 
-    void updateTarget(const Pac &pac, const std::vector<AGhost *> &ghost) override;
+    void updateTarget(const APacManEntity &pac, const std::vector<AGhost *> &ghost) override;
     void recalculateDotLimit() override;
 };

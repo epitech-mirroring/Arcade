@@ -7,7 +7,6 @@
 */
 
 #pragma once
-#include "../PacmanGlobals.hpp"
 #include "common/displayable/entities/AEntity.hpp"
 
 class PacDot : public AEntity {

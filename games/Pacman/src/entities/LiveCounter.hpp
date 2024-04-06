@@ -7,10 +7,7 @@
 */
 
 #pragma once
-
 #include "common/displayable/entities/AEntity.hpp"
-
-#define LIVES_SCALE (SCALE * 8. / 16.)
 
 class LiveCounter: public AEntity {
 protected:

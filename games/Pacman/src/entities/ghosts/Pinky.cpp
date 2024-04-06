@@ -7,21 +7,27 @@
 */
 
 #include "Pinky.hpp"
+#include "common/utils/RGBAColor.hpp"
+#include "../../PacmanGlobals.hpp"
 
 Pinky::Pinky(): AGhost("assets/games/pacman/ghosts/pinky.png") {
+    this->setPosition(GridCoordinate(13, 17).toScreen());
 }
 
-void Pinky::updateTarget(const Pac &pac, const std::vector<AGhost *> &ghost) {
+void Pinky::updateTarget(const APacManEntity &pac, const std::vector<AGhost *> &ghost) {
     static const GridCoordinate home = GridCoordinate(2, 0).toScreen();
     static const GridCoordinate cage = GridCoordinate(13, 17).toScreen();
     (void) ghost;
+
+    if (IS_GIZMOS(*arcade)) {
+        GIZMOS(*arcade)->drawRect(home, home + Coord2D(SCALE * 8, SCALE * 8), false, RGBAColor::MAGENTA);
+    }
 
     if(this->_isDead || this->_isCaged){
         this->_target = cage;
     } else if(_strategy == SCATTER){
         this->_target = home;
-    }
-    else if(_strategy == CHASE){
+    } else if(_strategy == CHASE){
         GridCoordinate grid = GridCoordinate(pac.getPosition(), GridCoordinate::SCREEN).toGrid();
         switch (pac.getDirection()) {
             case Direction::RIGHT:

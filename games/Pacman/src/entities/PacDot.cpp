@@ -7,6 +7,7 @@
 */
 
 #include "PacDot.hpp"
+#include "../PacmanGlobals.hpp"
 
 PacDot::PacDot(bool isEnergizer): AEntity("assets/games/pacman/walls.png", 143, 26)
 {

@@ -9,9 +9,12 @@
 #include "AGhost.hpp"
 #include "common/utils/RGBAColor.hpp"
 #include "common/utils/Picture.hpp"
+#include "../PacmanGlobals.hpp"
+#define SCALE_GHOST (SCALE * 8. / 28.)
 
 AGhost::AGhost(const std::string &texturePath): APacManEntity(texturePath, 252, 28),
-                                                _target(0, 0)
+                                                _target(0, 0),
+                                                _lastDirectionChangeCell(0, 0)
 {
     _isDead = false;
     _hasToReverse = false;
@@ -22,6 +25,7 @@ AGhost::AGhost(const std::string &texturePath): APacManEntity(texturePath, 252, 
     _strategy = CHASE;
     this->_sprite->setDrawRect({0, 0, 28, 28});
     this->_baseSpritePath = texturePath;
+    _isFrightened = false;
 }
 
 bool AGhost::isDead() const
@@ -34,7 +38,7 @@ bool AGhost::hasToReverse() const
     return _hasToReverse;
 }
 
-void AGhost::update(const Pac &pac, const Wall (&map)[37][28], const std::vector<AGhost *> &ghosts)
+void AGhost::update(const APacManEntity &pac, const Wall (&map)[37][28], const std::vector<AGhost *> &ghosts)
 {
     this->updateTarget(pac, ghosts);
     this->recalculateDotLimit();
@@ -49,11 +53,11 @@ void AGhost::update(const Pac &pac, const Wall (&map)[37][28], const std::vector
 
     if (isCaged()) {
         GridCoordinate grid = GridCoordinate(this->getPosition(), GridCoordinate::SCREEN).toGrid();
-        if (pos.getY() >= 16 * SCALE*8) {
+        if (pos.getY() <= 16 * SCALE*8) {
             move = Move(pos, *this, Direction::DOWN);
             move.computeLanding();
             toGrid = GridCoordinate(move.getTo()).toGrid();
-        } else if (grid.getY() == 18) { // Go up
+        } else if (grid.getY() >= 18) { // Go up
             move = Move(pos, *this, Direction::UP);
             move.computeLanding();
             toGrid = GridCoordinate(move.getTo()).toGrid();
@@ -69,10 +73,21 @@ void AGhost::update(const Pac &pac, const Wall (&map)[37][28], const std::vector
         this->_direction = move.getDirection();
         this->setPosition(move.getTo());
     } else if (move.isLegal(map)) {
+        if (fromGrid == _lastDirectionChangeCell && move.getDirection() != this->getDirection()) {
+            // Can't change direction twice in a row (or at least not in the same cell)
+            move = Move(pos, *this, this->_direction);
+            move.computeLanding();
+            toGrid = GridCoordinate(move.getTo()).toGrid();
+        }
         // Change square
         if (toGrid != fromGrid) {
             this->_animation ++;
             this->_animation %= 2;
+        }
+        if (move.getDirection() != this->getDirection()) {
+            _lastDirectionChangeCell = toGrid;
+            if (_hasToReverse && move.getDirection() == !this->getDirection())
+                _hasToReverse = false;
         }
         this->_direction = move.getDirection();
         if (IS_GIZMOS(*arcade)) {
@@ -82,7 +97,6 @@ void AGhost::update(const Pac &pac, const Wall (&map)[37][28], const std::vector
     } else {
         move = Move(pos, *this, this->_direction);
         move.computeLanding();
-        toGrid = GridCoordinate(move.getTo()).toGrid();
     }
 
     static Picture scared("assets/games/pacman/ghosts/scared.png", 124, 28);
@@ -91,18 +105,26 @@ void AGhost::update(const Pac &pac, const Wall (&map)[37][28], const std::vector
     std::size_t finalAnimation = _animation;
 
     if (this->_isDead) {
+        static GridCoordinate cage = GridCoordinate(13, 17).toScreen();
         this->_sprite->setPicture(dead);
-    } else if (isFrightened) {
+        // Check distance to cage if in cage then call spawn
+        if (move.getTo().distance(cage) <= 8 * SCALE) {
+            this->spawn(false);
+        }
+    } else if (_isFrightened) {
         this->_sprite->setPicture(scared);
         std::size_t blinkTimeInMs = 500; // Time in ms (time between two blinks)
         static std::size_t lastBlink = 0;
         static bool isWhite = false;
         if (frightenedMsLeft < 2000) {
-            blinkTimeInMs = 250;
+            blinkTimeInMs = 200;
         }
         if (arcade->getTime() - lastBlink > blinkTimeInMs) {
             isWhite = !isWhite;
             lastBlink = arcade->getTime();
+        }
+        if (frightenedMsLeft >= 2000) {
+            isWhite = false;
         }
         if (this->_animation == 0 && isWhite) {
             finalAnimation = 2;
@@ -114,8 +136,11 @@ void AGhost::update(const Pac &pac, const Wall (&map)[37][28], const std::vector
     }
 
     std::size_t offset = (finalAnimation+(_direction*2))*28 + (finalAnimation+(_direction*2))*4;
-    if (isFrightened && !this->_isDead) {
+    if (_isFrightened && !this->_isDead) {
         offset = (finalAnimation)*28 + (finalAnimation)*4;
+    }
+    if (this->_isDead) {
+        offset = (_direction)*20 + (_direction)*42;
     }
     this->_sprite->setDrawRect({offset, 0, 28, 28});
 }
@@ -123,6 +148,8 @@ void AGhost::update(const Pac &pac, const Wall (&map)[37][28], const std::vector
 Move AGhost::getBestMove(const GridCoordinate& coord, Direction direction, const Wall (&map)[37][28])
 {
     std::vector<Move> moves = this->getPossibleMoves(coord, direction, map);
+    if (moves.empty())
+        return {coord, *this, direction, direction};
     Move bestMove = moves[0];
     for (auto &move : moves) {
         if (move.getTo().distance(_target) < bestMove.getTo().distance(_target))
@@ -166,4 +193,39 @@ GhostStrategy AGhost::getStrategy() const
 void AGhost::setStrategy(GhostStrategy strategy)
 {
     _strategy = strategy;
+}
+
+void AGhost::spawn(bool skipAnimation)
+{
+    this->_isDead = false;
+    this->_isCaged = false;
+    this->_hasToReverse = false;
+    this->_animation = 0;
+    this->_sprite->setDrawRect({0, 0, 28, 28});
+    this->_direction = Direction::LEFT;
+    this->setPosition(GridCoordinate(13, 14).toScreen());
+    if (!skipAnimation) {
+        this->setPosition(GridCoordinate(13, 14).toScreen());
+        this->_isCaged = false;
+    }
+}
+
+bool AGhost::isFrightened() const
+{
+    return _isFrightened;
+}
+
+void AGhost::setFrightened(bool isFrightened)
+{
+    if (isFrightened && !_isFrightened) {
+        _hasToReverse = true;
+    }
+    _isFrightened = isFrightened;
+}
+
+void AGhost::kill()
+{
+    this->_isDead = true;
+    this->_isFrightened = false;
+    this->_hasToReverse = false;
 }

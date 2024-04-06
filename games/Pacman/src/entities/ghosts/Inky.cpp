@@ -8,14 +8,21 @@
 
 #include "Inky.hpp"
 #include "Blinky.hpp"
+#include "common/utils/RGBAColor.hpp"
+#include "../../PacmanGlobals.hpp"
 
 Inky::Inky(): AGhost("assets/games/pacman/ghosts/inky.png") {
-
+    this->setPosition(GridCoordinate(11, 17).toScreen());
 }
 
-void Inky::updateTarget(const Pac &pac, const std::vector<AGhost *> &ghost) {
-    static const GridCoordinate home = GridCoordinate(MAP_WIDTH-1, MAP_HEIGHT-1).toScreen();
+void Inky::updateTarget(const APacManEntity &pac, const std::vector<AGhost *> &ghost) {
+    static const GridCoordinate home = GridCoordinate(MAP_WIDTH-1, MAP_HEIGHT-3).toScreen();
     static const GridCoordinate cage = GridCoordinate(13, 17).toScreen();
+
+    if (IS_GIZMOS(*arcade)) {
+        GIZMOS(*arcade)->drawRect(home, home + Coord2D(SCALE * 8, SCALE * 8), false, RGBAColor::CYAN);
+    }
+
     Blinky *blinky = nullptr;
     for (auto &g : ghost) {
         if (dynamic_cast<Blinky *>(g) != nullptr) {

@@ -8,46 +8,16 @@
 
 #pragma once
 #include "shared/IArcade.hpp"
+#include "PacManEnums.hpp"
+#include "Pacman.hpp"
+
 #define SCALE 2
 #define MAP_WIDTH 28
 #define MAP_HEIGHT 37
 #define GIZMOS(x) (dynamic_cast<ICanDrawGizmos *>(&x))
 #define IS_GIZMOS(x) (dynamic_cast<ICanDrawGizmos *>(&x) != nullptr && GIZMOS(x)->isGizmosEnabled())
 
-enum Direction {
-    UP = 3,
-    DOWN = 1,
-    LEFT = 2,
-    RIGHT = 0,
-    NONE = -1
-};
-
-enum GhostStrategy {
-    CHASE = 0,
-    SCATTER = 1
-};
-
-enum BonusType {
-    CHERRY = 0,
-    STRAWBERRY = 1,
-    PEACH = 2,
-    APPLE = 3,
-    GRAPES = 4,
-    GALAXIAN = 5,
-    BELL = 6,
-    KEY = 7
-};
-
-enum BonusPoint {
-    _100 = 100,
-    _300 = 300,
-    _500 = 500,
-    _700 = 700,
-    _1000 = 1000,
-    _2000 = 2000,
-    _3000 = 3000,
-    _5000 = 5000
-};
+Direction operator!(Direction dir);
 
 struct Level {
     BonusType bonus;
@@ -93,3 +63,4 @@ extern int currentLevel;
 extern int currentLives;
 extern std::shared_ptr<IArcade> arcade;
 extern int *score;
+extern Pacman *game;

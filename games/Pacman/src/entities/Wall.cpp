@@ -7,6 +7,7 @@
 */
 
 #include "Wall.hpp"
+#include "../PacmanGlobals.hpp"
 
 Wall::Wall(WallType type, bool isWhite): AEntity("assets/games/pacman/walls.png", 143, 26)
 {

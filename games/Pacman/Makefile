@@ -21,6 +21,7 @@ CXX_SOURCES		= 	src/Pacman.cpp								\
 					src/entities/ghosts/Blinky.cpp				\
 					src/entities/ghosts/Inky.cpp				\
 					src/entities/ghosts/Clyde.cpp				\
+					src/entities/Bonus.cpp						\
 					src/utils/Move.cpp							\
 					src/utils/GridCoordinate.cpp				\
 
