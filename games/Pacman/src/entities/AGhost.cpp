@@ -18,6 +18,7 @@ AGhost::AGhost(const std::string &texturePath,
                                             _spawn(spawn) {
     _isDead = false;
     _hasToReverse = false;
+    _isInAnimation = false;
     _dotLimit = 0;
     _isCaged = true;
     this->setSize(SCALE_GHOST);
@@ -27,6 +28,7 @@ AGhost::AGhost(const std::string &texturePath,
     this->_baseSpritePath = texturePath;
     _isFrightened = false;
     _personalDotCount = 0;
+    _animationStart = 0;
 }
 
 const GridCoordinate AGhost::_cage = GridCoordinate(13, 17).toScreen();
@@ -62,6 +64,23 @@ void AGhost::updateStrategy()
 
 void AGhost::update(const APacManEntity &pac, const Wall (&map)[37][28], const std::vector<AGhost *> &ghosts)
 {
+    Picture base(this->_baseSpritePath, 252, 28);
+    if (this->_isInAnimation) {
+        this->_sprite->setPicture(base);
+        this->_sprite->setDrawRect({252-28, 0, 28, 28});
+        static GridCoordinate target = GridCoordinate(13, 15).toScreen();
+        static GridCoordinate from = GridCoordinate(13, 17).toScreen();
+        static const std::size_t animationLength = 1000;
+        double progress = (double) (arcade->getTime() - _animationStart) / (double)animationLength;
+        GridCoordinate pos = GridCoordinate(target.getX(), (int) (from.getY() + (target.getY() - from.getY()) * progress), GridCoordinate::SCREEN);
+        this->setPosition(pos);
+
+        if (arcade->getTime() - _animationStart > animationLength) {
+            this->_isInAnimation = false;
+        } else {
+            return;
+        }
+    }
     this->updateStrategy();
     this->updateTarget(pac, ghosts);
     this->recalculateDotLimit();
@@ -127,7 +146,6 @@ void AGhost::update(const APacManEntity &pac, const Wall (&map)[37][28], const s
 
     static Picture scared("assets/games/pacman/ghosts/scared.png", 124, 28);
     static Picture dead("assets/games/pacman/ghosts/dead.png", 252, 28);
-    Picture base(this->_baseSpritePath, 252, 28);
     std::size_t finalAnimation = _animation;
 
     if (this->_isDead) {
@@ -229,10 +247,13 @@ void AGhost::spawn(bool skipAnimation)
     this->_animation = 0;
     this->_sprite->setDrawRect({0, 0, 28, 28});
     this->_direction = Direction::LEFT;
-    this->setPosition(GridCoordinate(13, 14).toScreen());
     if (!skipAnimation) {
-        this->setPosition(GridCoordinate(13, 14).toScreen());
         this->_isCaged = false;
+        this->_isInAnimation = true;
+        this->_animationStart = arcade->getTime();
+    } else {
+        this->_isInAnimation = false;
+        this->setPosition(GridCoordinate(13, 14).toScreen());
     }
 }
 

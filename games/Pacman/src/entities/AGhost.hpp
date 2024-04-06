@@ -32,6 +32,8 @@ protected:
     static const GridCoordinate _cage;
     const GridCoordinate _spawn;
     std::size_t _personalDotCount;
+    bool _isInAnimation;
+    std::size_t _animationStart;
 public:
     ~AGhost() override = default;
 
