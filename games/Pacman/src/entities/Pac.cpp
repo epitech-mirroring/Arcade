@@ -14,7 +14,7 @@ const GridCoordinate Pac::_spawn = GridCoordinate(13, 26).toScreen();
 
 Pac::Pac(): APacManEntity("assets/games/pacman/pacman/pacman.png", 208, 26) {
     this->_sprite->setDrawRect({0, 0, 26, 26});
-    this->setPosition(this->_spawn);
+    this->setPosition(Pac::_spawn);
     this->setSize(SCALE_PACKMAN);
     this->_direction = Direction::LEFT;
     this->_newDirection = Direction::LEFT;
@@ -98,6 +98,20 @@ void Pac::update(std::vector<PacDot *> &dots, const Wall (&map)[37][28], const s
             }
             dots.erase(dots.begin() + i);
             delete dot;
+
+            AGhost *g = game->getFirstCagedGhost();
+            if(g != nullptr){
+                if(isGlobalDotCounter){
+                    globalDotCounter++;
+                    if(globalDotCounter == 7 || globalDotCounter == 17 || globalDotCounter == 32){
+                        g->spawn(false);
+                    }
+                } else {
+                    g->setPersonalDotCount(g->getPersonalDotCount() + 1);
+                    if((int) g->getPersonalDotCount() >= g->getDotLimit()) g->spawn(false);
+                }
+            }
+
             break;
         }
     }
@@ -158,7 +172,10 @@ void Pac::setEaten(bool eaten) {
 }
 
 void Pac::kill() {
-
+    isInAnimation = true;
+    animation = Death;
+    animationStart = arcade->getTime();
+    shouldDisplayActors = false;
 }
 
 const std::vector<Bonus *> &Pac::getBonuses() const {

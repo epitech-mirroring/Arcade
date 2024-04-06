@@ -80,3 +80,5 @@ extern std::size_t globalDotCounter;
 extern bool isInAnimation;
 extern Animation animation;
 extern std::size_t animationStart;
+extern bool shouldDisplayActors;
+extern bool shouldDisplayAnything;

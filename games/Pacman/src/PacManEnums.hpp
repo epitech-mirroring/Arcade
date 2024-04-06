@@ -50,5 +50,7 @@ enum Direction {
 enum Animation {
     BoardBlink = 0,
     Ready = 1,
+    Death = 2,
+    GameOver = 3,
     None = 100
 };

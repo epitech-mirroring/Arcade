@@ -17,6 +17,7 @@
 #include "entities/ghosts/Inky.hpp"
 #include "common/displayable/entities/SimpleEntity.hpp"
 #include "PacmanGlobals.hpp"
+#include "common/displayable/entities/SimpleSprite.hpp"
 #include <string>
 #include <iostream>
 
@@ -56,6 +57,8 @@ std::size_t globalDotCounter;
 bool isInAnimation;
 Animation animation;
 std::size_t animationStart;
+bool shouldDisplayActors;
+bool shouldDisplayAnything;
 
 void Pacman::init(std::shared_ptr<IArcade> _arcade) {
     this->_arcade = _arcade;
@@ -101,6 +104,7 @@ void Pacman::start() {
     currentLevel = -1;
     currentLives = 4;
     shouldDisplayActors = true;
+    shouldDisplayAnything = true;
     this->_score = 0;
     *score = this->_score;
     isInAnimation = false;
@@ -149,7 +153,8 @@ void Pacman::run() {
     // Draw map
     for (auto & line : this->_map) {
         for (const auto & piece : line) {
-            this->_arcade->display(piece);
+            if (shouldDisplayAnything)
+                this->_arcade->display(piece);
         }
     }
     // Draw ui
@@ -164,7 +169,8 @@ void Pacman::run() {
     highScore.setText(std::to_string(this->_score)); // TODO Change to highscore
     highScore.setPosition(GridCoordinate((int) (17 - highScore.getChars().size()), 1).toScreen());
     for (auto &c : highScoreText.getChars()) {
-        this->_arcade->display(*c);
+        if (shouldDisplayAnything)
+            this->_arcade->display(*c);
     }
     const int oneUpBlinkTimeInMs = 500; // Time in ms (time between two blinks)
     static std::size_t lastBlinkOneUp = 0;
@@ -175,21 +181,26 @@ void Pacman::run() {
     }
     if (displayOneUp || isInAnimation) {
         for (auto &c: oneUP.getChars()) {
-            this->_arcade->display(*c);
+            if (shouldDisplayAnything)
+                this->_arcade->display(*c);
         }
     }
     for (auto &c : scoreText.getChars()) {
-        this->_arcade->display(*c);
+        if (shouldDisplayAnything)
+            this->_arcade->display(*c);
     }
     for (auto &c : highScore.getChars()) {
-        this->_arcade->display(*c);
+        if (shouldDisplayAnything)
+            this->_arcade->display(*c);
     }
     static LevelCounter levelCounter;
     levelCounter.setLevel(currentLevel + 1);
-    this->_arcade->display(levelCounter);
+    if (shouldDisplayAnything)
+        this->_arcade->display(levelCounter);
     static LiveCounter livesCounter;
     livesCounter.setLives(currentLives);
-    this->_arcade->display(livesCounter);
+    if (shouldDisplayAnything)
+        this->_arcade->display(livesCounter);
 
     // Draw dots
     const int energizerBlinkTimeInMs = 250; // Time in ms (time between two blinks)
@@ -200,7 +211,7 @@ void Pacman::run() {
         lastBlink = this->_arcade->getTime();
     }
     for (auto & dot : this->dots) {
-        if (!dot->isEnergizer() || displayEnergizer || isInAnimation) {
+        if ((!dot->isEnergizer() || displayEnergizer || isInAnimation) && shouldDisplayAnything) {
             this->_arcade->display(*dot);
         }
     }
@@ -227,7 +238,7 @@ void Pacman::run() {
             }
         }
     }
-    if (shouldDisplayActors) {
+    if (shouldDisplayActors && shouldDisplayAnything) {
         // Display pacman
         this->_arcade->display(this->pac);
         // Display score bonus
@@ -347,6 +358,39 @@ void Pacman::handleAnimation() {
                         cell.setWhite(boardIsWhite);
                     }
                 }
+            }
+        } else if (animation == Death) {
+            static int animationStep = 0;
+            static const std::size_t frameLasting = 200; // in ms
+            static const std::size_t frameCount = 11;
+            if (this->_arcade->getTime() - animationStart > frameLasting * frameCount) {
+                isInAnimation = false;
+                animation = None;
+                shouldDisplayActors = true;
+                animationStep = 0;
+                currentLives--;
+                if (currentLives > 0) {
+                    reset(false);
+                } else {
+                    isInAnimation = true;
+                    animation = GameOver;
+                    animationStart = this->_arcade->getTime();
+                    shouldDisplayActors = false;
+                    shouldDisplayAnything = false;
+                }
+            } else {
+                static auto death = SimpleEntity("assets/games/pacman/pacman/pac_death.png", 344, 22);
+                static std::size_t lastAnimationChange = 0;
+                if (this->_arcade->getTime() - lastAnimationChange > frameLasting) {
+                    lastAnimationChange = this->_arcade->getTime();
+                    animationStep++;
+                }
+                death.setPosition(this->pac.getPosition());
+                death.setSize(SCALE * 8. / 22.);
+                SimpleSprite sprite = SimpleSprite(death.getSprite());
+                sprite.setDrawRect({(std::size_t) animationStep*32 - 2, 0, 30, 21});
+                death.setSprite(sprite);
+                this->_arcade->display(death);
             }
         }
     }

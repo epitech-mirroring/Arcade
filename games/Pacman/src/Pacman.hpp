@@ -14,8 +14,6 @@
 #include "entities/AGhost.hpp"
 
 class Pacman: public AGame {
-protected:
-    bool shouldDisplayActors;
 public:
     // 37x28
     Wall _map[37][28] = {

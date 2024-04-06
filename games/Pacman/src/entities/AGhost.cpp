@@ -273,3 +273,8 @@ void AGhost::setDead(bool isDead)
 const GridCoordinate &AGhost::getSpawnPosition() {
     return _spawn;
 }
+
+int AGhost::getDotLimit() const
+{
+    return _dotLimit;
+}

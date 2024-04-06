@@ -54,6 +54,7 @@ public:
     void setPersonalDotCount(std::size_t count);
     [[nodiscard]] std::size_t getPersonalDotCount() const;
     void setDead(bool isDead);
+    [[nodiscard]] int getDotLimit() const;
 
     [[nodiscard]] Move getBestMove(const GridCoordinate& coord, Direction direction, const Wall (&map)[37][28]);
     [[nodiscard]] std::vector<Move> getPossibleMoves(const GridCoordinate& coord, Direction direction, const Wall (&map)[37][28]);
