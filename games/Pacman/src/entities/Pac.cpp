@@ -82,6 +82,7 @@ void Pac::update(std::vector<PacDot *> &dots, const Wall (&map)[37][28], const s
         }
     }
 
+    static std::size_t lastEat = 0;
     for (std::size_t i = 0; i < dots.size(); i++) {
         PacDot *dot = dots[i];
         GridCoordinate dotGrid = GridCoordinate(dot->getPosition(), GridCoordinate::SCREEN).toGrid();
@@ -111,10 +112,18 @@ void Pac::update(std::vector<PacDot *> &dots, const Wall (&map)[37][28], const s
                     if((int) g->getPersonalDotCount() >= g->getDotLimit()) g->spawn(false);
                 }
             }
-
+            lastEat = arcade->getTime();
             break;
         }
     }
+    if (arcade->getTime() - lastEat > 6000) {
+        lastEat = arcade->getTime();
+        AGhost *g = game->getFirstCagedGhost();
+        if(g != nullptr){
+            g->spawn(false);
+        }
+    }
+
     for (AGhost *ghost : ghosts) {
         GridCoordinate ghostGrid = GridCoordinate(ghost->getPosition(), GridCoordinate::SCREEN).toGrid();
         GridCoordinate pacGrid = GridCoordinate(this->getPosition(), GridCoordinate::SCREEN).toGrid();
