@@ -14,6 +14,11 @@ AEntity::AEntity(std::unique_ptr<ISprite> sprite)
     this->_sprite = std::move(sprite);
 }
 
+AEntity::AEntity(const ISprite &sprite)
+{
+    this->_sprite = std::make_unique<SimpleSprite>(sprite);
+}
+
 AEntity::AEntity(const std::string &path, const std::size_t &width, const std::size_t &height)
 {
     this->_sprite = std::make_unique<SimpleSprite>(path, width, height);
