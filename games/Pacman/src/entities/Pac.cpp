@@ -150,12 +150,12 @@ void Pac::update(std::vector<PacDot *> &dots, const Wall (&map)[37][28], const s
                             point = _1600;
                             break;
                     }
-                    this->_bonuses.push_back(new Bonus(ghost->getPosition(), point));
+                    this->_bonuses.push_back(new Bonus((Coord2D &)ghost->getPosition(), point));
                 } else {
                     _killStreak = 1;
                     if (score != nullptr)
                         *score += 200;
-                    this->_bonuses.push_back(new Bonus(ghost->getPosition(),
+                    this->_bonuses.push_back(new Bonus((Coord2D &)ghost->getPosition(),
                                                        _200));
                 }
                 _lastKill = arcade->getTime();
@@ -169,13 +169,13 @@ void Pac::update(std::vector<PacDot *> &dots, const Wall (&map)[37][28], const s
             fruit1->setEaten(true);
             if (score != nullptr)
                 *score += levels[currentLevel].point;
-            this->_bonuses.push_back(new Bonus(fruit1->getPosition(), levels[currentLevel].point));
+            this->_bonuses.push_back(new Bonus((Coord2D &)fruit1->getPosition(), levels[currentLevel].point));
         }
         if (fruit2->shouldBeDisplayed()) {
             fruit2->setEaten(true);
             if (score != nullptr)
                 *score += levels[currentLevel].point;
-            this->_bonuses.push_back(new Bonus(fruit2->getPosition(), levels[currentLevel].point));
+            this->_bonuses.push_back(new Bonus((Coord2D &)fruit2->getPosition(), levels[currentLevel].point));
         }
     }
 
