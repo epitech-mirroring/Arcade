@@ -136,6 +136,36 @@ void Menu::typeUsername(const IEvent &event) {
     }
 }
 
+void Menu::handleClicked(const IEvent &event) {
+    Coord2D mousePos = event.getPosition();
+
+    Coord2D gameTextPos = Coord2D(50, 150);
+    gameTextPos.move(0, 50);
+    for (auto &game : TRANSFORM_TO(Arcade, *this->_arcade)->getGames()) {
+        std::size_t width = game.name.size() * 15;
+        std::size_t height = 15;
+
+        if (mousePos.getX() >= gameTextPos.getX() && (std::size_t) mousePos.getX() <= (std::size_t) gameTextPos.getX() + width &&
+            mousePos.getY() >= gameTextPos.getY() && (std::size_t) mousePos.getY() <= (std::size_t) gameTextPos.getY() + height) {
+            TRANSFORM_TO(Arcade, *this->_arcade)->loadGame(game.name);
+        }
+        gameTextPos.move(0, 20);
+    }
+
+    Coord2D driverTextPos = Coord2D(250, 150);
+    driverTextPos.move(0, 50);
+    for (auto &driver : TRANSFORM_TO(Arcade, *this->_arcade)->getDrivers()) {
+        std::size_t width = driver.name.size() * 15;
+        std::size_t height = 15;
+
+        if (mousePos.getX() >= driverTextPos.getX() && (std::size_t) mousePos.getX() <= (std::size_t) driverTextPos.getX() + width &&
+            mousePos.getY() >= driverTextPos.getY() && (std::size_t) mousePos.getY() <= (std::size_t) driverTextPos.getY() + height) {
+            TRANSFORM_TO(Arcade, *this->_arcade)->loadDriver(driver.name);
+        }
+        driverTextPos.move(0, 20);
+    }
+}
+
 void Menu::start() {
     this->_arcade->setPreferredSize(979, 551);
     for (EventKey key = _KEY_A; key <= _KEY_DIGIT_0; key++) {
@@ -143,4 +173,5 @@ void Menu::start() {
     }
     this->_arcade->bindEvent(IEvent::_KEY_DOWN, _KEY_BACKSPACE, [this](const IEvent &event) { this->typeUsername(event); });
     this->_arcade->bindEvent(IEvent::_KEY_DOWN, _KEY_ENTER, [this](const IEvent &event) { this->typeUsername(event); });
+    this->_arcade->bindEvent(IEvent::_MOUSE_DOWN, _MOUSE_LEFT_CLICK, [this](const IEvent &event) { this->handleClicked(event); });
 }

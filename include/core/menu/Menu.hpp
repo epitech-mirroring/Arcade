@@ -18,6 +18,7 @@ public:
     ~Menu() override = default;
 
     void typeUsername(const IEvent &event);
+    void handleClicked(const IEvent &event);
 
     void run() override;
     void init(std::shared_ptr<IArcade> arcade) override;
