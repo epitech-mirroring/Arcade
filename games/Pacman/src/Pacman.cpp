@@ -70,7 +70,9 @@ Pacman::~Pacman() {
         delete dot;
     }
     delete fruit1;
+    fruit1 = nullptr;
     delete fruit2;
+    fruit2 = nullptr;
 }
 
 void Pacman::init(std::shared_ptr<IArcade> _arcade) {
@@ -107,6 +109,8 @@ void Pacman::init(std::shared_ptr<IArcade> _arcade) {
 }
 
 void Pacman::start() {
+    game = this;
+    arcade = this->_arcade;
     for (std::size_t y = 0; y < MAP_HEIGHT; y++) {
         for (std::size_t x = 0; x < MAP_WIDTH; x++) {
             this->_map[y][x].setPosition(GridCoordinate(x, y).toScreen());
@@ -162,7 +166,7 @@ void Pacman::replaceDots() {
 
 void Pacman::run() {
     static int frame = 0;
-    int fps = (int) (1.f / this->_arcade->getDeltaTime());
+    int fps = (int) (1.f / (this->_arcade->getDeltaTime() + 0.0001f));
     // Draw map
     for (auto & line : this->_map) {
         for (const auto & piece : line) {
@@ -293,7 +297,7 @@ void Pacman::run() {
 
     this->_arcade->flipFrame();
     frame++;
-    frame = frame % fps;
+    frame = frame % (std::max(fps, 1));
 }
 
 Direction operator!(Direction direction) {
@@ -327,11 +331,11 @@ void Pacman::reset(bool isNewLevel) {
         this->replaceDots();
         isGlobalDotCounter = false;
 
-        if (fruit1) {
+        if (fruit1 != nullptr) {
             delete fruit1;
             fruit1 = nullptr;
         }
-        if (fruit2) {
+        if (fruit2 != nullptr) {
             delete fruit2;
             fruit2 = nullptr;
         }
