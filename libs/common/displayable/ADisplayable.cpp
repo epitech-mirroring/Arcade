@@ -12,8 +12,10 @@
 ADisplayable::ADisplayable()
 {
     this->_position = std::make_unique<Coord2D>(0, 0);
+    this->_color = std::make_unique<RGBAColor>(255, 255, 255, 255);
     this->_size = 1;
     this->_rotation = 0;
+    this->_replacingChar = ' ';
 }
 
 const ICoordinate &ADisplayable::getPosition() const
