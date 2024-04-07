@@ -119,7 +119,7 @@ NCurses::NCurses() {
         {KEY_LEFT, _KEY_LEFT},
         {KEY_RIGHT, _KEY_RIGHT},
         {KEY_BACKSPACE, _KEY_BACKSPACE},
-        {KEY_ENTER, _KEY_ENTER},
+        {10, _KEY_ENTER},
         {' ', _KEY_SPACE},
         {27, _KEY_ESCAPE},
         {9, _KEY_TAB},
