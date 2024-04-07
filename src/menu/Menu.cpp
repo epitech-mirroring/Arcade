@@ -147,7 +147,7 @@ void Menu::handleClicked(const IEvent &event) {
 
         if (mousePos.getX() >= gameTextPos.getX() && (std::size_t) mousePos.getX() <= (std::size_t) gameTextPos.getX() + width &&
             mousePos.getY() >= gameTextPos.getY() && (std::size_t) mousePos.getY() <= (std::size_t) gameTextPos.getY() + height) {
-            TRANSFORM_TO(Arcade, *this->_arcade)->loadGame(game.name);
+            TRANSFORM_TO(Arcade, *this->_arcade)->queueLoadGame(game.name);
         }
         gameTextPos.move(0, 20);
     }
@@ -160,7 +160,7 @@ void Menu::handleClicked(const IEvent &event) {
 
         if (mousePos.getX() >= driverTextPos.getX() && (std::size_t) mousePos.getX() <= (std::size_t) driverTextPos.getX() + width &&
             mousePos.getY() >= driverTextPos.getY() && (std::size_t) mousePos.getY() <= (std::size_t) driverTextPos.getY() + height) {
-            TRANSFORM_TO(Arcade, *this->_arcade)->loadDriver(driver.name);
+            TRANSFORM_TO(Arcade, *this->_arcade)->queueLoadDriver(driver.name);
         }
         driverTextPos.move(0, 20);
     }
