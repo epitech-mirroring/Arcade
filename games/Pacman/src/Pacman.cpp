@@ -18,6 +18,7 @@
 #include "common/displayable/entities/SimpleEntity.hpp"
 #include "PacmanGlobals.hpp"
 #include "common/displayable/entities/SimpleSprite.hpp"
+#include "shared/ICanUseShaders.hpp"
 #include <string>
 #include <iostream>
 
@@ -81,7 +82,9 @@ void Pacman::init(std::shared_ptr<IArcade> _arcade) {
     arcade = this->_arcade;
     this->_score = 0;
     score = &this->_score;
-    this->_arcade->addShader("assets/shaders/crt.frag");
+    if (dynamic_cast<IArcadeWithShaders *>(this->_arcade.get()) != nullptr) {
+        dynamic_cast<IArcadeWithShaders *>(this->_arcade.get())->addShader("assets/shaders/crt.vert");
+    }
 
     this->_arcade->bindEvent(IEvent::EventType::_KEY_PRESS, _KEY_Z, [this](const IEvent &event) {
         this->pac.handleEvent(event);

@@ -130,9 +130,9 @@ void Arcade::loadGame(const std::string &gameName) {
         if (this->_game.loader != nullptr)
             this->_game.loader.reset();
         this->_driver.instance->unbindAll();
-        this->_shaders.clear();
         this->_events.clear();
         this->rebindGlobalKeys();
+        this->removeAllShaders();
     }
     // Replace game
     this->_game.instance = dl->getInstance().release();
@@ -358,6 +358,7 @@ void Arcade::menu() {
             this->_driver.instance->unbindAll();
             this->_events.clear();
             this->rebindGlobalKeys();
+            this->removeAllShaders();
         }
         this->loadScore();
         this->sortPlayers();
@@ -365,6 +366,7 @@ void Arcade::menu() {
         this->_game.loader = nullptr;
         this->_game.instance->init(this->_arcade);
         this->_game.instance->start();
+        this->reapplyShaders();
     });
 }
 
@@ -492,4 +494,9 @@ void Arcade::reapplyShaders() const {
     for (const auto &shader : this->_shaders) {
         driver->addShader(shader);
     }
+}
+
+void Arcade::removeAllShaders() {
+    this->_shaders.clear();
+    this->reapplyShaders();
 }

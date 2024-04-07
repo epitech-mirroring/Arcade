@@ -13,6 +13,7 @@
 #include "shared/IGame.hpp"
 #include "core/Player.hpp"
 #include "DLLoader.hpp"
+#include "shared/ICanUseShaders.hpp"
 #include <list>
 #include <memory>
 #include <queue>
@@ -32,7 +33,7 @@ struct LoadedLibrary {
     std::string name;
 };
 
-class Arcade: public ICanDrawGizmos {
+class Arcade: public ICanDrawGizmos, public IArcadeWithShaders {
 private:
     LoadedLibrary<IDriver> _driver;
     LoadedLibrary<IGame> _game;
@@ -100,5 +101,6 @@ public:
     void bindEvent(IEvent::EventType type, EventKey key, EventCallback callback) override;
     void setPreferredSize(std::size_t width, std::size_t height) override;
     void addShader(const std::string &shaderPath) override;
+    void removeAllShaders() override;
     void reapplyShaders() const;
 };
