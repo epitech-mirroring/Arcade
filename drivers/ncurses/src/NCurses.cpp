@@ -256,8 +256,12 @@ void NCurses::displayEntity(const IEntity &entity) {
     int color = getNcursesColor(entity.getColor());
     std::size_t posX = entity.getPosition().getX() / SCALE_WIDTH;
     std::size_t posY = entity.getPosition().getY() / SCALE_HEIGHT;
-    std::size_t width = (entity.getSprite().getPicture().getWidth() * entity.getSize()) / SCALE_WIDTH;
-    std::size_t height = (entity.getSprite().getPicture().getHeight() * entity.getSize()) / SCALE_HEIGHT;
+    std::size_t width = (entity.getSprite().getDrawRect().width * entity.getSize()) / SCALE_WIDTH;
+    std::size_t height = (entity.getSprite().getDrawRect().height  * entity.getSize()) / SCALE_HEIGHT;
+    if (width == 0)
+        width = 1;
+    if (height == 0)
+        height = 1;
 
     for (std::size_t y = 0; y < height; y++) {
         for (std::size_t x = 0; x < width; x++) {
@@ -337,5 +341,9 @@ void NCurses::handleInput(int event)
     EventCallback callback = this->_events[std::make_pair(IEvent::EventType::_KEY_DOWN, this->_keyMap[event])];
     if (callback) {
         callback(Event(IEvent::EventType::_KEY_DOWN, this->_keyMap[event]));
+    } else {
+        callback = this->_events[std::make_pair(IEvent::EventType::_KEY_PRESS, this->_keyMap[event])];
+        if (callback)
+            callback(Event(IEvent::EventType::_KEY_PRESS, this->_keyMap[event]));
     }
 }

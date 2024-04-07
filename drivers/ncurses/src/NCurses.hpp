@@ -30,8 +30,8 @@
 #undef _KEY_T
 #endif
 
-#define SCALE_WIDTH 8
-#define SCALE_HEIGHT 18
+#define SCALE_WIDTH 16
+#define SCALE_HEIGHT 16
 
 struct BufferedChar {
     char c;
