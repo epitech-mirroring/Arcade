@@ -122,6 +122,12 @@ SFML::SFML()
 SFML::~SFML()
 {
     this->_window.close();
+    for (auto &texture : this->_loadedTextures) {
+        delete texture.second;
+    }
+    for (auto &font : this->_loadedFonts) {
+        delete font.second;
+    }
 }
 
 void SFML::flipFrame()
@@ -208,22 +214,25 @@ void SFML::displayPrimitive(const IPrimitive &primitive)
         displaySquare(dynamic_cast<const ISquare &>(primitive));
     } else if (IS_INSTANCE_OF(const ICircle, primitive)) {
         displayCircle(dynamic_cast<const ICircle &>(primitive));
+    } else if (IS_INSTANCE_OF(const ILine, primitive)) {
+        displayLine(dynamic_cast<const ILine &>(primitive));
     }
 }
 
 void SFML::displayText(const IText &text)
 {
-    static sf::Font font;
-    sf::Text sfText;
+    static sf::Font *font;
+    static sf::Text sfText;
     sf::Color color = sf::Color(text.getColor().getR(), text.getColor().getG(), text.getColor().getB(), text.getColor().getA());
 
     if (this->_loadedFonts.find(text.getFontPath()) == this->_loadedFonts.end()) {
-        font.loadFromFile(text.getFontPath());
+        font = new sf::Font();
+        font->loadFromFile(text.getFontPath());
         this->_loadedFonts[text.getFontPath()] = font;
     } else {
         font = this->_loadedFonts[text.getFontPath()];
     }
-    sfText.setFont(font);
+    sfText.setFont(*font);
     sfText.setString(text.getText());
     sfText.setFillColor(color);
     sfText.setOutlineColor(color);
@@ -241,12 +250,30 @@ void SFML::displaySquare(const ISquare &square)
     sf::Color color = sf::Color(square.getColor().getR(), square.getColor().getG(), square.getColor().getB(), square.getColor().getA());
 
     sfSquare.setSize(sf::Vector2f(square.getWidth() * square.getSize(), square.getHeight() * square.getSize()));
-    sfSquare.setFillColor(color);
+    if (square.isFilled()) {
+        sfSquare.setFillColor(color);
+    } else {
+        sfSquare.setOutlineColor(color);
+        sfSquare.setOutlineThickness(1);
+        sfSquare.setFillColor(sf::Color::Transparent);
+    }
     sfSquare.setPosition(square.getPosition().getX(), square.getPosition().getY());
     if (IS_INSTANCE_OF(const ICanRotate, square)) {
         sfSquare.setRotation(TRANSFORM_TO(const ICanRotate, square)->getRotation());
     }
     this->_window.draw(sfSquare);
+}
+
+void SFML::displayLine(const ILine &line)
+{
+    sf::Vertex sfLine[2];
+    sf::Color color = sf::Color(line.getColor().getR(), line.getColor().getG(), line.getColor().getB(), line.getColor().getA());
+
+    sfLine[0].position = sf::Vector2f((float) line.getPosition().getX(), (float) line.getPosition().getY());
+    sfLine[1].position = sf::Vector2f((float) line.getEnd().getX(), (float) line.getEnd().getY());
+    sfLine[0].color = color;
+    sfLine[1].color = color;
+    this->_window.draw(sfLine, 2, sf::Lines);
 }
 
 void SFML::displayCircle(const ICircle &circle)
@@ -265,18 +292,19 @@ void SFML::displayCircle(const ICircle &circle)
 
 void SFML::displayEntity(const IEntity &entity)
 {
-    sf::Sprite sprite;
-    sf::Texture texture;
+    static sf::Sprite sprite;
+    static sf::Texture *texture = nullptr;
     DrawRect drawRect = entity.getSprite().getDrawRect();
     std::string path = entity.getSprite().getPicture().getPath();
 
     if (this->_loadedTextures.find(path) == this->_loadedTextures.end()) {
-        texture.loadFromFile(path);
+        texture = new sf::Texture();
+        texture->loadFromFile(path);
         this->_loadedTextures[path] = texture;
     } else {
         texture = this->_loadedTextures[path];
     }
-    sprite.setTexture(texture, true);
+    sprite.setTexture(*texture, true);
     sprite.setTextureRect(sf::IntRect(drawRect.x, drawRect.y, drawRect.width, drawRect.height));
     sprite.setPosition(entity.getPosition().getX(), entity.getPosition().getY());
     sprite.setScale(entity.getSize(), entity.getSize());

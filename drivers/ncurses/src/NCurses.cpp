@@ -119,7 +119,7 @@ NCurses::NCurses() {
         {KEY_LEFT, _KEY_LEFT},
         {KEY_RIGHT, _KEY_RIGHT},
         {KEY_BACKSPACE, _KEY_BACKSPACE},
-        {KEY_ENTER, _KEY_ENTER},
+        {10, _KEY_ENTER},
         {' ', _KEY_SPACE},
         {27, _KEY_ESCAPE},
         {9, _KEY_TAB},
@@ -171,6 +171,8 @@ void NCurses::displayPrimitive(const IPrimitive &primitive) {
         displayCircle(dynamic_cast<const ICircle &>(primitive));
     } else if (IS_INSTANCE_OF(const ISquare, primitive)) {
         displaySquare(dynamic_cast<const ISquare &>(primitive));
+    } else if (IS_INSTANCE_OF(const ILine, primitive)) {
+        displayLine(dynamic_cast<const ILine &>(primitive));
     }
 }
 
@@ -213,9 +215,37 @@ void NCurses::displaySquare(const ISquare &square) {
 
     for (std::size_t y = startY; y < endY; y++) {
         for (std::size_t x = startX; x < endX; x++) {
-            if (x == startX || y == startY || y == endY - 1 || x == endX - 1) {
+            if (x == startX || y == startY || y == endY - 1 || x == endX - 1 || square.isFilled()) {
                 this->_frameBuffer[x][y] = BufferedChar{square.getReplacingChar(), color};
             }
+        }
+    }
+}
+
+static bool isPointInLine(const ILine &line, std::size_t x, std::size_t y) {
+    std::size_t startX = line.getPosition().getX() / SCALE_WIDTH;
+    std::size_t startY = line.getPosition().getY() / SCALE_HEIGHT;
+    std::size_t endX = line.getEnd().getX() / SCALE_WIDTH;
+    std::size_t endY = line.getEnd().getY() / SCALE_HEIGHT;
+    double d = sqrt(pow(endX - startX, 2) + pow(endY - startY, 2));
+    double flexibility = 0.05;
+    double d_min = d - flexibility;
+    double d_max = d + flexibility;
+    double r = sqrt(pow(x - startX, 2) + pow(y - startY, 2)) + sqrt(pow(x - endX, 2) + pow(y - endY, 2));
+    return r >= d_min && r <= d_max;
+}
+
+void NCurses::displayLine(const ILine &line) {
+    int color = getNcursesColor(line.getColor());
+    std::size_t startX = line.getPosition().getX() / SCALE_WIDTH;
+    std::size_t startY = line.getPosition().getY() / SCALE_HEIGHT;
+    std::size_t endX = line.getEnd().getX() / SCALE_WIDTH;
+    std::size_t endY = line.getEnd().getY() / SCALE_HEIGHT;
+
+    for (std::size_t y = startY; y <= endY; y++) {
+        for (std::size_t x = startX; x <= endX; x++) {
+            if (isPointInLine(line, x, y))
+                this->_frameBuffer[x][y] = BufferedChar{line.getReplacingChar(), color};
         }
     }
 }
@@ -226,8 +256,12 @@ void NCurses::displayEntity(const IEntity &entity) {
     int color = getNcursesColor(entity.getColor());
     std::size_t posX = entity.getPosition().getX() / SCALE_WIDTH;
     std::size_t posY = entity.getPosition().getY() / SCALE_HEIGHT;
-    std::size_t width = (entity.getSprite().getPicture().getWidth() * entity.getSize()) / SCALE_WIDTH;
-    std::size_t height = (entity.getSprite().getPicture().getHeight() * entity.getSize()) / SCALE_HEIGHT;
+    std::size_t width = (entity.getSprite().getDrawRect().width * entity.getSize()) / SCALE_WIDTH;
+    std::size_t height = (entity.getSprite().getDrawRect().height  * entity.getSize()) / SCALE_HEIGHT;
+    if (width == 0)
+        width = 1;
+    if (height == 0)
+        height = 1;
 
     for (std::size_t y = 0; y < height; y++) {
         for (std::size_t x = 0; x < width; x++) {
@@ -307,5 +341,9 @@ void NCurses::handleInput(int event)
     EventCallback callback = this->_events[std::make_pair(IEvent::EventType::_KEY_DOWN, this->_keyMap[event])];
     if (callback) {
         callback(Event(IEvent::EventType::_KEY_DOWN, this->_keyMap[event]));
+    } else {
+        callback = this->_events[std::make_pair(IEvent::EventType::_KEY_PRESS, this->_keyMap[event])];
+        if (callback)
+            callback(Event(IEvent::EventType::_KEY_PRESS, this->_keyMap[event]));
     }
 }

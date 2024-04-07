@@ -61,6 +61,11 @@ void Coord2D::move(ICoordinate *coord)
     this->_y += coord->getY();
 }
 
+double Coord2D::distance(const ICoordinate &coord) const
+{
+    return sqrt(pow(this->_x - coord.getX(), 2) + pow(this->_y - coord.getY(), 2));
+}
+
 // Operators
 
 bool Coord2D::operator==(const Coord2D &coord) const

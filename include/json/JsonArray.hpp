@@ -21,15 +21,15 @@ private:
     static std::function<IJsonObject *(const std::string &)> getParser(const std::string &obj, const std::string &key);
 public:
     JsonArray(const std::string &name = "root");
-    ~JsonArray() override = default;
+    ~JsonArray() override;
 
-    void addValue(IJsonObject &value);
+    void addValue(IJsonObject *value);
     void removeValue(std::size_t index);
     std::size_t size() const;
     template<typename T>
-    T &getValue(const std::size_t &index) const {
+    T *getValue(const std::size_t &index) const {
         static_assert(std::is_base_of<IJsonObject, T>::value, "T must inherit from IJsonObject");
-        return *dynamic_cast<T *>(_values.at(index));
+        return dynamic_cast<T *>(_values.at(index));
     }
     std::vector<IJsonObject *> getValues() const;
     std::string getName() const override;

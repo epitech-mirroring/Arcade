@@ -8,20 +8,23 @@
 
 #include "core/Player.hpp"
 
-Player::Player(const std::string &name, int score)
+Player::Player(const std::string &name)
 {
     this->_name = name;
-    this->_score = score;
 }
 
-void Player::setScore(int score)
+void Player::setScore(const std::string &gameName, int score)
 {
-    this->_score = score;
+    this->_scores[gameName] = score;
 }
 
-int Player::getScore() const
+int Player::getTotalScore() const
 {
-    return this->_score;
+    int total = 0;
+    for (auto &score : this->_scores) {
+        total += score.second;
+    }
+    return total;
 }
 
 void Player::setName(const std::string &name)
@@ -32,4 +35,16 @@ void Player::setName(const std::string &name)
 const std::string &Player::getName() const
 {
     return this->_name;
+}
+
+int Player::getScore(const std::string &gameName) const
+{
+    if (this->_scores.find(gameName) == this->_scores.end())
+        return 0;
+    return this->_scores.at(gameName);
+}
+
+const std::unordered_map<std::string, int> &Player::getScores() const
+{
+    return this->_scores;
 }

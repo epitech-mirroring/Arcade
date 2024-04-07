@@ -49,8 +49,8 @@ SnakeGame::SnakeGame()
     this->_gameOverText = std::make_shared<Text>(RGBAColor(255, 0, 0, 255), "Game Over", "assets/PressStart2P.ttf");
     this->_gameOverText->setPosition(Coord2D(200, GRID_HEIGHT * GRID_SIZE / 2));
     this->_gameOverText->setSize(50);
-    this->_background_even = std::make_shared<Square>(RGBAColor(162, 209, 73, 255), GRID_WIDTH, GRID_HEIGHT, ' ');
-    this->_background_odd = std::make_shared<Square>(RGBAColor(170, 215, 81, 255), GRID_WIDTH, GRID_HEIGHT, ' ');
+    this->_background_even = std::make_shared<Square>(RGBAColor(162, 209, 73, 255), GRID_WIDTH, GRID_HEIGHT, true, ' ');
+    this->_background_odd = std::make_shared<Square>(RGBAColor(170, 215, 81, 255), GRID_WIDTH, GRID_HEIGHT, true, ' ');
 }
 
 SnakeGame::~SnakeGame()
@@ -212,6 +212,7 @@ bool SnakeGame::isGameOver()
 void SnakeGame::updateScore()
 {
     this->_scoreText->setText("Score: " + std::to_string(this->_score));
+    this->_highScoreText->setText("High Score: " + std::to_string(this->_arcade->getCurrentGameHighScore()));
 }
 
 void SnakeGame::drawBackground()

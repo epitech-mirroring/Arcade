@@ -8,14 +8,18 @@
 
 #pragma once
 #include "common/AGame.hpp"
+#include <string>
 
 class Menu : public AGame {
+protected:
+    std::string _tempUsername;
 public:
     Menu();
     ~Menu() override = default;
 
-    void typeUsername(const IEvent &event) const;
+    void typeUsername(const IEvent &event);
 
     void run() override;
+    void init(std::shared_ptr<IArcade> arcade) override;
     void start() override;
 };

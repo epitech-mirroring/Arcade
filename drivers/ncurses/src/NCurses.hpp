@@ -14,6 +14,7 @@
 #include "shared/displayable/primitives/IText.hpp"
 #include "shared/displayable/primitives/ICircle.hpp"
 #include "shared/displayable/primitives/ISquare.hpp"
+#include "shared/displayable/primitives/ILine.hpp"
 #include "shared/displayable/entities/IEntity.hpp"
 #include "shared/utils/ICanRotate.hpp"
 #include "common/displayable/ADisplayable.hpp"
@@ -25,9 +26,12 @@
 #include <cstddef>
 #include <memory>
 #include <iostream>
+#ifdef _KEY_T
+#undef _KEY_T
+#endif
 
-#define SCALE_WIDTH 8
-#define SCALE_HEIGHT 18
+#define SCALE_WIDTH 16
+#define SCALE_HEIGHT 16
 
 struct BufferedChar {
     char c;
@@ -48,6 +52,7 @@ private:
     void handleInput(int event);
     void displayText(const IText &text);
     void displaySquare(const ISquare &square);
+    void displayLine(const ILine &line);
     void displayCircle(const ICircle &circle);
     void displayEntity(const IEntity &entity);
     void displayPrimitive(const IPrimitive &primitive);

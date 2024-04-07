@@ -18,6 +18,11 @@ JsonArray::JsonArray(const std::string &name) {
     this->_name = name;
 }
 
+JsonArray::~JsonArray() {
+    for (auto &obj : this->_values)
+        delete obj;
+}
+
 std::string JsonArray::stringify() const {
     std::string str = "[";
     for (auto &elem : this->_values) {
@@ -151,6 +156,6 @@ void JsonArray::writeToFile(const std::string &filename) const {
     file.close();
 }
 
-void JsonArray::addValue(IJsonObject &value) {
-    this->_values.push_back(&value);
+void JsonArray::addValue(IJsonObject *value) {
+    this->_values.push_back(value);
 }

@@ -30,8 +30,9 @@ int main(int argc, char **argv) {
     } catch (IError &e) {
         std::cerr << e.what() << std::endl;
         return e.getCode();
-    } catch (...) {
+    } catch (std::exception &e) {
         std::cerr << "An error occurred" << std::endl;
+        std::cerr << e.what() << std::endl;
         return 84;
     }
     return 0;

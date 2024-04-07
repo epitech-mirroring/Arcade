@@ -17,6 +17,14 @@ Circle::Circle(const IColor &color, std::size_t radius, char replacingChar): APr
     this->_radius = radius;
 }
 
+Circle::Circle(const ICircle &circle): APrimitive(circle.getColor(), circle.getReplacingChar()) {
+    this->_radius = circle.getRadius();
+}
+
+Circle::Circle(const Circle &circle): APrimitive(circle.getColor(), circle.getReplacingChar()) {
+    this->_radius = circle.getRadius();
+}
+
 size_t Circle::getRadius() const
 {
     return this->_radius;

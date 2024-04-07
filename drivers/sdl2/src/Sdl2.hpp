@@ -15,6 +15,7 @@
 #include "shared/displayable/primitives/IText.hpp"
 #include "shared/displayable/primitives/ICircle.hpp"
 #include "shared/displayable/primitives/ISquare.hpp"
+#include "shared/displayable/primitives/ILine.hpp"
 #include "shared/displayable/entities/IEntity.hpp"
 #include "shared/utils/ICanRotate.hpp"
 #include "common/displayable/ADisplayable.hpp"
@@ -25,6 +26,9 @@
 #include <cstddef>
 #include <memory>
 #include <iostream>
+#ifdef _KEY_T
+#undef _KEY_T
+#endif
 
 class SDL2: public IDriver {
 public:
@@ -43,6 +47,7 @@ private:
     void handleKeyPressedEvents();
     void displayText(const IText &text);
     void displaySquare(const ISquare &square);
+    void displayLine(const ILine &line);
     void displayCircle(const ICircle &circle);
     void displayEntity(const IEntity &entity);
     void displayPrimitive(const IPrimitive &primitive);
@@ -53,7 +58,11 @@ private:
     std::map<std::pair<IEvent::EventType, EventKey>, EventCallback> _events;
     std::map<SDL_Keycode, EventKey> _keyMap;
     std::deque<SDL_Keycode> _pressedKeys;
-    std::map<std::string, SDL_Surface *> _images;
+    struct LoadedImage {
+        SDL_Surface *surface;
+        SDL_Texture *texture;
+    };
+    std::map<std::string, LoadedImage> _images;
     std::map<std::pair<std::string, std::size_t>, TTF_Font *> _fonts;
     std::size_t _width;
     std::size_t _height;

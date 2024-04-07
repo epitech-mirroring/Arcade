@@ -12,6 +12,7 @@
 #include "shared/displayable/primitives/IText.hpp"
 #include "shared/displayable/primitives/ICircle.hpp"
 #include "shared/displayable/primitives/ISquare.hpp"
+#include "shared/displayable/primitives/ILine.hpp"
 #include "shared/displayable/entities/IEntity.hpp"
 #include "shared/utils/ICanRotate.hpp"
 #include "common/displayable/ADisplayable.hpp"
@@ -20,9 +21,13 @@
 #include <SFML/Window.hpp>
 #include <SFML/System.hpp>
 #include <SFML/Audio.hpp>
+#include <unordered_map>
 #include <map>
 #include <deque>
 #include <cstddef>
+#ifdef _KEY_T
+#undef _KEY_T
+#endif
 
 class SFML: public IDriver {
 public:
@@ -40,6 +45,7 @@ private:
     void handleKeyPressedEvents();
     void displayText(const IText &text);
     void displaySquare(const ISquare &square);
+    void displayLine(const ILine &line);
     void displayCircle(const ICircle &circle);
     void displayEntity(const IEntity &entity);
     void displayPrimitive(const IPrimitive &primitive);
@@ -47,10 +53,10 @@ private:
     sf::RenderWindow _window;
     sf::Event _event;
     std::map<std::pair<IEvent::EventType, EventKey>, EventCallback> _events;
-    std::map<sf::Keyboard::Key, EventKey> _keyMap;
+    std::unordered_map<sf::Keyboard::Key, EventKey> _keyMap;
     std::deque<sf::Keyboard::Key> _pressedKeys;
-    std::map<std::string, sf::Texture> _loadedTextures;
-    std::map<std::string, sf::Font> _loadedFonts;
+    std::unordered_map<std::string, sf::Texture *> _loadedTextures;
+    std::unordered_map<std::string, sf::Font *> _loadedFonts;
     std::size_t _width;
     std::size_t _height;
 };

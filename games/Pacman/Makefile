@@ -9,6 +9,22 @@
 
 # All the source files
 CXX_SOURCES		= 	src/Pacman.cpp								\
+					src/entities/Wall.cpp						\
+					src/entities/APacManEntity.cpp				\
+					src/entities/Pac.cpp						\
+					src/entities/AGhost.cpp						\
+					src/entities/PacDot.cpp						\
+					src/entities/PacManText.cpp					\
+					src/entities/LevelCounter.cpp				\
+					src/entities/LiveCounter.cpp				\
+					src/entities/ghosts/Pinky.cpp				\
+					src/entities/ghosts/Blinky.cpp				\
+					src/entities/ghosts/Inky.cpp				\
+					src/entities/ghosts/Clyde.cpp				\
+					src/entities/Bonus.cpp						\
+					src/entities/Fruit.cpp						\
+					src/utils/Move.cpp							\
+					src/utils/GridCoordinate.cpp				\
 
 CXX_TESTS		=
 
@@ -31,14 +47,15 @@ COMMON_OBJS 	= 	$(COMMON_LIB)/AGame.o									\
 					$(COMMON_LIB)/displayable/primitives/APrimitive.o		\
 					$(COMMON_LIB)/displayable/primitives/Circle.o			\
 					$(COMMON_LIB)/displayable/primitives/Square.o			\
-					$(COMMON_LIB)/displayable/primitives/Text.o
+					$(COMMON_LIB)/displayable/primitives/Text.o				\
+					$(COMMON_LIB)/displayable/primitives/Line.o				\
+
 CXX_OBJS		= 	$(CXX_SOURCES:.cpp=.o)
 CXX_TESTS_OBJS	= 	$(CXX_TESTS:.cpp=.o)
 LOG				= 	./build.log
 
 .PHONY: $(NAME) all clean fclean re tests_run clean_test \
-	$(CXX_OBJS) $(CXX_TESTS_OBJS) common $(COMMON_LIB) \
-	clean_common fclean_common
+	common $(COMMON_LIB) clean_common fclean_common
 
 # Colors and formatting
 GREEN =		\033[1;32m

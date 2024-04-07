@@ -8,16 +8,19 @@
 
 #pragma once
 #include <string>
+#include <unordered_map>
 
 class Player {
 protected:
     std::string _name;
-    int _score;
+    std::unordered_map<std::string, int> _scores;
 public:
-    Player(const std::string &name, int score = 0);
+    explicit Player(const std::string &name);
     ~Player() = default;
-    void setScore(int score);
-    int getScore() const;
+    void setScore(const std::string &gameName, int score);
+    [[nodiscard]] int getTotalScore() const;
     void setName(const std::string &name);
-    const std::string &getName() const;
+    [[nodiscard]] const std::string &getName() const;
+    [[nodiscard]] int getScore(const std::string &gameName) const;
+    [[nodiscard]] const std::unordered_map<std::string, int> &getScores() const;
 };

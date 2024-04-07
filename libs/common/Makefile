@@ -22,6 +22,7 @@ CXX_SOURCES		= 	AGame.cpp								\
 					displayable/primitives/Circle.cpp		\
 					displayable/primitives/Square.cpp		\
 					displayable/primitives/Text.cpp			\
+					displayable/primitives/Line.cpp			\
 
 CXX_TESTS		=
 
@@ -32,8 +33,7 @@ CXX_OBJS		= $(CXX_SOURCES:.cpp=.o)
 CXX_TESTS_OBJS	= $(CXX_TESTS:.cpp=.o)
 LOG				= ./build.log
 
-.PHONY: all clean fclean re tests_run clean_test \
-	$(CXX_OBJS) $(CXX_TESTS_OBJS)
+.PHONY: all clean fclean re tests_run clean_test
 
 # Colors and formatting
 GREEN =		\033[1;32m

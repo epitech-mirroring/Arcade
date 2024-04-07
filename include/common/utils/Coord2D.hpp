@@ -25,6 +25,7 @@ public:
     void setY(int y) override;
     void move(int x, int y);
     void move(ICoordinate *coord);
+    double distance(const ICoordinate &coord) const;
 
     // Operators
     bool operator==(const Coord2D &coord) const;

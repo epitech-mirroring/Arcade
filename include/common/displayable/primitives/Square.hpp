@@ -17,14 +17,15 @@ protected:
     std::size_t _height;
     bool _isFilled;
 public:
-    Square(std::unique_ptr<IColor> &color, size_t width, std::size_t height, char replacingChar = '*');
-    Square(const IColor &color, size_t width, std::size_t height, char replacingChar = '*');
+    Square(std::unique_ptr<IColor> &color, size_t width, std::size_t height, bool isFilled = true, char replacingChar = '*');
+    Square(const IColor &color, size_t width, std::size_t height, bool isFilled = true, char replacingChar = '*');
+    Square(const ISquare &square);
+    Square(const Square &square);
     ~Square() override = default;
     [[nodiscard]] std::size_t getWidth() const override;
     [[nodiscard]] std::size_t getHeight() const override;
     void setWidth(std::size_t width) override;
     void setHeight(std::size_t height) override;
-    bool isFilled() const override;
+    [[nodiscard]] bool isFilled() const override;
     void setIsFilled(bool isFilled) override;
 };
-

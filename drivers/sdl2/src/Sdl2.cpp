@@ -150,7 +150,8 @@ SDL2::~SDL2()
         TTF_CloseFont(font.second);
     }
     for (auto &image : this->_images) {
-        SDL_FreeSurface(image.second);
+        SDL_FreeSurface(image.second.surface);
+        SDL_DestroyTexture(image.second.texture);
     }
     this->_renderer.reset();
     this->_window.reset();
@@ -245,6 +246,8 @@ void SDL2::displayPrimitive(const IPrimitive &primitive)
         this->displaySquare(dynamic_cast<const ISquare &>(primitive));
     } else if (IS_INSTANCE_OF(const ICircle, primitive)) {
         this->displayCircle(dynamic_cast<const ICircle &>(primitive));
+    } else if (IS_INSTANCE_OF(const ILine, primitive)) {
+        this->displayLine(dynamic_cast<const ILine &>(primitive));
     }
 }
 
@@ -321,12 +324,54 @@ void SDL2::displaySquare(const ISquare &square)
     if (SDL_SetRenderDrawColor(this->_renderer.get(), color.r, color.g, color.b, color.a) != 0) {
         throw SDL2Exception("Error while setting color");
     }
-    std::pair<std::vector<SDL_Vertex>, std::vector<SDL_Vertex>> triangles = getSquareVertexes(posX, posY, sizeX, sizeY, angle, color);
-    if (SDL_RenderGeometry(this->_renderer.get(), nullptr, triangles.first.data(), triangles.first.size(), nullptr, 0) != 0) {
-        throw SDL2Exception("Error while rendering square");
+
+    if (square.isFilled()) {
+        std::pair<std::vector<SDL_Vertex>, std::vector<SDL_Vertex>> triangles = getSquareVertexes(
+                posX, posY, sizeX, sizeY, angle, color);
+        if (SDL_RenderGeometry(this->_renderer.get(), nullptr,
+                               triangles.first.data(), triangles.first.size(),
+                               nullptr, 0) != 0) {
+            throw SDL2Exception("Error while rendering square");
+        }
+        if (SDL_RenderGeometry(this->_renderer.get(), nullptr,
+                               triangles.second.data(), triangles.second.size(),
+                               nullptr, 0) != 0) {
+            throw SDL2Exception("Error while rendering square");
+        }
+    } else {
+        // Draw 4 lines
+        SDL_FPoint points[5] = {
+            {posX, posY},
+            {posX + sizeX, posY},
+            {posX + sizeX, posY + sizeY},
+            {posX, posY + sizeY},
+            {posX, posY},
+        };
+        for (int i = 0; i < 4; i++) {
+            SDL_FPoint point1 = points[i];
+            SDL_FPoint point2 = points[i + 1];
+            SDL_FPoint newPoint1 = {posX + cos(angle) * (point1.x - posX) - sin(angle) * (point1.y - posY), posY + sin(angle) * (point1.x - posX) + cos(angle) * (point1.y - posY)};
+            SDL_FPoint newPoint2 = {posX + cos(angle) * (point2.x - posX) - sin(angle) * (point2.y - posY), posY + sin(angle) * (point2.x - posX) + cos(angle) * (point2.y - posY)};
+            if (SDL_RenderDrawLine(this->_renderer.get(), (int) newPoint1.x, (int) newPoint1.y, (int) newPoint2.x, (int) newPoint2.y) != 0) {
+                throw SDL2Exception("Error while rendering square");
+            }
+        }
     }
-    if (SDL_RenderGeometry(this->_renderer.get(), nullptr, triangles.second.data(), triangles.second.size(), nullptr, 0) != 0) {
-        throw SDL2Exception("Error while rendering square");
+}
+
+void SDL2::displayLine(const ILine &line)
+{
+    SDL_Color color = convertColor(line.getColor());
+    int posX = line.getPosition().getX();
+    int posY = line.getPosition().getY();
+    int endX = line.getEnd().getX();
+    int endY = line.getEnd().getY();
+
+    if (SDL_SetRenderDrawColor(this->_renderer.get(), color.r, color.g, color.b, color.a) != 0) {
+        throw SDL2Exception("Error while setting color");
+    }
+    if (SDL_RenderDrawLine(this->_renderer.get(), posX, posY, endX, endY) != 0) {
+        throw SDL2Exception("Error while rendering line");
     }
 }
 
@@ -360,26 +405,27 @@ void SDL2::displayEntity(const IEntity &entity)
     std::string path = entity.getSprite().getPicture().getPath();
     int angle = 0;
     float scale = entity.getSize();
-    float w = entity.getSprite().getPicture().getWidth() * scale;
-    float h = entity.getSprite().getPicture().getHeight() * scale;
     DrawRect drawRect = entity.getSprite().getDrawRect();
+    float w = drawRect.width * scale;
+    float h = drawRect.height * scale;
     SDL_Rect drawRectSDL = {static_cast<int>(drawRect.x), static_cast<int>(drawRect.y), static_cast<int>(drawRect.width), static_cast<int>(drawRect.height)};
     SDL_Rect rect = {entity.getPosition().getX(), entity.getPosition().getY(), (int)w, (int)h};
 
     if (this->_images.find(path) == this->_images.end()) {
-        this->_images[path] = IMG_Load(path.c_str());
-        if (this->_images[path] == nullptr) {
+        this->_images[path] = {nullptr, nullptr};
+        this->_images[path].surface = IMG_Load(path.c_str());
+        if (this->_images[path].surface == nullptr) {
             throw SDL2Exception("Error while loading image");
         }
-    }
-    std::unique_ptr<SDL_Texture, decltype(&SDL_DestroyTexture)> texture(SDL_CreateTextureFromSurface(this->_renderer.get(), this->_images[path]), SDL_DestroyTexture);
-    if (texture == nullptr) {
-        throw SDL2Exception("Error while rendering image");
+        this->_images[path].texture = SDL_CreateTextureFromSurface(this->_renderer.get(), this->_images[path].surface);
+        if (this->_images[path].texture == nullptr) {
+            throw SDL2Exception("Error while rendering image");
+        }
     }
     if (IS_INSTANCE_OF(const ICanRotate, entity)) {
         angle = TRANSFORM_TO(const ICanRotate, entity)->getRotation();
     }
-    if (SDL_RenderCopyEx(this->_renderer.get(), texture.get(), &drawRectSDL, &rect, angle, nullptr, SDL_FLIP_NONE) != 0) {
+    if (SDL_RenderCopyEx(this->_renderer.get(), this->_images[path].texture, &drawRectSDL, &rect, angle, nullptr, SDL_FLIP_NONE) != 0) {
         throw SDL2Exception("Error while rendering image");
     }
 }
