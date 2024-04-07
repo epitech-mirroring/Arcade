@@ -184,6 +184,35 @@ void SDL2::bindEvent(IEvent::EventType type, EventKey key, EventCallback callbac
     this->_events[std::make_pair(type, key)] = callback;
 }
 
+void SDL2::handleMouseEvents(SDL_Event event)
+{
+    IEvent::EventType type;
+    if (event.type == SDL_MOUSEBUTTONDOWN) {
+        type = IEvent::EventType::_MOUSE_DOWN;
+    } else if (event.type == SDL_MOUSEBUTTONUP) {
+        type = IEvent::EventType::_MOUSE_UP;
+    } else {
+        type = IEvent::EventType::_MOUSE_MOVE;
+    }
+    EventKey key;
+    if (type == IEvent::EventType::_MOUSE_MOVE) {
+        key = _MOUSE_MOVE;
+    } else if (event.button.button == SDL_BUTTON_LEFT) {
+        key = _MOUSE_LEFT_CLICK;
+    } else if (event.button.button == SDL_BUTTON_RIGHT) {
+        key = _MOUSE_RIGHT_CLICK;
+    } else if (event.button.button == SDL_BUTTON_MIDDLE) {
+        key = _MOUSE_MIDDLE_CLICK;
+    }
+    int x = event.button.x;
+    int y = event.button.y;
+
+    EventCallback callback = this->_events[std::make_pair(type, key)];
+    if (callback) {
+        callback(Event(type, key, x, y));
+    }
+}
+
 void SDL2::handleEvents()
 {
     if (this->_event.type == SDL_QUIT) {
@@ -198,6 +227,9 @@ void SDL2::handleEvents()
     this->handleKeyPressedEvents();
     if (this->_event.type == SDL_KEYUP) {
         this->handleKeyUpEvents(this->_event);
+    }
+    if (this->_event.type == SDL_MOUSEBUTTONDOWN || this->_event.type == SDL_MOUSEBUTTONUP || this->_event.type == SDL_MOUSEMOTION) {
+        this->handleMouseEvents(this->_event);
     }
 }
 
