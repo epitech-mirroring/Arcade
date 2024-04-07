@@ -42,6 +42,7 @@ public:
     SDL_Color convertColor(const IColor &color);
 private:
     void handleEvents();
+    void handleMouseEvents(SDL_Event event);
     void handleKeyDownEvents(SDL_Event event);
     void handleKeyUpEvents(SDL_Event event);
     void handleKeyPressedEvents();

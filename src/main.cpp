@@ -23,7 +23,7 @@ int main(int argc, char **argv) {
         return 84;
     }
     try {
-        std::shared_ptr<Arcade> arcade = std::make_shared<Arcade>(argv[1]);
+        std::shared_ptr<Arcade> arcade = std::make_shared<Arcade>(argv[1], false);
         arcade->setArcadePtr(arcade);
         arcade->run();
         arcade->destroy();
