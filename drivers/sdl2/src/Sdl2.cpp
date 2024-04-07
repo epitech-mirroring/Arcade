@@ -150,7 +150,8 @@ SDL2::~SDL2()
         TTF_CloseFont(font.second);
     }
     for (auto &image : this->_images) {
-        SDL_FreeSurface(image.second);
+        SDL_FreeSurface(image.second.surface);
+        SDL_DestroyTexture(image.second.texture);
     }
     this->_renderer.reset();
     this->_window.reset();
@@ -404,26 +405,27 @@ void SDL2::displayEntity(const IEntity &entity)
     std::string path = entity.getSprite().getPicture().getPath();
     int angle = 0;
     float scale = entity.getSize();
-    float w = entity.getSprite().getPicture().getWidth() * scale;
-    float h = entity.getSprite().getPicture().getHeight() * scale;
     DrawRect drawRect = entity.getSprite().getDrawRect();
+    float w = drawRect.width * scale;
+    float h = drawRect.height * scale;
     SDL_Rect drawRectSDL = {static_cast<int>(drawRect.x), static_cast<int>(drawRect.y), static_cast<int>(drawRect.width), static_cast<int>(drawRect.height)};
     SDL_Rect rect = {entity.getPosition().getX(), entity.getPosition().getY(), (int)w, (int)h};
 
     if (this->_images.find(path) == this->_images.end()) {
-        this->_images[path] = IMG_Load(path.c_str());
-        if (this->_images[path] == nullptr) {
+        this->_images[path] = {nullptr, nullptr};
+        this->_images[path].surface = IMG_Load(path.c_str());
+        if (this->_images[path].surface == nullptr) {
             throw SDL2Exception("Error while loading image");
         }
-    }
-    std::unique_ptr<SDL_Texture, decltype(&SDL_DestroyTexture)> texture(SDL_CreateTextureFromSurface(this->_renderer.get(), this->_images[path]), SDL_DestroyTexture);
-    if (texture == nullptr) {
-        throw SDL2Exception("Error while rendering image");
+        this->_images[path].texture = SDL_CreateTextureFromSurface(this->_renderer.get(), this->_images[path].surface);
+        if (this->_images[path].texture == nullptr) {
+            throw SDL2Exception("Error while rendering image");
+        }
     }
     if (IS_INSTANCE_OF(const ICanRotate, entity)) {
         angle = TRANSFORM_TO(const ICanRotate, entity)->getRotation();
     }
-    if (SDL_RenderCopyEx(this->_renderer.get(), texture.get(), &drawRectSDL, &rect, angle, nullptr, SDL_FLIP_NONE) != 0) {
+    if (SDL_RenderCopyEx(this->_renderer.get(), this->_images[path].texture, &drawRectSDL, &rect, angle, nullptr, SDL_FLIP_NONE) != 0) {
         throw SDL2Exception("Error while rendering image");
     }
 }

@@ -58,7 +58,11 @@ private:
     std::map<std::pair<IEvent::EventType, EventKey>, EventCallback> _events;
     std::map<SDL_Keycode, EventKey> _keyMap;
     std::deque<SDL_Keycode> _pressedKeys;
-    std::map<std::string, SDL_Surface *> _images;
+    struct LoadedImage {
+        SDL_Surface *surface;
+        SDL_Texture *texture;
+    };
+    std::map<std::string, LoadedImage> _images;
     std::map<std::pair<std::string, std::size_t>, TTF_Font *> _fonts;
     std::size_t _width;
     std::size_t _height;
