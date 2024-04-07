@@ -62,6 +62,8 @@ PacManTextChar::PacManTextChar(char c, PacManTextColor color)
     std::pair<std::size_t, std::size_t> pos = charMap.at(c);
     this->_sprite->setDrawRect({pos.first, pos.second + color, 8, 8});
     this->setSize(SCALE);
+    this->_replacingChar = c;
+    this->setColor(RGBAColor::WHITE);
 }
 
 PacManText::PacManText(const std::string &text, PacManTextColor color)

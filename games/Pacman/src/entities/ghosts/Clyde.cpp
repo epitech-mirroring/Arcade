@@ -13,6 +13,7 @@
 Clyde::Clyde(): AGhost("assets/games/pacman/ghosts/clyde.png",
                        GridCoordinate(15, 17).toScreen()) {
     this->setPosition(GridCoordinate(15, 17).toScreen());
+    this->setColor(RGBAColor::YELLOW);
 }
 
 void Clyde::updateTarget(const APacManEntity &pac, const std::vector<AGhost *> &ghost) {

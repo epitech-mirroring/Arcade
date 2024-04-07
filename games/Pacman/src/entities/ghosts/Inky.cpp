@@ -14,6 +14,7 @@
 Inky::Inky(): AGhost("assets/games/pacman/ghosts/inky.png",
                      GridCoordinate(11, 17).toScreen()) {
     this->setPosition(GridCoordinate(11, 17).toScreen());
+    this->setColor(RGBAColor::CYAN);
 }
 
 void Inky::updateTarget(const APacManEntity &pac, const std::vector<AGhost *> &ghost) {

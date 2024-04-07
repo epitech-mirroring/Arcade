@@ -74,6 +74,8 @@ Fruit::Fruit(BonusType type): AEntity(getTexturePathFromType(type),
     _hasBeenEaten = false;
     _apparitionTime = 0;
     _hasSpawned = false;
+    this->_replacingChar = 'F';
+    this->setColor(RGBAColor::RED);
 }
 
 BonusType Fruit::getType() const {

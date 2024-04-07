@@ -21,6 +21,8 @@ void Wall::recomputeDrawRect() {
     // Add offset caused by the line of one pixel between each sprite
     y += (tempType / 16);
     this->_sprite->setDrawRect({x, y, 8, 8});
+    this->_replacingChar = this->_type == WallType::DOT || this->_type == WallType::ENERGIZER || this->_type == WallType::EMPTY ? ' ' : '#';
+    this->setColor(this->_isWhite ? RGBAColor::WHITE : RGBAColor::BLUE);
 }
 
 Wall::Wall(WallType type, bool isWhite): AEntity("assets/games/pacman/walls.png", 143, 26)

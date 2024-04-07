@@ -13,6 +13,7 @@
 Pinky::Pinky(): AGhost("assets/games/pacman/ghosts/pinky.png",
                        GridCoordinate(13, 17).toScreen()) {
     this->setPosition(GridCoordinate(13, 17).toScreen());
+    this->setColor(RGBAColor::MAGENTA);
 }
 
 void Pinky::updateTarget(const APacManEntity &pac, const std::vector<AGhost *> &ghost) {

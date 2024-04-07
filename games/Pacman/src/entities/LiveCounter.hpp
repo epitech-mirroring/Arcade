@@ -17,4 +17,5 @@ public:
     ~LiveCounter() override = default;
 
     void setLives(std::size_t lives);
+    [[nodiscard]] char getReplacingChar() const override;
 };

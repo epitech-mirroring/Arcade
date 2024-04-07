@@ -17,4 +17,5 @@ public:
     ~LevelCounter() override = default;
 
     void setLevel(std::size_t level);
+    [[nodiscard]] char getReplacingChar() const override;
 };

@@ -22,6 +22,8 @@ Pac::Pac(): APacManEntity("assets/games/pacman/pacman/pacman.png", 208, 26) {
     this->_animation = 0;
     this->_lastKill = 0;
     this->_killStreak = 0;
+    this->_replacingChar = 'P';
+    this->setColor(RGBAColor::YELLOW);
 }
 
 Pac::~Pac() {

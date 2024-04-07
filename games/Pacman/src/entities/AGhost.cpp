@@ -29,6 +29,7 @@ AGhost::AGhost(const std::string &texturePath,
     _isFrightened = false;
     _personalDotCount = 0;
     _animationStart = 0;
+    this->_replacingChar = 'G';
 }
 
 const GridCoordinate AGhost::_cage = GridCoordinate(13, 17).toScreen();

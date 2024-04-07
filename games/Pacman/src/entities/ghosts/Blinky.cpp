@@ -13,6 +13,7 @@ Blinky::Blinky(): AGhost("assets/games/pacman/ghosts/blinky.png",
                          GridCoordinate(13, 14).toScreen()) {
     this->setPosition(GridCoordinate(13, 17).toScreen());
     spawn(true);
+    this->setColor(RGBAColor::RED);
 }
 
 void Blinky::updateTarget(const APacManEntity &pac, const std::vector<AGhost *> &ghost) {
