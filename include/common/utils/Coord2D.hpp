@@ -25,7 +25,7 @@ public:
      * @brief Construct a new Coord2D object from an ICoordinate object
      * @param coord the ICoordinate object to copy
      */
-    explicit Coord2D(const ICoordinate &coord);
+    Coord2D(const ICoordinate &coord);
     /**
      * @brief Construct a new Coord2D object (0, 0)
      */
