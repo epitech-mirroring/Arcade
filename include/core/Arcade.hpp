@@ -76,6 +76,8 @@ public:
     void sortPlayers();
     [[nodiscard]] std::size_t getCurrentGameHighScore() const override;
     void updateCurrentPlayerName(const std::string &name);
+    void queueLoadGame(const std::string &gameName);
+    void queueLoadDriver(const std::string &driverName);
 
     void exit();
     void restart();

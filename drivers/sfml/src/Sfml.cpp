@@ -176,7 +176,26 @@ void SFML::handleEvents()
     if (this->_event.type == sf::Event::KeyReleased) {
         this->handleKeyUpEvents(this->_event);
     }
+    if (this->_event.type == sf::Event::MouseButtonPressed) {
+        handleMouseEvents(this->_event);
+    }
 }
+
+void SFML::handleMouseEvents(sf::Event event) {
+    EventKey key;
+    if (event.mouseButton.button == sf::Mouse::Left) {
+        key = _MOUSE_LEFT_CLICK;
+    } else if (event.mouseButton.button == sf::Mouse::Right) {
+        key = _MOUSE_RIGHT_CLICK;
+    } else {
+        return;
+    }
+
+    EventCallback callback = _events[std::make_pair(IEvent::_MOUSE_DOWN, key)];
+    if (callback) {
+        callback(Event(IEvent::_KEY_DOWN, key, event.mouseButton.x, event.mouseButton.y));
+    }
+}   
 
 void SFML::handleKeyDownEvents(sf::Event event)
 {

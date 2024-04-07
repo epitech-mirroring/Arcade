@@ -388,6 +388,8 @@ void Arcade::nextDriver() {
     this->_endFrameCallbacks.emplace([this]() {this->loadDriver(this->_drivers[this->_currentDriverIndex].name);});
 }
 
+
+
 void Arcade::setPreferredSize(std::size_t width, std::size_t height) {
     this->_preferredWidth = width;
     this->_preferredHeight = height;
@@ -479,6 +481,14 @@ void Arcade::updateCurrentPlayerName(const std::string &name) {
         this->_players.push_back(player);
     }
     this->_currentPlayer = player;
+}
+
+void Arcade::queueLoadGame(const std::string &gameName) {
+    this->_endFrameCallbacks.emplace([this, gameName]() {this->loadGame(gameName);});
+}
+
+void Arcade::queueLoadDriver(const std::string &driverName) {
+    this->_endFrameCallbacks.emplace([this, driverName]() {this->loadDriver(driverName);});
 }
 
 void Arcade::addShader(const std::string &shaderPath) {

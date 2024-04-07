@@ -64,4 +64,6 @@ private:
     std::unordered_map<std::string, sf::Font *> _loadedFonts;
     std::size_t _width;
     std::size_t _height;
+
+    void handleMouseEvents(sf::Event event);
 };
