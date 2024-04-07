@@ -46,6 +46,7 @@ NCurses::NCurses() {
     noecho();
     curs_set(0);
     nodelay(stdscr, TRUE);
+    mousemask(BUTTON1_CLICKED | BUTTON2_CLICKED | BUTTON3_CLICKED, nullptr);
     start_color();
     init_pair(1, COLOR_BLACK, COLOR_BLACK);
     init_pair(2, COLOR_RED, COLOR_BLACK);
@@ -311,8 +312,6 @@ void NCurses::flipFrame() {
 }
 
 void NCurses::bindEvent(IEvent::EventType type, EventKey key, EventCallback callback) {
-    if (type == IEvent::_MOUSE_DOWN || type == IEvent::_MOUSE_UP || type == IEvent::_MOUSE_MOVE)
-        return;
     this->_events[std::make_pair(type, key)] = callback;
 }
 
@@ -335,6 +334,32 @@ void NCurses::handleEvents() {
 
 void NCurses::handleInput(int event)
 {
+    if (event == KEY_MOUSE) {
+        MEVENT mouseEvent;
+        if (getmouse(&mouseEvent) == OK) {
+            IEvent::EventType type;
+            EventKey key;
+            if (mouseEvent.bstate & BUTTON1_CLICKED) {
+                type = IEvent::EventType::_MOUSE_DOWN;
+                key = _MOUSE_LEFT_CLICK;
+            } else if (mouseEvent.bstate & BUTTON2_CLICKED) {
+                type = IEvent::EventType::_MOUSE_DOWN;
+                key = _MOUSE_MIDDLE_CLICK;
+            } else if (mouseEvent.bstate & BUTTON3_CLICKED) {
+                type = IEvent::EventType::_MOUSE_DOWN;
+                key = _MOUSE_RIGHT_CLICK;
+            } else {
+                return;
+            }
+            int x = mouseEvent.x * SCALE_WIDTH;
+            int y = mouseEvent.y * SCALE_HEIGHT;
+            EventCallback callback = this->_events[std::make_pair(type, key)];
+            std::cout << "Mouse event: " << x << " " << y << std::endl;
+            if (callback)
+                callback(Event(type, key, x, y));
+        }
+        return;
+    }
     if (this->_keyMap.find(event) == this->_keyMap.end())
         return;
 
