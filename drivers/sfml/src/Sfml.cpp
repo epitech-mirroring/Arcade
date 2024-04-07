@@ -138,7 +138,6 @@ void SFML::flipFrame()
         screen.create(this->_width, this->_height);
         screen.update(this->_window);
         sf::Sprite sprite = sf::Sprite(screen);
-        //shader.second->setUniform("iResolution", sf::Glsl::Vec2((float) this->_width, (float) this->_height));
         shader.second->setUniform("texture", screen);
         this->_window.draw(sprite, shader.second);
     }
