@@ -354,7 +354,6 @@ void NCurses::handleInput(int event)
             int x = mouseEvent.x * SCALE_WIDTH;
             int y = mouseEvent.y * SCALE_HEIGHT;
             EventCallback callback = this->_events[std::make_pair(type, key)];
-            std::cout << "Mouse event: " << x << " " << y << std::endl;
             if (callback)
                 callback(Event(type, key, x, y));
         }
