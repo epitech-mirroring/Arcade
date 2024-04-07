@@ -8,6 +8,7 @@
 
 #pragma once
 #include "shared/IDriver.hpp"
+#include "shared/ICanUseShaders.hpp"
 #include "shared/displayable/primitives/IPrimitive.hpp"
 #include "shared/displayable/primitives/IText.hpp"
 #include "shared/displayable/primitives/ICircle.hpp"
@@ -29,7 +30,9 @@
 #undef _KEY_T
 #endif
 
-class SFML: public IDriver {
+class SFML: public ICanUseShaders {
+protected:
+    std::unordered_map<std::string, sf::Shader *> _shaders;
 public:
     SFML();
     ~SFML() override;
@@ -38,6 +41,8 @@ public:
     void bindEvent(IEvent::EventType type, EventKey key, EventCallback callback) override;
     void setPreferredSize(std::size_t width, std::size_t height) override;
     void unbindAll() override;
+    void addShader(const std::string &shaderPath) override;
+    void removeAllShaders() override;
 private:
     void handleEvents();
     void handleKeyDownEvents(sf::Event event);
@@ -51,7 +56,7 @@ private:
     void displayPrimitive(const IPrimitive &primitive);
 
     sf::RenderWindow _window;
-    sf::Event _event;
+    sf::Event _event{};
     std::map<std::pair<IEvent::EventType, EventKey>, EventCallback> _events;
     std::unordered_map<sf::Keyboard::Key, EventKey> _keyMap;
     std::deque<sf::Keyboard::Key> _pressedKeys;

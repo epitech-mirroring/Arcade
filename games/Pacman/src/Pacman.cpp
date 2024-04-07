@@ -81,6 +81,7 @@ void Pacman::init(std::shared_ptr<IArcade> _arcade) {
     arcade = this->_arcade;
     this->_score = 0;
     score = &this->_score;
+    this->_arcade->addShader("assets/shaders/crt.frag");
 
     this->_arcade->bindEvent(IEvent::EventType::_KEY_PRESS, _KEY_Z, [this](const IEvent &event) {
         this->pac.handleEvent(event);
