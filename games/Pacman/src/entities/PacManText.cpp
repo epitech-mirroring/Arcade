@@ -63,7 +63,25 @@ PacManTextChar::PacManTextChar(char c, PacManTextColor color)
     this->_sprite->setDrawRect({pos.first, pos.second + color, 8, 8});
     this->setSize(SCALE);
     this->_replacingChar = c;
-    this->setColor(RGBAColor::WHITE);
+    switch (color) {
+        case BEIGE:
+        case WHITE:
+            this->setColor(RGBAColor::WHITE);
+            break;
+        case RED:
+            this->setColor(RGBAColor::RED);
+            break;
+        case PINK:
+            this->setColor(RGBAColor::MAGENTA);
+            break;
+        case CYAN:
+            this->setColor(RGBAColor::CYAN);
+            break;
+        case ORANGE:
+        case YELLOW:
+            this->setColor(RGBAColor::YELLOW);
+            break;
+    }
 }
 
 PacManText::PacManText(const std::string &text, PacManTextColor color)
