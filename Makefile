@@ -7,17 +7,18 @@
 ##
 
 # All the source files
-CXX_SOURCES		= 	src/main.cpp		\
-					src/Arcade.cpp		\
-					src/Player.cpp		\
-					src/menu/Menu.cpp	\
+CXX_SOURCES		= 	src/main.cpp							\
+					src/Arcade.cpp							\
+					src/Player.cpp							\
+					src/menu/Menu.cpp						\
 					src/errors/NoSuchDriverException.cpp	\
 					src/errors/LibraryFormatException.cpp	\
 
-GAMES			= 	games/Pacman 		\
-				  	games/Snake		\
+GAMES			= 	games/Pacman 			\
+				  	games/Snake				\
+				  	games/Cookie_Clicker	\
 
-DRIVERS			= 	drivers/ncurses	\
+DRIVERS			= 	drivers/ncurses		\
 				  	drivers/sdl2		\
 				  	drivers/sfml		\
 
