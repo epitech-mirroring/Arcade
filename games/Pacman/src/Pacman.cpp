@@ -83,7 +83,7 @@ void Pacman::init(std::shared_ptr<IArcade> _arcade) {
     this->_score = 0;
     score = &this->_score;
     if (dynamic_cast<IArcadeWithShaders *>(this->_arcade.get()) != nullptr) {
-        dynamic_cast<IArcadeWithShaders *>(this->_arcade.get())->addShader("assets/shaders/crt.vert");
+        dynamic_cast<IArcadeWithShaders *>(this->_arcade.get())->addShader("assets/shaders/crt.frag");
     }
 
     this->_arcade->bindEvent(IEvent::EventType::_KEY_PRESS, _KEY_Z, [this](const IEvent &event) {
