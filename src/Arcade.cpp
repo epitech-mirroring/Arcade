@@ -18,6 +18,7 @@
 #include "common/displayable/primitives/Square.hpp"
 #include "common/displayable/primitives/Line.hpp"
 #include "common/displayable/primitives/Circle.hpp"
+#include "shared/ICanUseShaders.hpp"
 
 Arcade::Arcade(const std::string &firstDriverName, bool isGizmosEnabled) {
     this->_currentPlayer = new Player("player");
@@ -106,6 +107,7 @@ void Arcade::loadDriver(const std::string &driverName) {
     this->_driver.loader = std::move(dl);
     this->_driver.name = driverName;
     this->rebindGlobalKeys();
+    this->reapplyShaders();
 }
 
 void Arcade::loadGame(const std::string &gameName) {
@@ -130,6 +132,7 @@ void Arcade::loadGame(const std::string &gameName) {
         this->_driver.instance->unbindAll();
         this->_events.clear();
         this->rebindGlobalKeys();
+        this->removeAllShaders();
     }
     // Replace game
     this->_game.instance = dl->getInstance().release();
@@ -137,6 +140,7 @@ void Arcade::loadGame(const std::string &gameName) {
     this->_game.name = gameName;
     this->_game.instance->init(this->_arcade);
     this->_game.instance->start();
+    this->reapplyShaders();
 }
 
 static std::string parseLibName(const std::string &filename) {
@@ -354,6 +358,7 @@ void Arcade::menu() {
             this->_driver.instance->unbindAll();
             this->_events.clear();
             this->rebindGlobalKeys();
+            this->removeAllShaders();
         }
         this->loadScore();
         this->sortPlayers();
@@ -361,6 +366,7 @@ void Arcade::menu() {
         this->_game.loader = nullptr;
         this->_game.instance->init(this->_arcade);
         this->_game.instance->start();
+        this->reapplyShaders();
     });
 }
 
@@ -483,4 +489,24 @@ void Arcade::queueLoadGame(const std::string &gameName) {
 
 void Arcade::queueLoadDriver(const std::string &driverName) {
     this->_endFrameCallbacks.emplace([this, driverName]() {this->loadDriver(driverName);});
+}
+
+void Arcade::addShader(const std::string &shaderPath) {
+    this->_shaders.push_back(shaderPath);
+    this->reapplyShaders();
+}
+
+void Arcade::reapplyShaders() const {
+    if (dynamic_cast<ICanUseShaders *>(this->_driver.instance) == nullptr)
+        return;
+    auto *driver = dynamic_cast<ICanUseShaders *>(this->_driver.instance);
+    driver->removeAllShaders();
+    for (const auto &shader : this->_shaders) {
+        driver->addShader(shader);
+    }
+}
+
+void Arcade::removeAllShaders() {
+    this->_shaders.clear();
+    this->reapplyShaders();
 }

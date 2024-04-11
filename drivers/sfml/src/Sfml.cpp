@@ -38,6 +38,7 @@ extern "C" {
 
 SFML::SFML()
 {
+    this->_event = sf::Event();
     this->_width = 800;
     this->_height = 600;
     this->_window.create(sf::VideoMode(800, 600), "Arcade", sf::Style::Close | sf::Style::Titlebar);
@@ -132,6 +133,14 @@ SFML::~SFML()
 
 void SFML::flipFrame()
 {
+    for (auto &shader : this->_shaders) {
+        sf::Texture screen = sf::Texture();
+        screen.create(this->_width, this->_height);
+        screen.update(this->_window);
+        sf::Sprite sprite = sf::Sprite(screen);
+        shader.second->setUniform("texture", screen);
+        this->_window.draw(sprite, shader.second);
+    }
     this->_window.display();
     this->_window.clear();
     if (this->_window.pollEvent(this->_event)) {
@@ -337,3 +346,21 @@ void SFML::unbindAll()
 {
     this->_events.clear();
 }
+
+void SFML::addShader(const std::string &shaderPath)
+{
+    if (!sf::Shader::isAvailable())
+        return;
+    auto *shader = new sf::Shader();
+    shader->loadFromFile(shaderPath, sf::Shader::Fragment);
+    this->_shaders[shaderPath] = shader;
+}
+
+void SFML::removeAllShaders()
+{
+    for (auto& shader : this->_shaders) {
+        delete shader.second;
+    }
+    this->_shaders.clear();
+}
+
